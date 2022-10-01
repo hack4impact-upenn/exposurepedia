@@ -20,6 +20,8 @@ import RegisterPage from './Authentication/RegisterPage';
 import LoginPage from './Authentication/LoginPage';
 import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
+import HierarchiesPage from './Hierarchy/HierarchiesPage';
+import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 
 function App() {
   return (
@@ -50,6 +52,11 @@ function App() {
                   {/* Routes accessed only if user is authenticated */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/hierarchies" element={<HierarchiesPage />} />
+                    <Route
+                      path="/viewhierarchy"
+                      element={<ViewHierarchyPage />}
+                    />
                   </Route>
                   <Route element={<AdminRoutesWrapper />}>
                     <Route path="/users" element={<AdminDashboardPage />} />
