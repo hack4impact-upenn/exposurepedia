@@ -22,6 +22,15 @@ const testPassword = '123456';
 const testFirstName = 'testFirst';
 const testLastName = 'testLast';
 
+const defaultRegistrationOptions = {
+  isProfessional: true,
+  profession: 'Clinical Psycologist',
+  degree: '',
+  settings: ['Academic medical center'],
+  percentCaseload: 10,
+  difficulty: 5,
+};
+
 beforeAll(async () => {
   // connects to an in memory database since this is a testing environment
   dbConnection = await MongoConnection.getInstance();
@@ -52,6 +61,11 @@ describe('testing authentication routes', () => {
           password: testPassword,
           firstName: testFirstName,
           lastName: testLastName,
+          isProfessional: true,
+          profession: 'Clinical Psycologist',
+          settings: ['Academic medical center'],
+          percentCaseload: 10,
+          difficulty: 5,
         });
         expect(response.status).toBe(StatusCode.CREATED);
         expect(await Session.countDocuments()).toBe(0);
@@ -91,6 +105,7 @@ describe('testing authentication routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
@@ -114,6 +129,7 @@ describe('testing authentication routes', () => {
         password: 'differentThanTestPassword',
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.BAD_REQUEST);
       expect(await Session.countDocuments()).toBe(0);
@@ -145,6 +161,7 @@ describe('testing authentication routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
@@ -175,6 +192,7 @@ describe('testing authentication routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.BAD_REQUEST);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
@@ -215,6 +233,7 @@ describe('testing authentication routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await Session.countDocuments()).toBe(0);
