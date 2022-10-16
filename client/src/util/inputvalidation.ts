@@ -10,6 +10,8 @@ export enum InputErrorMessage {
   INVALID_NAME = 'Invalid name',
   PASSWORD_MISMATCH = 'Passwords do not match',
   MISSING_INPUT = 'Missing input',
+  FIELD_NOT_SELECTED = 'Field not selected',
+  INVALID_NUMERIC = 'Invalid numeric value',
 }
 
 export const emailRegex =

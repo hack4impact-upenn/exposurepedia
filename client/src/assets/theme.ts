@@ -53,6 +53,7 @@ const theme = createTheme({
         },
         h2: {
           fontSize: '38px !important',
+          marginTop: '32px !important',
           marginBottom: '32px !important',
         },
         h3: {
@@ -61,6 +62,22 @@ const theme = createTheme({
         },
         h4: {
           fontWeight: 'bold !important',
+        },
+      },
+    },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          paddingTop: '3px',
+          paddingBottom: '3px',
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          paddingTop: '3px',
+          paddingBottom: '3px',
         },
       },
     },
