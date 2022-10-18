@@ -8,6 +8,7 @@ interface DeleteUserButtonProps {
   admin: boolean;
   email: string;
   removeRow: (user: string) => void;
+  close: () => void;
 }
 
 /**
@@ -18,7 +19,12 @@ interface DeleteUserButtonProps {
  * @param removeRow - a function which removes a row from the user table. This
  * function is called upon successfully deletion of user from the database.
  */
-function DeleteUserButton({ admin, email, removeRow }: DeleteUserButtonProps) {
+function DeleteUserButton({
+  admin,
+  email,
+  removeRow,
+  close,
+}: DeleteUserButtonProps) {
   const [isLoading, setLoading] = useState(false);
   async function handleDelete() {
     setLoading(true);
@@ -27,18 +33,20 @@ function DeleteUserButton({ admin, email, removeRow }: DeleteUserButtonProps) {
     } else {
       setLoading(false);
     }
+    close();
   }
   if (isLoading) {
     return <LoadingButton />;
   }
   if (!admin) {
     return (
-      <ConfirmationModal
-        buttonText="Remove User"
-        title="Are you sure you want to remove this user?"
-        body="This action is permanent. User information will not be able to be recovered."
-        onConfirm={() => handleDelete()}
-      />
+      <Button
+        style={{ color: 'green', borderColor: 'green' }}
+        variant="outlined"
+        onClick={() => handleDelete()}
+      >
+        Confirm
+      </Button>
     );
   }
   return (
