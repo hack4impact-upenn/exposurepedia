@@ -8,6 +8,7 @@ import {
   getAllUsers,
   upgradePrivilege,
   deleteUser,
+  approveUser,
 } from '../controllers/admin.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 import { approve } from '../controllers/auth.controller';
@@ -42,6 +43,22 @@ router.put('/promote', isAuthenticated, isAdmin, upgradePrivilege);
  */
 // delete during deployment
 router.put('/autopromote', upgradePrivilege);
+
+/**
+ * A PUT route to approve user access. Checks first if the requestor
+ * is a authenticated and is an admin.
+ * Expects a JSON body with the following fields:
+ * - email (string) - The email of the user to be approved
+ */
+router.put('/approve', isAuthenticated, isAdmin, approveUser);
+
+/**
+ * A PUT route to approve a user for testing
+ * Expects a JSON body with the following fields:
+ * - email (string) - The email of the user to be promoted
+ */
+// delete during deployment
+router.put('/autoapprove', approveUser);
 
 /**
  * A PUT route to delete a user. Checks first if the requestor

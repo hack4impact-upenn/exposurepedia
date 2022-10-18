@@ -15,10 +15,7 @@ import {
   getUserByResetPasswordToken,
   getUserByVerificationToken,
 } from '../services/user.service';
-import {
-  emailResetPasswordLink,
-  emailVerificationLink,
-} from '../services/mail.service';
+import { emailResetPasswordLink } from '../services/mail.service';
 import ApiError from '../config/apiError';
 
 /**
@@ -50,6 +47,10 @@ const login = async (
       }
       if (!user) {
         next(ApiError.unauthorized('Incorrect credentials'));
+        return;
+      }
+      if (user!.status && user!.status !== 'approved') {
+        next(ApiError.unauthorized('User not approved'));
         return;
       }
       if (!user!.verified) {
@@ -146,16 +147,7 @@ const register = async (
       lowercaseEmail,
       password,
     );
-    // Don't need verification email if testing
-    if (process.env.NODE_ENV === 'test') {
-      user!.verified = true;
-      await user?.save();
-    } else {
-      const verificationToken = crypto.randomBytes(32).toString('hex');
-      user!.verificationToken = verificationToken;
-      await user!.save();
-      await emailVerificationLink(lowercaseEmail, verificationToken);
-    }
+    await user!.save();
     res.sendStatus(StatusCode.CREATED);
   } catch (err) {
     next(ApiError.internal('Unable to register user.'));
