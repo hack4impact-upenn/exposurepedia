@@ -10,6 +10,7 @@ import createExpressApp from '../../config/createExpressApp';
 import StatusCode from '../../config/statusCode';
 import { User } from '../../models/user';
 import Session from '../../models/session';
+import { getDate } from '../../services/user.service';
 
 let dbConnection: MongoConnection;
 let sessionStore: MongoStore;
@@ -35,8 +36,10 @@ const user1 = {
   email: testEmail,
   firstName: testFirstName,
   lastName: testLastName,
+  date: getDate(),
   admin: true,
   verified: true,
+  status: 'approved',
 };
 
 const testEmail2 = 'testemail2@gmail.com';
@@ -47,8 +50,10 @@ const user2 = {
   email: testEmail2,
   firstName: testFirstName2,
   lastName: testLastName2,
+  date: getDate(),
   admin: false,
   verified: true,
+  status: 'approved',
 };
 
 const testEmail3 = 'testemail3@gmail.com';
@@ -59,8 +64,10 @@ const user3 = {
   email: testEmail3,
   firstName: testFirstName3,
   lastName: testLastName3,
+  date: getDate(),
   admin: true,
   verified: true,
+  status: 'approved',
 };
 
 const testEmail4 = 'testemail4@gmail.com';
@@ -71,8 +78,10 @@ const user4 = {
   email: testEmail4,
   firstName: testFirstName4,
   lastName: testLastName4,
+  date: getDate(),
   admin: false,
   verified: true,
+  status: 'approved',
 };
 
 beforeAll(async () => {
@@ -140,6 +149,27 @@ describe('testing admin routes', () => {
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail4 })).toBeTruthy();
       expect(await Session.countDocuments()).toBe(0);
+
+      // Approve users
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail,
+      });
+      expect(response.status).toBe(StatusCode.OK);
+
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail2,
+      });
+      expect(response.status).toBe(StatusCode.OK);
+
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail3,
+      });
+      expect(response.status).toBe(StatusCode.OK);
+
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail4,
+      });
+      expect(response.status).toBe(StatusCode.OK);
 
       // Login user3, promote to admin, and then logout
       response = await agent.post('/api/auth/login').send({
@@ -340,6 +370,11 @@ describe('testing admin routes', () => {
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail4 })).toBeTruthy();
       expect(await Session.countDocuments()).toBe(0);
+
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail,
+      });
+      expect(response.status).toBe(StatusCode.OK);
 
       // Login user1
       response = await agent.post('/api/auth/login').send({

@@ -147,6 +147,9 @@ const register = async (
       lowercaseEmail,
       password,
     );
+    if (process.env.NODE_ENV === 'test') {
+      user!.verified = true;
+    }
     await user!.save();
     res.sendStatus(StatusCode.CREATED);
   } catch (err) {

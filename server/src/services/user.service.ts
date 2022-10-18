@@ -150,7 +150,9 @@ const upgradeUserToAdmin = async (id: string) => {
  */
 const deleteUserById = async (id: string) => {
   const user = await User.findByIdAndDelete(id).exec();
-  await emailAccessDenial(user!.email);
+  if (process.env.NODE_ENV !== 'test') {
+    await emailAccessDenial(user!.email);
+  }
   return user;
 };
 
@@ -163,15 +165,18 @@ const approveUserById = async (id: string) => {
   const user = await User.findByIdAndUpdate(id, [
     { $set: { status: 'approved' } },
   ]).exec();
-  const verificationToken = crypto.randomBytes(32).toString('hex');
-  user!.verificationToken = verificationToken;
-  await user!.save();
-  await emailVerificationLink(user!.email, verificationToken);
+  if (process.env.NODE_ENV !== 'test') {
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user!.verificationToken = verificationToken;
+    await user!.save();
+    await emailVerificationLink(user!.email, verificationToken);
+  }
   return user;
 };
 
 export {
   passwordHashSaltRounds,
+  getDate,
   createUser,
   getUserByEmail,
   getUserByVerificationToken,
