@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
     match:
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g,
   },
+  date: {
+    type: String,
+    required: false,
+  },
   password: {
     type: String,
     required: true,
@@ -49,6 +53,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+  status: {
+    type: String,
+    required: false,
+  },
 });
 
 interface IUser extends mongoose.Document {
@@ -56,12 +64,14 @@ interface IUser extends mongoose.Document {
   firstName: string;
   lastName: string;
   email: string;
+  date: string;
   password: string;
   verified: boolean;
   verificationToken: string | null | undefined;
   resetPasswordToken: string | null | undefined;
   resetPasswordTokenExpiryDate: Date | null | undefined;
   admin: boolean;
+  status: string;
 }
 
 const User = mongoose.model<IUser>('User', UserSchema);

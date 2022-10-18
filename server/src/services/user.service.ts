@@ -2,7 +2,9 @@
  * All the functions for interacting with user data in the MongoDB database
  */
 import { hash } from 'bcrypt';
+import crypto from 'crypto';
 import { User } from '../models/user';
+import { emailVerificationLink, emailAccessDenial } from './mail.service';
 
 const passwordHashSaltRounds = 10;
 const removeSensitiveDataQuery = [
@@ -17,6 +19,14 @@ const removeSensitiveDataQueryKeepPassword = [
   '-resetPasswordToken',
   '-resetPasswordTokenExpiryDate',
 ];
+
+const getDate = () => {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+  const yyyy = String(today.getFullYear());
+  return mm.concat('/', dd, '/', yyyy);
+};
 
 /**
  * Creates a new user in the database.
@@ -40,8 +50,10 @@ const createUser = async (
     firstName,
     lastName,
     email,
+    date: getDate(),
     password: hashedPassword,
     admin: false,
+    status: 'pending',
   });
   const user = await newUser.save();
   return user;
@@ -138,6 +150,23 @@ const upgradeUserToAdmin = async (id: string) => {
  */
 const deleteUserById = async (id: string) => {
   const user = await User.findByIdAndDelete(id).exec();
+  await emailAccessDenial(user!.email);
+  return user;
+};
+
+/**
+ * A function that approves a user.
+ * @param id The id of the user to approve.
+ * @returns The approved {@link User}
+ */
+const approveUserById = async (id: string) => {
+  const user = await User.findByIdAndUpdate(id, [
+    { $set: { status: 'approved' } },
+  ]).exec();
+  const verificationToken = crypto.randomBytes(32).toString('hex');
+  user!.verificationToken = verificationToken;
+  await user!.save();
+  await emailVerificationLink(user!.email, verificationToken);
   return user;
 };
 
@@ -152,4 +181,5 @@ export {
   getAllUsersFromDB,
   upgradeUserToAdmin,
   deleteUserById,
+  approveUserById,
 };
