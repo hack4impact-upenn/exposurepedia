@@ -8,6 +8,7 @@ interface PromoteUserButtonProps {
   admin: boolean;
   email: string;
   updateAdmin: (email: string) => void;
+  close: () => void;
 }
 
 /**
@@ -23,6 +24,7 @@ function PromoteUserButton({
   admin,
   email,
   updateAdmin,
+  close,
 }: PromoteUserButtonProps) {
   const [isLoading, setLoading] = useState(false);
 
@@ -32,18 +34,20 @@ function PromoteUserButton({
       updateAdmin(email);
     }
     setLoading(false);
+    close();
   }
   if (isLoading) {
     return <LoadingButton />;
   }
   if (!admin) {
     return (
-      <ConfirmationModal
-        buttonText="Promote User"
-        title="Are you sure you want to promote this user to admin?"
-        body="This action will give this user admin privileges"
-        onConfirm={() => handlePromote()}
-      />
+      <Button
+        style={{ color: 'green', borderColor: 'green' }}
+        variant="outlined"
+        onClick={() => handlePromote()}
+      >
+        Confirm
+      </Button>
     );
   }
   return (
