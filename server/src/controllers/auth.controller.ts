@@ -6,8 +6,8 @@ import express from 'express';
 import passport from 'passport';
 import crypto from 'crypto';
 import { hash } from 'bcrypt';
-import { IUser } from '../models/user';
-import StatusCode from '../config/statusCode';
+import { IUser } from '../models/user.model';
+import StatusCode from '../util/statusCode';
 import {
   passwordHashSaltRounds,
   createUser,
@@ -15,8 +15,11 @@ import {
   getUserByResetPasswordToken,
   getUserByVerificationToken,
 } from '../services/user.service';
-import { emailResetPasswordLink } from '../services/mail.service';
-import ApiError from '../config/apiError';
+import {
+  // emailVerificationLink,
+  emailResetPasswordLink,
+} from '../services/mail.service';
+import ApiError from '../util/apiError';
 
 /**
  * A controller function to login a user and create a session with Passport.
@@ -77,18 +80,22 @@ const logout = async (
   next: express.NextFunction,
 ) => {
   // Logout with Passport which modifies the request object
-  req.logout();
-
-  // Destroy the session
-  if (req.session) {
-    req.session.destroy((e) => {
-      if (e) {
-        next(ApiError.internal('Unable to logout properly'));
-      } else {
-        res.sendStatus(StatusCode.OK);
-      }
-    });
-  }
+  req.logout((err) => {
+    if (err) {
+      next(ApiError.internal('Failed to log out user'));
+      return;
+    }
+    // Destroy the session
+    if (req.session) {
+      req.session.destroy((e) => {
+        if (e) {
+          next(ApiError.internal('Unable to logout properly'));
+        } else {
+          res.sendStatus(StatusCode.OK);
+        }
+      });
+    }
+  });
 };
 
 /**
@@ -150,6 +157,13 @@ const register = async (
     if (process.env.NODE_ENV === 'test') {
       user!.verified = true;
     }
+    // Send verification email
+    // else {
+    //   const verificationToken = crypto.randomBytes(32).toString('hex');
+    //   user!.verificationToken = verificationToken;
+    //   await user!.save();
+    //   await emailVerificationLink(lowercaseEmail, verificationToken);
+    // }
     await user!.save();
     res.sendStatus(StatusCode.CREATED);
   } catch (err) {
@@ -230,7 +244,7 @@ const sendResetPasswordEmail = async (
       res.status(StatusCode.CREATED).send({
         message: `Reset link has been sent to ${lowercaseEmail}`,
       }),
-    ) // TODO: should this code be OK?
+    )
     .catch(() => {
       next(ApiError.internal('Failed to email reset password link.'));
     });
@@ -256,6 +270,10 @@ const resetPassword = async (
     return;
   }
 
+  if (Date.now() > user.resetPasswordTokenExpiryDate!.getTime()) {
+    next(ApiError.forbidden('Reset password token has expired.'));
+    return;
+  }
   // Hash the password before storing
   let hashedPassword: string | undefined;
   try {
