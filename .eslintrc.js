@@ -10,6 +10,6 @@ module.exports = {
         devDependencies: true,
       },
     ],
-    'prettier/prettier': ['warn', { endOfLine: 'auto' }],
+    'prettier/prettier': ['error', { endOfLine: 'auto' }],
   },
 };

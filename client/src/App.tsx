@@ -53,7 +53,7 @@ function App() {
                   {/* Routes accessed only if user is authenticated */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
-                    
+
                     <Route
                       path="/viewhierarchy"
                       element={<ViewHierarchyPage />}
