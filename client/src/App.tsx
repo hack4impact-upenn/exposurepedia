@@ -22,6 +22,7 @@ import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
+import Exposurepedia from './Hierarchy/Exposurepedia';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                   <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/exposurepedia" element={<Exposurepedia />} />
                     <Route path="/hierarchies" element={<HierarchiesPage />} />
                     <Route
                       path="/verify-account/:token"
