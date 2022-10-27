@@ -7,9 +7,9 @@ import { Server } from 'http';
 import MongoStore from 'connect-mongo';
 import MongoConnection from '../../config/mongoConnection';
 import createExpressApp from '../../config/createExpressApp';
-import StatusCode from '../../config/statusCode';
-import { User } from '../../models/user';
-import Session from '../../models/session';
+import StatusCode from '../../util/statusCode';
+import { User } from '../../models/user.model';
+import Session from '../../models/session.model';
 
 let dbConnection: MongoConnection;
 let sessionStore: MongoStore;
@@ -27,6 +27,15 @@ const cleanMongoObjArr = (objArr: any[]): any => {
   return dup;
 };
 
+const defaultRegistrationOptions = {
+  isProfessional: true,
+  profession: 'Clinical Psycologist',
+  degree: '',
+  settings: ['Academic medical center'],
+  percentCaseload: 10,
+  difficulty: 5,
+};
+
 const testEmail = 'example@gmail.com';
 const testPassword = '123456';
 const testFirstName = 'testFirst';
@@ -37,6 +46,7 @@ const user1 = {
   lastName: testLastName,
   admin: true,
   verified: true,
+  ...defaultRegistrationOptions,
 };
 
 const testEmail2 = 'testemail2@gmail.com';
@@ -49,6 +59,7 @@ const user2 = {
   lastName: testLastName2,
   admin: false,
   verified: true,
+  ...defaultRegistrationOptions,
 };
 
 const testEmail3 = 'testemail3@gmail.com';
@@ -61,6 +72,7 @@ const user3 = {
   lastName: testLastName3,
   admin: true,
   verified: true,
+  ...defaultRegistrationOptions,
 };
 
 const testEmail4 = 'testemail4@gmail.com';
@@ -73,6 +85,7 @@ const user4 = {
   lastName: testLastName4,
   admin: false,
   verified: true,
+  ...defaultRegistrationOptions,
 };
 
 beforeAll(async () => {
@@ -106,6 +119,7 @@ describe('testing admin routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
@@ -116,6 +130,7 @@ describe('testing admin routes', () => {
         password: testPassword2,
         firstName: testFirstName2,
         lastName: testLastName2,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail2 })).toBeTruthy();
@@ -126,6 +141,7 @@ describe('testing admin routes', () => {
         password: testPassword3,
         firstName: testFirstName3,
         lastName: testLastName3,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail3 })).toBeTruthy();
@@ -136,6 +152,7 @@ describe('testing admin routes', () => {
         password: testPassword4,
         firstName: testFirstName4,
         lastName: testLastName4,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail4 })).toBeTruthy();
@@ -306,6 +323,7 @@ describe('testing admin routes', () => {
         password: testPassword,
         firstName: testFirstName,
         lastName: testLastName,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
@@ -316,6 +334,7 @@ describe('testing admin routes', () => {
         password: testPassword2,
         firstName: testFirstName2,
         lastName: testLastName2,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail2 })).toBeTruthy();
@@ -326,6 +345,7 @@ describe('testing admin routes', () => {
         password: testPassword3,
         firstName: testFirstName3,
         lastName: testLastName3,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail3 })).toBeTruthy();
@@ -336,6 +356,7 @@ describe('testing admin routes', () => {
         password: testPassword4,
         firstName: testFirstName4,
         lastName: testLastName4,
+        ...defaultRegistrationOptions,
       });
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail4 })).toBeTruthy();

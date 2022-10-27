@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { Link, TextField, Grid, Typography } from '@mui/material';
+import {
+  Link,
+  TextField,
+  Grid,
+  Typography,
+  FormLabel,
+  FormControl,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormHelperText,
+  Checkbox,
+  FormGroup,
+} from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import FormCol from '../components/form/FormCol';
 import {
@@ -21,6 +34,25 @@ import FormGrid from '../components/form/FormGrid';
  */
 function RegisterPage() {
   const navigate = useNavigate();
+  const professionOptions = [
+    'Clinical Psycologist',
+    'Social Worker / Therapist',
+    'Student / Trainee',
+    'School Counselor',
+    'Psychiatrist',
+    'Psychiatric Nurse',
+    'Behavior Technician',
+    'Other',
+  ];
+  const settingsOptions = [
+    'Private practice',
+    'Academic medical center',
+    'Community mental health',
+    'Student counseling center',
+    'Veterans Affairs (VA)',
+    'Psychaitric Hosptital',
+    'Other',
+  ];
 
   // Default values for state
   const defaultValues = {
@@ -29,6 +61,14 @@ function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    isProfessional: '',
+    profession: '',
+    degree: '',
+    professionOther: '',
+    settings: Object.fromEntries(settingsOptions.map((i) => [i, false])),
+    settingOther: '',
+    percentCaseload: '',
+    difficulty: '',
   };
   const defaultShowErrors = {
     firstName: false,
@@ -36,6 +76,14 @@ function RegisterPage() {
     email: false,
     password: false,
     confirmPassword: false,
+    isProfessional: false,
+    profession: false,
+    degree: false,
+    professionOther: false,
+    settings: false,
+    settingOther: false,
+    percentCaseload: false,
+    difficulty: false,
     alert: false,
   };
   const defaultErrorMessages = {
@@ -44,6 +92,14 @@ function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    isProfessional: '',
+    profession: '',
+    degree: '',
+    professionOther: '',
+    settings: '',
+    settingOther: '',
+    percentCaseload: '',
+    difficulty: '',
     alert: '',
   };
   type ValueType = keyof typeof values;
@@ -74,6 +130,28 @@ function RegisterPage() {
       ...{ [field]: msg },
     }));
   };
+  const setCheckboxValues = (option: string, value: string) => {
+    setValueState((prevState) => ({
+      ...prevState,
+      settings: {
+        ...prevState.settings,
+        [option]: !prevState.settings[option],
+      },
+    }));
+  };
+
+  const getSettingArray = () => {
+    const settings = [];
+    Object.keys(values.settings).forEach((key) => {
+      if (key !== 'Other' && values.settings[key]) {
+        settings.push(key);
+      }
+    });
+    if (values.settings.Other) {
+      settings.push(values.settingOther);
+    }
+    return settings;
+  };
 
   const handleAlertClose = () => {
     if (isRegistered) {
@@ -90,11 +168,12 @@ function RegisterPage() {
   const validateInputs = () => {
     clearErrorMessages();
     let isValid = true;
+    const optionalInputs = ['degree', 'professionOther', 'settingOther'];
 
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const valueTypeString in values) {
       const valueType = valueTypeString as ValueType;
-      if (!values[valueType]) {
+      if (!values[valueType] && !optionalInputs.includes(valueType)) {
         setErrorMessage(valueTypeString, InputErrorMessage.MISSING_INPUT);
         setShowError(valueTypeString, true);
         isValid = false;
@@ -126,13 +205,68 @@ function RegisterPage() {
       setShowError('confirmPassword', true);
       isValid = false;
     }
+    if (!values.isProfessional) {
+      setErrorMessage('isProfessional', InputErrorMessage.FIELD_NOT_SELECTED);
+      setShowError('isProfessional', true);
+      isValid = false;
+    }
+    if (!values.profession) {
+      setErrorMessage('profession', InputErrorMessage.FIELD_NOT_SELECTED);
+      setShowError('profession', true);
+      isValid = false;
+    }
+    if (values.profession === 'Student / Trainee' && !values.degree) {
+      setErrorMessage('profession', InputErrorMessage.FIELD_NOT_SELECTED);
+      setShowError('profession', true);
+      isValid = false;
+    }
+    if (!Object.values(values.settings).some((checked) => checked)) {
+      setErrorMessage('settings', InputErrorMessage.FIELD_NOT_SELECTED);
+      setShowError('settings', true);
+      isValid = false;
+    }
+    if (values.settings.Other && !values.settingOther) {
+      setErrorMessage('settingOther', InputErrorMessage.MISSING_INPUT);
+      setShowError('settingOther', true);
+      isValid = false;
+    }
+
+    const percentCaseloadNum = parseInt(values.percentCaseload, 10);
+    if (
+      Number.isNaN(percentCaseloadNum) ||
+      percentCaseloadNum < 0 ||
+      percentCaseloadNum > 100
+    ) {
+      setErrorMessage('percentCaseload', InputErrorMessage.INVALID_NUMERIC);
+      setShowError('percentCaseload', true);
+      isValid = false;
+    }
 
     return isValid;
   };
 
   async function handleSubmit() {
     if (validateInputs()) {
-      register(values.firstName, values.lastName, values.email, values.password)
+      const profession: string =
+        values.profession === 'Other'
+          ? values.professionOther
+          : values.profession;
+
+      const degree: string =
+        values.profession === 'Student / Trainee' ? values.degree : '';
+
+      register(
+        values.firstName,
+        values.lastName,
+        values.email,
+        values.password,
+        values.isProfessional,
+        profession,
+        degree,
+        getSettingArray(),
+        parseInt(values.percentCaseload, 10),
+        parseInt(values.difficulty, 10),
+      )
         .then(() => {
           setShowError('alert', true);
           setAlertTitle('');
@@ -148,10 +282,24 @@ function RegisterPage() {
 
   const title = "Let's get started";
   return (
-    <ScreenGrid>
-      <FormGrid>
+    <Grid
+      container
+      xs={12}
+      justifyContent="center"
+      alignItems="center"
+      flexDirection="column"
+    >
+      <Grid
+        item
+        container
+        direction="column"
+        rowSpacing={3}
+        xs={8}
+        sm={6}
+        fontSize="0.75em"
+      >
         <FormCol>
-          <Grid item container justifyContent="center">
+          <Grid item container justifyContent="center" spacing={0}>
             <Typography variant="h2">{title}</Typography>
           </Grid>
           <FormRow>
@@ -223,6 +371,203 @@ function RegisterPage() {
               />
             </Grid>
           </FormRow>
+          <FormRow>
+            <Grid item container width="1">
+              <FormControl error={showError.isProfessional}>
+                <FormLabel id="register-licensed-professional-group">
+                  Are you a licensed professional?
+                </FormLabel>
+                <RadioGroup
+                  aria-labelledby="register-licensed-professional-group"
+                  value={values.isProfessional || ''}
+                  onChange={(e) => setValue('isProfessional', e.target.value)}
+                >
+                  <FormControlLabel
+                    value="true"
+                    control={<Radio />}
+                    label="Yes"
+                  />
+                  <FormControlLabel
+                    value="false"
+                    control={<Radio />}
+                    label="No"
+                  />
+                  <FormHelperText>{errorMessage.isProfessional}</FormHelperText>
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+          </FormRow>
+          <FormRow>
+            <Grid item container width="1">
+              <FormControl error={showError.profession}>
+                <FormLabel id="register-profession-group">
+                  What type of profession best describes you?
+                </FormLabel>
+                <RadioGroup
+                  aria-labelledby="register-profession-group"
+                  value={values.profession || ''}
+                  onChange={(e) => setValue('profession', e.target.value)}
+                >
+                  {professionOptions.map((prof) => (
+                    <FormControlLabel
+                      value={prof}
+                      control={<Radio />}
+                      label={prof}
+                    />
+                  ))}
+                  <FormHelperText>{errorMessage.isProfessional}</FormHelperText>
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+          </FormRow>
+          {values.profession === 'Student / Trainee' && (
+            <Grid item width="1">
+              <FormLabel>What degree are you pursuing?</FormLabel>
+              <TextField
+                fullWidth
+                error={showError.degree}
+                helperText={errorMessage.degree}
+                size="small"
+                type="text"
+                required
+                label=""
+                value={values.degree}
+                onChange={(e) => setValue('degree', e.target.value)}
+              />
+            </Grid>
+          )}
+          {values.profession === 'Other' && (
+            <Grid item width="1">
+              <FormLabel>What is your profession?</FormLabel>
+              <TextField
+                fullWidth
+                error={showError.professionOther}
+                helperText={errorMessage.professionOther}
+                size="small"
+                type="text"
+                required
+                label=""
+                value={values.professionOther}
+                onChange={(e) => setValue('professionOther', e.target.value)}
+              />
+            </Grid>
+          )}
+          <Grid item width="1">
+            <FormControl error={showError.settings}>
+              <FormLabel>
+                What type of setting do you primarily work in? (Select all that
+                apply)
+              </FormLabel>
+              <FormGroup>
+                {settingsOptions.map((option) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={values.settings[option]}
+                        onChange={(e) =>
+                          setCheckboxValues(option, e.target.value)
+                        }
+                        name={option}
+                      />
+                    }
+                    label={option}
+                  />
+                ))}
+              </FormGroup>
+              <FormHelperText>{errorMessage.settings}</FormHelperText>
+            </FormControl>
+          </Grid>
+          {values.settings.Other && (
+            <Grid item width="1">
+              <FormLabel>Please specify other settings: </FormLabel>
+              <TextField
+                fullWidth
+                error={showError.settingOther}
+                helperText={errorMessage.settingOther}
+                size="small"
+                type="text"
+                required
+                label=""
+                value={values.settingOther}
+                onChange={(e) => setValue('settingOther', e.target.value)}
+              />
+            </Grid>
+          )}
+          <Grid item width="1">
+            <FormLabel>
+              Approximately what percent of your caseload do you use exposure
+              therapy with? (Make sure to respond with a number between 0 and
+              100)
+            </FormLabel>
+            <TextField
+              fullWidth
+              error={showError.percentCaseload}
+              helperText={errorMessage.percentCaseload}
+              size="small"
+              type="text"
+              required
+              label=""
+              value={values.percentCaseload}
+              onChange={(e) => setValue('percentCaseload', e.target.value)}
+            />
+          </Grid>
+          <Grid item width="1">
+            <FormControl error={showError.difficulty} sx={{ width: '100%' }}>
+              <FormLabel id="register-difficulty-group">
+                How difficult do you think it is for exposure therapy to be
+                administered?
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="register-difficulty-group"
+                value={values.difficulty || ''}
+                onChange={(e) => setValue('difficulty', e.target.value)}
+                sx={{ justifyContent: 'space-between', paddingTop: '10px' }}
+              >
+                {[1, 2, 3, 4, 5, 6, 7].map((level) => (
+                  <FormControlLabel
+                    value={level}
+                    control={<Radio />}
+                    label={level}
+                    labelPlacement="bottom"
+                  />
+                ))}
+              </RadioGroup>
+              <FormHelperText>{errorMessage.difficulty}</FormHelperText>
+              <Grid container>
+                <Grid
+                  justifyContent="center"
+                  item
+                  xs={4}
+                  sx={{ textAlign: 'left' }}
+                >
+                  <Typography variant="caption">
+                    (1 - Not difficult at all)
+                  </Typography>
+                </Grid>
+                <Grid
+                  justifyContent="center"
+                  item
+                  xs={4}
+                  sx={{ textAlign: 'center' }}
+                >
+                  <Typography variant="caption">
+                    (4 - Somewhat difficult)
+                  </Typography>
+                </Grid>
+                <Grid
+                  justifyContent="center"
+                  item
+                  xs={4}
+                  sx={{ textAlign: 'right' }}
+                >
+                  <Typography variant="caption">
+                    (7 - Very difficult)
+                  </Typography>
+                </Grid>
+              </Grid>
+            </FormControl>
+          </Grid>
           <Grid item container justifyContent="center">
             <PrimaryButton
               fullWidth
@@ -251,8 +596,8 @@ function RegisterPage() {
             onClose={handleAlertClose}
           />
         </Grid>
-      </FormGrid>
-    </ScreenGrid>
+      </Grid>
+    </Grid>
   );
 }
 

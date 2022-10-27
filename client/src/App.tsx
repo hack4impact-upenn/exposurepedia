@@ -38,6 +38,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/exposurepedia" element={<Exposurepedia />} />
+                    <Route path="/hierarchies" element={<HierarchiesPage />} />
                     <Route
                       path="/verify-account/:token"
                       element={<VerifyAccountPage />}
@@ -54,7 +55,7 @@ function App() {
                   {/* Routes accessed only if user is authenticated */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
-                    <Route path="/hierarchies" element={<HierarchiesPage />} />
+
                     <Route
                       path="/viewhierarchy"
                       element={<ViewHierarchyPage />}
