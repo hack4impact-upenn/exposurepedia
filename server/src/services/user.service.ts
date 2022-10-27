@@ -3,7 +3,7 @@
  */
 import { hash } from 'bcrypt';
 import crypto from 'crypto';
-import { User } from '../models/user';
+import { User } from '../models/user.model';
 import { emailVerificationLink, emailAccessDenial } from './mail.service';
 
 const passwordHashSaltRounds = 10;
