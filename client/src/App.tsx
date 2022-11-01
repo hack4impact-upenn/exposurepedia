@@ -23,6 +23,7 @@ import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
+import SubmitResourcePage from './SubmitResource/SubmitResourcePage';
 
 function App() {
   return (
@@ -37,6 +38,10 @@ function App() {
                   <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                      path="/submit-resource"
+                      element={<SubmitResourcePage />}
+                    />
                     <Route
                       path="/verify-account/:token"
                       element={<VerifyAccountPage />}
