@@ -4,14 +4,13 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
+import { Button, Paper } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import HierarchyListItem from '../components/HierarchyListItem';
 
 const styles = {
   button: {
-    marginTop: '10px',
-    marginBottom: '10px',
-    marginleft: '5px',
+    padding: '8px 15px',
   },
 };
 
@@ -28,14 +27,15 @@ function HierarchyPage() {
     <div
       style={{
         display: 'flex',
-        justifyContent: 'left',
         flexDirection: 'column',
         alignItems: 'center',
-        marginLeft: '100px',
+        width: '60%',
+        margin: 'auto',
       }}
     >
-      <h1 style={{ fontSize: '50px', fontWeight: 'bold' }}>Hierarchies</h1>
-
+      <div style={{ width: '100%' }}>
+        <h1 style={{ fontSize: '42px', fontWeight: 'bold' }}>Hierarchies</h1>
+      </div>
       {hierarchyList.map((hierarchy_) => (
         <HierarchyListItem
           key={hierarchy_.name}
@@ -45,7 +45,9 @@ function HierarchyPage() {
         />
       ))}
 
-      <PrimaryButton style={styles.button}>Add New Hierarchy</PrimaryButton>
+      <Button variant="contained" style={styles.button}>
+        Add New Hierarchy
+      </Button>
     </div>
   );
 }
