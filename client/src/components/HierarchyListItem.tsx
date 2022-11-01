@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import React from 'react';
 import InvertedPrimaryButton from './buttons/InvertedPrimaryButton';
 import PrimaryButton from './buttons/PrimaryButton';
@@ -11,14 +12,15 @@ interface HierarchyListItemProps {
 const styles = {
   container: {
     borderStyle: 'solid',
-    borderWidth: '3px',
-    borderColor: 'black',
+    borderWidth: '1px',
+    borderColor: 'rgb(112, 112, 112)',
     borderRadius: '20px',
-    height: '83px',
     display: 'flex',
+    width: '90%',
     justifyContent: 'space-between',
     fontFamily: 'Roboto',
     marginBottom: '20px',
+    alignItems: 'center',
   },
   containerLeft: {
     display: 'flex',
@@ -28,7 +30,7 @@ const styles = {
   },
   header: {
     marginLeft: '20px',
-    fontSize: '24px',
+    fontSize: '20px',
     fontWeight: 'bold',
   },
   subheader: {
@@ -37,7 +39,6 @@ const styles = {
     width: '40%',
     textAlign: 'center',
   },
-  containerMiddle: {},
   containerRight: {
     justifyContent: 'space-around',
     fontSize: '24px',
@@ -50,9 +51,7 @@ const styles = {
     margin: 0,
   },
   button: {
-    marginTop: '15px',
-    marginBottom: '10px',
-    marginleft: '5px',
+    padding: '5px 20px',
   },
 };
 
@@ -65,13 +64,10 @@ function HierarchyListItem(props: HierarchyListItemProps) {
       <div style={styles.containerLeft}>
         <p style={styles.header}>{total}</p>
       </div>
-      <div style={styles.containerMiddle} />
       <div style={styles.containerRight}>
-        <p style={styles.description}>
-          <InvertedPrimaryButton variant="outlined" style={styles.button}>
-            Open
-          </InvertedPrimaryButton>
-        </p>
+        <InvertedPrimaryButton variant="outlined" style={styles.button}>
+          Open
+        </InvertedPrimaryButton>
       </div>
     </div>
   );
