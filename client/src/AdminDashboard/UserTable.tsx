@@ -20,6 +20,7 @@ import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 import IUser from '../util/types/user';
 import ButtonFooter from './ButtonFooter';
+import ButtonContainer from './ButtonContainer';
 
 interface AdminDashboardRow {
   key: string;
@@ -52,11 +53,11 @@ function UserTable() {
     view: React.ReactElement,
   ): AdminDashboardRow {
     const { _id, firstName, lastName, email, date, admin, status } = user;
-    let outStatus = status || 'n/a';
+    let outStatus = status || 'N/A';
     if (admin) {
-      outStatus = 'admin';
+      outStatus = 'Admin';
     }
-    const outDate = date || 'no date';
+    const outDate = date || 'No Date';
     return {
       key: _id,
       first: firstName,
@@ -149,77 +150,12 @@ function UserTable() {
       rows={userList.map((user: IUser) =>
         createAdminDashboardRow(
           user,
-          <>
-            <Button
-              variant="outlined"
-              // eslint-disable-next-line no-underscore-dangle
-              onClick={() => handleClickOpen(parseInt(user._id, 10))}
-            >
-              Open
-            </Button>
-            <BootstrapDialog
-              onClose={handleClose}
-              aria-labelledby="customized-dialog-title"
-              // eslint-disable-next-line no-underscore-dangle
-              open={open && openUser === parseInt(user._id, 10)}
-            >
-              <>
-                <PopupDialog id="customized-dialog-title" onClose={handleClose}>
-                  Taran Anantasagar
-                </PopupDialog>
-                <DialogContent dividers>
-                  <Typography gutterBottom>
-                    <span>
-                      <b>Licensed Provider: </b>
-                    </span>{' '}
-                    Yes
-                  </Typography>
-                  <Typography gutterBottom>
-                    <span>
-                      <b>Profession: </b>
-                    </span>{' '}
-                    School Counselor
-                  </Typography>
-                  <Typography gutterBottom>
-                    <span>
-                      <b>Setting(s) worked in: </b>
-                    </span>{' '}
-                    Private practice, Veterans Affair, Other (Hack4Immpact)
-                  </Typography>
-                  <Typography gutterBottom>
-                    <span>
-                      <b>Exposure Therapy Use: </b>
-                    </span>{' '}
-                    84%
-                  </Typography>
-                  <Typography gutterBottom>
-                    <span>
-                      <b>Difficulty to administer: </b>
-                    </span>{' '}
-                    3
-                  </Typography>
-                </DialogContent>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ButtonFooter
-                    email={user.email}
-                    admin={user.admin}
-                    status={user.status}
-                    acceptUser={acceptUser}
-                    updateAdmin={updateAdmin}
-                    removeUser={removeUser}
-                    close={handleClose}
-                  />
-                </div>
-              </>
-            </BootstrapDialog>
-          </>,
+          <ButtonContainer
+            user={user}
+            acceptUser={acceptUser}
+            updateAdmin={updateAdmin}
+            removeUser={removeUser}
+          />,
         ),
       )}
       columns={columns}

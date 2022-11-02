@@ -27,7 +27,7 @@ function ButtonFooter({
   const [isLeft, setIsLeft] = useState(true);
 
   if (admin) {
-    return <Button>hello</Button>;
+    return <p style={{ color: 'gray' }}>Already Approved</p>;
   }
 
   if (!status || status === 'pending') {
