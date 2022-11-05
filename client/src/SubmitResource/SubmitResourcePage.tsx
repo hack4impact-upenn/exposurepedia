@@ -132,7 +132,7 @@ function SubmitResourcePage() {
           </FormRow>
           <FormRow>
             <Grid item width="0.5">
-              <FormControl>
+              <FormControl sx={{ 'padding-left': 20 }}>
                 Format
                 <RadioGroup
                   aria-labelledby="format"
