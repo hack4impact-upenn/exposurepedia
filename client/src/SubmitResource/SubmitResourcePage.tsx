@@ -18,6 +18,7 @@ import {
   FormHelperText,
   Checkbox,
   FormGroup,
+  Autocomplete,
 } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import FormCol from '../components/form/FormCol';
@@ -25,9 +26,9 @@ import FormRow from '../components/form/FormRow';
 
 const styles = {
   button: {
+    margin: '0 auto',
+    display: 'block',
     marginTop: '10px',
-    marginBottom: '10px',
-    marginleft: '5px',
   },
 };
 
@@ -82,6 +83,20 @@ function SubmitResourcePage() {
     }));
   };
 
+  const disorders = [
+    'Body Dysmorphia',
+    'Generalized Anxiety',
+    'Health Anxiety/Medical Phobia',
+    'Hoarding',
+    'Obsessive Compulsive Disorder (OCD)',
+    'Panic/Agoraphobia',
+    'Specific Phobia',
+    'Posttraumatic Stress Disorder (PTSD)',
+    'Separation Anxiety',
+    'Social Anxiety',
+    'Trichotillomania/Excoriation',
+  ];
+
   return (
     <div
       style={{
@@ -92,7 +107,7 @@ function SubmitResourcePage() {
       <h2 style={{ fontSize: '50px', fontWeight: 'bold' }}>
         Submit New Resource
       </h2>
-      <div
+      {/* <div
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -102,172 +117,179 @@ function SubmitResourcePage() {
           marginLeft: '100px',
           marginRight: '100px',
         }}
-      >
-        <FormCol>
-          <FormRow>
-            <Grid item width="1">
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                required
-                label="Title"
-                value={values.title}
-                onChange={(e) => setValue('title', e.target.value)}
-              />
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="1">
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                required
-                label="Disorder"
-                value={values.disorder}
-                onChange={(e) => setValue('disorder', e.target.value)}
-              />
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="0.5">
-              <FormControl sx={{ 'padding-left': 20 }}>
-                Format
-                <RadioGroup
-                  aria-labelledby="format"
-                  defaultValue="idea"
-                  name="radio-buttons-group"
-                  value={values.format || ''}
-                  onChange={(e) => setValue('format', e.target.value)}
-                >
+      > */}
+      <FormCol>
+        <FormRow>
+          <Grid item width="1">
+            <TextField
+              fullWidth
+              size="small"
+              type="text"
+              required
+              label="Title"
+              value={values.title}
+              onChange={(e) => setValue('title', e.target.value)}
+            />
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="1">
+            {/* <TextField
+              fullWidth
+              size="small"
+              type="text"
+              required
+              label="Disorder"
+              value={values.disorder}
+              onChange={(e) => setValue('disorder', e.target.value)}
+            /> */}
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={disorders}
+              sx={{ width: '100%' }}
+              renderInput={(params) => (
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                <TextField {...params} label="Disorders" />
+              )}
+            />
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="0.5">
+            <FormControl sx={{ 'padding-left': 20 }}>
+              Format
+              <RadioGroup
+                aria-labelledby="format"
+                defaultValue="idea"
+                name="radio-buttons-group"
+                value={values.format || ''}
+                onChange={(e) => setValue('format', e.target.value)}
+              >
+                <FormControlLabel
+                  value="idea"
+                  control={<Radio />}
+                  label="Idea"
+                />
+                <FormControlLabel
+                  value="audio"
+                  control={<Radio />}
+                  label="Audio"
+                />
+                <FormControlLabel
+                  value="picture"
+                  control={<Radio />}
+                  label="Picture"
+                />
+                <FormControlLabel
+                  value="vr"
+                  control={<Radio />}
+                  label="Virtual Reality"
+                />
+                <FormControlLabel
+                  value="reading"
+                  control={<Radio />}
+                  label="Reading"
+                />
+                <FormControlLabel
+                  value="joke"
+                  control={<Radio />}
+                  label="Joke"
+                />
+                <FormControlLabel
+                  value="script"
+                  control={<Radio />}
+                  label="Script"
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid item width="0.5">
+            <FormControl>
+              Intervention Type
+              <FormGroup>
+                {interventionTypes.map((option) => (
                   <FormControlLabel
-                    value="idea"
-                    control={<Radio />}
-                    label="Idea"
+                    control={
+                      <Checkbox
+                        checked={values.interventions[option]}
+                        onChange={(e) =>
+                          setInterventionCheckboxValues(option, e.target.value)
+                        }
+                        name={option}
+                      />
+                    }
+                    label={option}
                   />
+                ))}
+              </FormGroup>
+            </FormControl>
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="1">
+            <FormControl>
+              Maturity:
+              <FormGroup>
+                {maturityTypes.map((option) => (
                   <FormControlLabel
-                    value="audio"
-                    control={<Radio />}
-                    label="Audio"
+                    control={
+                      <Checkbox
+                        checked={values.maturity[option]}
+                        onChange={(e) =>
+                          setMaturityCheckboxValues(option, e.target.value)
+                        }
+                        name={option}
+                      />
+                    }
+                    label={option}
                   />
-                  <FormControlLabel
-                    value="picture"
-                    control={<Radio />}
-                    label="Picture"
-                  />
-                  <FormControlLabel
-                    value="vr"
-                    control={<Radio />}
-                    label="Virtual Reality"
-                  />
-                  <FormControlLabel
-                    value="reading"
-                    control={<Radio />}
-                    label="Reading"
-                  />
-                  <FormControlLabel
-                    value="joke"
-                    control={<Radio />}
-                    label="Joke"
-                  />
-                  <FormControlLabel
-                    value="script"
-                    control={<Radio />}
-                    label="Script"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-            <Grid item width="0.5">
-              <FormControl>
-                Intervention Type
-                <FormGroup>
-                  {interventionTypes.map((option) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={values.interventions[option]}
-                          onChange={(e) =>
-                            setInterventionCheckboxValues(
-                              option,
-                              e.target.value,
-                            )
-                          }
-                          name={option}
-                        />
-                      }
-                      label={option}
-                    />
-                  ))}
-                </FormGroup>
-              </FormControl>
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="1">
-              <FormControl>
-                Maturity:
-                <FormGroup>
-                  {maturityTypes.map((option) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={values.maturity[option]}
-                          onChange={(e) =>
-                            setMaturityCheckboxValues(option, e.target.value)
-                          }
-                          name={option}
-                        />
-                      }
-                      label={option}
-                    />
-                  ))}
-                </FormGroup>
-              </FormControl>
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="1">
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                label="Keywords (optional)"
-                value={values.keywords}
-                onChange={(e) => setValue('keywords', e.target.value)}
-              />
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="1">
-              <TextField
-                fullWidth
-                multiline
-                type="text"
-                label="Modifications (optional)"
-                rows={4}
-                value={values.modifications}
-                onChange={(e) => setValue('modifications', e.target.value)}
-              />
-            </Grid>
-          </FormRow>
-          <FormRow>
-            <Grid item width="1">
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                label="Link to Resource (optional)"
-                value={values.link}
-                onChange={(e) => setValue('link', e.target.value)}
-              />
-            </Grid>
-          </FormRow>
-        </FormCol>
+                ))}
+              </FormGroup>
+            </FormControl>
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="1">
+            <TextField
+              fullWidth
+              size="small"
+              type="text"
+              label="Keywords (optional)"
+              value={values.keywords}
+              onChange={(e) => setValue('keywords', e.target.value)}
+            />
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="1">
+            <TextField
+              fullWidth
+              multiline
+              type="text"
+              label="Modifications (optional)"
+              rows={4}
+              value={values.modifications}
+              onChange={(e) => setValue('modifications', e.target.value)}
+            />
+          </Grid>
+        </FormRow>
+        <FormRow>
+          <Grid item width="1">
+            <TextField
+              fullWidth
+              size="small"
+              type="text"
+              label="Link to Resource (optional)"
+              value={values.link}
+              onChange={(e) => setValue('link', e.target.value)}
+            />
+          </Grid>
+        </FormRow>
+      </FormCol>
 
-        <PrimaryButton style={styles.button}>Submit</PrimaryButton>
-      </div>
+      <PrimaryButton style={styles.button}>Submit</PrimaryButton>
+      {/* </div> */}
     </div>
   );
 }
