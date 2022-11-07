@@ -13,9 +13,27 @@ interface NavTabProps {
   href?: string;
 }
 
+const tabStyle = {
+  color: '#397FBF',
+  borderRadius: 30,
+  '&:hover': {
+    color: '#40a9ff',
+    opacity: 1,
+  },
+  '&.Mui-selected': {
+    color: '#ffffff',
+    backgroundColor: '#397FBF',
+  },
+  '&.Mui-focusVisible': {
+    backgroundColor: '#d1eaff',
+  },
+};
+
 function NavTab(props: NavTabProps) {
   return (
     <Tab
+      disableRipple
+      sx={tabStyle}
       component="a"
       onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         event.preventDefault();
@@ -44,7 +62,14 @@ export default function NavBar() {
     <Box
       sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
     >
-      <Tabs value={value} onChange={handleChange} aria-label="nav tabs example">
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        aria-label="nav tabs example"
+        TabIndicatorProps={{
+          hidden: true,
+        }}
+      >
         <NavTab label="Home" href="/home" />
         <NavTab label="Exposurepedia" href="/trash" />
         <NavTab label="Submit Resources" href="/spam" />
@@ -57,7 +82,14 @@ export default function NavBar() {
     <Box
       sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
     >
-      <Tabs value={value} onChange={handleChange} aria-label="nav tabs example">
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        aria-label="nav tabs example"
+        TabIndicatorProps={{
+          hidden: true,
+        }}
+      >
         <NavTab label="Home" href="/home" />
         <NavTab label="Contact Us" href="/contact" />
       </Tabs>
