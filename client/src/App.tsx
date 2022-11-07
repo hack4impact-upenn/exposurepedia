@@ -23,12 +23,14 @@ import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
+import NavBar from './components/NavBar';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Provider store={store}>
+          <NavBar />
           <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider theme={theme}>
               <CssBaseline>
