@@ -22,10 +22,12 @@ import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
+import NavBar from './components/NavBar';
 
 function App() {
   return (
     <div className="App">
+      <NavBar />
       <BrowserRouter>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
