@@ -83,7 +83,7 @@ function SubmitResourcePage() {
     }));
   };
 
-  const disorders = [
+  const defaultDisorders = [
     'Body Dysmorphia',
     'Generalized Anxiety',
     'Health Anxiety/Medical Phobia',
@@ -96,6 +96,34 @@ function SubmitResourcePage() {
     'Social Anxiety',
     'Trichotillomania/Excoriation',
   ];
+  const [disorders, setDisorderState] = useState(defaultDisorders);
+
+  const [disordersOpen, setDisordersOpen] = useState(false);
+
+  const masterDisorderObject = {
+    'Body Dysmorphia': [],
+    'Generalized Anxiety': [''],
+    'Health Anxiety/Medical Phobia': [
+      'Blood/Injection/Injury',
+      'Dental Phobia',
+    ],
+    Hoarding: [],
+    'Obsessive Compulsive Disorder (OCD)': [
+      'Aggressive/Violent',
+      'Checking',
+      'etc.',
+    ],
+    'Panic/Agoraphobia': [],
+    'Specific Phobia': ['Animals', 'Claustriphobia', 'etc.'],
+    'Posttraumatic Stress Disorder (PTSD)': [
+      'Combat/Military/Terrorism',
+      'Sexual Assault',
+      'Car Accident',
+    ],
+    'Separation Anxiety': [],
+    'Social Anxiety': [],
+    'Trichotillomania/Excoriation': [],
+  };
 
   return (
     <div
@@ -144,10 +172,22 @@ function SubmitResourcePage() {
               onChange={(e) => setValue('disorder', e.target.value)}
             /> */}
             <Autocomplete
-              disablePortal
+              open={disordersOpen}
               id="combo-box-demo"
               options={disorders}
               sx={{ width: '100%' }}
+              onFocus={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDisordersOpen(true);
+              }}
+              onChange={(event, value) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (value) {
+                  setDisorderState([value]);
+                }
+              }}
               renderInput={(params) => (
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 <TextField {...params} label="Disorders" />
