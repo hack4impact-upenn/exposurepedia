@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import MenuListComposition from './MenuList';
 import { selectUser } from '../util/redux/userSlice';
 import { useAppSelector } from '../util/redux/hooks';
+import { useData } from '../util/api';
 
 interface NavTabProps {
   label?: string;
@@ -47,8 +48,8 @@ function NavTab(props: NavTabProps) {
 export default function NavBar() {
   const [value, setValue] = React.useState(0);
 
+  const data = useData('auth/authstatus');
   const self = useAppSelector(selectUser);
-  const isLoggedIn = self.email !== null;
   const location = useLocation();
   console.log(self);
   console.log(location.pathname);
@@ -57,7 +58,7 @@ export default function NavBar() {
     setValue(newValue);
   };
 
-  return isLoggedIn ? (
+  return !data?.error ? (
     <Box
       sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
     >
