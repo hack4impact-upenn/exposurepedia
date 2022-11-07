@@ -48,7 +48,6 @@ export default function NavBar() {
   const [value, setValue] = React.useState(0);
 
   const self = useAppSelector(selectUser);
-  const isAdmin = self.admin;
   const isLoggedIn = self.email !== null;
   const location = useLocation();
   console.log(self);
@@ -76,7 +75,7 @@ export default function NavBar() {
         <NavTab label="Hierarchies" href="/hierarchies" />
         <NavTab label="Contact" href="/contact" />
       </Tabs>
-      <MenuListComposition />
+      <MenuListComposition user={self} />
     </Box>
   ) : (
     <Box

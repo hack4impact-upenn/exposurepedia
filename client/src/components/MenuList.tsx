@@ -8,8 +8,13 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
+import { UserState } from '../util/redux/userSlice';
 
-export default function MenuListComposition() {
+interface MenuListProps {
+  user: UserState;
+}
+
+export default function MenuListComposition({ user }: MenuListProps) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
 
@@ -59,7 +64,7 @@ export default function MenuListComposition() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          Ziya Xu
+          {user.firstName} {user.lastName}
         </Button>
         <Popper
           open={open}
@@ -87,7 +92,9 @@ export default function MenuListComposition() {
                     // eslint-disable-next-line react/jsx-no-bind
                     onKeyDown={handleListKeyDown}
                   >
-                    <MenuItem onClick={handleClose}>Admin Dashboard</MenuItem>
+                    {user.admin && (
+                      <MenuItem onClick={handleClose}>Admin Dashboard</MenuItem>
+                    )}
                     <MenuItem onClick={handleClose}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
