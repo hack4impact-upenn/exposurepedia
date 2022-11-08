@@ -29,10 +29,20 @@ interface Item {
 
 export default function ExposureItem({ item }: ExposureItemProps) {
   const [isEdit, setIsEdit] = useState(false);
+  ['disorder', 'format', 'interventionType', 'maturity', 'keywords'].forEach(
+    (key) => {
+      Object(item)[key] = Object(item)[key].map((data: string) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [isDisplayed, setIsDisplayed] = useState(true);
+        return [data, isDisplayed, setIsDisplayed];
+      });
+    },
+  );
   const saveChanges = () => {
     setIsEdit(false);
     console.log('saved!');
   };
+
   return (
     <Paper
       sx={{
@@ -114,25 +124,40 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             <Typography>
               <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
             </Typography>
-            {Object(item)[key].map((value: string) => (
-              <Chip
-                sx={{
-                  mx: '0.25rem',
-                  background: '#397FBF',
-                  color: 'white',
-                  height: '30px',
-                  margin: '2px',
-                  '& .MuiChip-deleteIcon': {
-                    color: 'rgba(237,237,237,0.9)',
-                  },
-                }}
-                label={value}
-                onDelete={() => ({})}
-                deleteIcon={
-                  isEdit ? <Cancel sx={{ backgroundClip: 'red' }} /> : <span />
-                }
-              />
-            ))}
+            {Object(item)[key].map(
+              (
+                value: [
+                  string,
+                  boolean,
+                  React.Dispatch<React.SetStateAction<boolean>>,
+                ],
+              ) =>
+                value[1] && (
+                  <Chip
+                    sx={{
+                      mx: '0.25rem',
+                      background: '#397FBF',
+                      color: 'white',
+                      height: '30px',
+                      margin: '2px',
+                      '& .MuiChip-deleteIcon': {
+                        color: 'rgba(237,237,237,0.9)',
+                      },
+                    }}
+                    label={value[0]}
+                    onDelete={() => {
+                      value[2](false);
+                    }}
+                    deleteIcon={
+                      isEdit ? (
+                        <Cancel sx={{ backgroundClip: 'red' }} />
+                      ) : (
+                        <span />
+                      )
+                    }
+                  />
+                ),
+            )}
           </Box>
         ),
       )}
