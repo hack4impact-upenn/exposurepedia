@@ -1,6 +1,16 @@
-import React from 'react';
-import { Box, Chip, Link, Paper, Typography } from '@mui/material';
-import { FavoriteBorder } from '@mui/icons-material';
+import React, { useState } from 'react';
+import {
+  Box,
+  Chip,
+  Link,
+  Paper,
+  Typography,
+  Button,
+  TextField,
+} from '@mui/material';
+import { Cancel, FavoriteBorder } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 
 interface ExposureItemProps {
   item: Item;
@@ -18,6 +28,11 @@ interface Item {
 }
 
 export default function ExposureItem({ item }: ExposureItemProps) {
+  const [isEdit, setIsEdit] = useState(false);
+  const saveChanges = () => {
+    setIsEdit(false);
+    console.log('saved!');
+  };
   return (
     <Paper
       sx={{
@@ -41,13 +56,48 @@ export default function ExposureItem({ item }: ExposureItemProps) {
           }}
         >
           <Typography variant="h5" sx={{ mr: '0.25rem' }}>
-            <strong>{item.title}</strong>
+            {isEdit ? (
+              <TextField
+                sx={{ width: '750px' }}
+                InputProps={{ style: { fontSize: '24px', fontWeight: 'bold' } }}
+                id="standard-basic"
+                variant="standard"
+                defaultValue={item.title}
+              />
+            ) : (
+              <strong style={{ width: '600px' }}>{item.title}</strong>
+            )}
           </Typography>
           <FavoriteBorder />
           <Typography>0</Typography>
         </Box>
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+          }}
+        >
           <Typography>Last updated October 1st 2022</Typography>
+          {isEdit ? (
+            <Button
+              variant="outlined"
+              sx={{ maxWidth: '180px', borderColor: 'green', color: 'green' }}
+              onClick={() => saveChanges()}
+            >
+              <span style={{ marginRight: '5px' }}>Save Changes</span>
+              <CheckIcon />
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              sx={{ maxWidth: '140px' }}
+              onClick={() => setIsEdit(true)}
+            >
+              <span style={{ marginRight: '5px' }}>Edit Item</span>
+              <EditIcon />
+            </Button>
+          )}
         </Box>
       </Box>
 
@@ -66,9 +116,21 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             </Typography>
             {Object(item)[key].map((value: string) => (
               <Chip
-                sx={{ mx: '0.25rem' }}
+                sx={{
+                  mx: '0.25rem',
+                  background: '#397FBF',
+                  color: 'white',
+                  height: '30px',
+                  margin: '2px',
+                  '& .MuiChip-deleteIcon': {
+                    color: 'rgba(237,237,237,0.9)',
+                  },
+                }}
                 label={value}
                 onDelete={() => ({})}
+                deleteIcon={
+                  isEdit ? <Cancel sx={{ backgroundClip: 'red' }} /> : <span />
+                }
               />
             ))}
           </Box>
@@ -84,7 +146,17 @@ export default function ExposureItem({ item }: ExposureItemProps) {
       >
         <Typography>
           <strong>Modifications: </strong>
-          {item.modifications}
+          {isEdit ? (
+            <TextField
+              sx={{ width: '350px' }}
+              InputProps={{ style: { fontSize: '16px' } }}
+              id="standard-basic"
+              variant="standard"
+              defaultValue={item.modifications}
+            />
+          ) : (
+            <span style={{ width: '500px' }}>{item.modifications}</span>
+          )}
         </Typography>
       </Box>
       {item.link !== '' && (
