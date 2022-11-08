@@ -64,7 +64,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             <Typography>
               <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
             </Typography>
-            {item[key].map((value) => (
+            {Object(item)[key].map((value: string) => (
               <Chip
                 sx={{ mx: '0.25rem' }}
                 label={value}

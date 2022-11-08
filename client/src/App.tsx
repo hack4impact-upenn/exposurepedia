@@ -23,6 +23,7 @@ import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
+import ExposureItem from './components/ExposureItem';
 
 function App() {
   return (
@@ -54,6 +55,25 @@ function App() {
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/exposurepedia" element={<Exposurepedia />} />
+                    <Route
+                      path="/exposureitem"
+                      element={
+                        <ExposureItem
+                          item={{
+                            title:
+                              'Leave electrical appliances plugged in/lights on (e.g., coffee maker)',
+                            disorder: ['OCD', 'Checking', 'Causing Harm'],
+                            format: ['Idea'],
+                            interventionType: ['In-vivo'],
+                            maturity: ['Adult friendly'],
+                            keywords: ['disaster', 'fire', 'home'],
+                            modifications:
+                              'Increase amount of time; Leave room/house',
+                            link: '',
+                          }}
+                        />
+                      }
+                    />
                     <Route path="/hierarchies" element={<HierarchiesPage />} />
                     <Route
                       path="/viewhierarchy"

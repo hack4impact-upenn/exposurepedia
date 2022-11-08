@@ -7,6 +7,17 @@ import { ExposureItemTable } from '../components/ExposureItemTable';
  * in a table and allows users to expand and delete hierarchies.
  */
 
+interface Item {
+  title: string;
+  disorder: string[];
+  format: string[];
+  interventionType: string[];
+  maturity: string[];
+  keywords: string[];
+  modifications: string;
+  link: string;
+}
+
 function Exposurepedia() {
   const rows = [
     {
