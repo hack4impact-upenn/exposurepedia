@@ -23,5 +23,15 @@ async function upgradePrivilege(email: string) {
   if (res.error) return false;
   return true;
 }
+/**
+ * Sends a request to the server to approve a user
+ * @param email - the email of the user to approve
+ * @returns true if successful, false otherwise
+ */
+async function approveUser(email: string) {
+  const res = await putData('admin/approve', { email });
+  if (res.error) return false;
+  return true;
+}
 
-export { deleteUser, upgradePrivilege };
+export { deleteUser, upgradePrivilege, approveUser };
