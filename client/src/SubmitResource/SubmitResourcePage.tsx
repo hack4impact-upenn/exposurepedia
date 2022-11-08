@@ -96,13 +96,15 @@ function SubmitResourcePage() {
     'Social Anxiety',
     'Trichotillomania/Excoriation',
   ];
-  const [disorders, setDisorderState] = useState(defaultDisorders);
+  const [disorders, setDisorderState] = useState<string[]>(defaultDisorders);
 
   const [disordersOpen, setDisordersOpen] = useState(false);
 
-  const masterDisorderObject = {
+  const [currLayer, setCurrLayer] = useState(0);
+
+  const masterDisorderObject: any = {
     'Body Dysmorphia': [],
-    'Generalized Anxiety': [''],
+    'Generalized Anxiety': [],
     'Health Anxiety/Medical Phobia': [
       'Blood/Injection/Injury',
       'Dental Phobia',
@@ -111,10 +113,42 @@ function SubmitResourcePage() {
     'Obsessive Compulsive Disorder (OCD)': [
       'Aggressive/Violent',
       'Checking',
-      'etc.',
+      'Contamination',
+      'Existential',
+      'Fear of Acting on Unwanted Impulses',
+      'Fear of Being Cancelled',
+      'Fear of Being Misunderstood',
+      'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs',
+      'Fear of Developing Other Types of OCD',
+      'Fear of Forgetting',
+      'Fear of Getting in Trouble',
+      'Fear of Going Crazy',
+      'Fear of Making the Wrong Decision',
+      'Fear of Unintentionally Causing Harm',
+      'Magical Numbers',
+      'Need to Know',
+      'Not Just Right',
+      'Perfectionism',
+      'Relationship OCD',
+      'Scrupulosity/Morality',
+      'Sexual/Gender',
+      'Somatic OCD',
+      'Symmetry/Ordering',
+      'Fear of Uncertainty',
     ],
     'Panic/Agoraphobia': [],
-    'Specific Phobia': ['Animals', 'Claustriphobia', 'etc.'],
+    'Specific Phobia': [
+      'Animals',
+      'Claustriphobia',
+      'Choking',
+      'Dark',
+      'Driving',
+      'Flying',
+      'Heights',
+      'Storms/Natural Disasters',
+      'Trypophobia',
+      'Vomit (Emetophobia)',
+    ],
     'Posttraumatic Stress Disorder (PTSD)': [
       'Combat/Military/Terrorism',
       'Sexual Assault',
@@ -123,6 +157,65 @@ function SubmitResourcePage() {
     'Separation Anxiety': [],
     'Social Anxiety': [],
     'Trichotillomania/Excoriation': [],
+  };
+
+  const disordersLayer2: any = {
+    'Blood/Injection/Injury': [],
+    'Dental Phobia': [],
+    'Aggressive/Violent': [
+      'Fear of Being a Sociopath/Murderer',
+      'Fear of a Hit-and-Run',
+      'Fear of Self-Harm',
+    ],
+    Checking: [],
+    Contamination: [],
+    Existential: ['Fear of Wasting Time'],
+    'Fear of Acting on Unwanted Impulses': [],
+    'Fear of Being Cancelled': [],
+    'Fear of Being Misunderstood': [],
+    'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs': [],
+    'Fear of Developing Other Types of OCD': [],
+    'Fear of Forgetting': [],
+    'Fear of Getting in Trouble': [],
+    'Fear of Going Crazy': [],
+    'Fear of Making the Wrong Decision': ['Fear of Buying the Wrong Thing'],
+    'Fear of Unintentionally Causing Harm': [],
+    'Magical Numbers': [],
+    'Need to Know': [],
+    'Not Just Right': [],
+    Perfectionism: [],
+    'Relationship OCD': ['Retractive Jealousy'],
+    'Scrupulosity/Morality': ['Fear of Being Racist', 'Fear of Sinning'],
+    'Sexual/Gender': [
+      'Fear of Being Gay/Straight',
+      'Fear of Being Trans',
+      'Fear of Being a Pedophile',
+    ],
+    'Somatic OCD': [],
+    'Symmetry/Ordering': [],
+    'Fear of Uncertainty': [],
+    Animals: [
+      'Birds',
+      'Bugs',
+      'Cats',
+      'Dogs',
+      'Fish',
+      'Mice/Rats',
+      'Sharks',
+      'Snakes',
+    ],
+    Claustriphobia: [],
+    Choking: [],
+    Dark: [],
+    Driving: [],
+    Flying: [],
+    Heights: [],
+    'Storms/Natural Disasters': [],
+    Trypophobia: [],
+    'Vomit (Emetophobia)': [],
+    'Combat/Military/Terrorism': [],
+    'Sexual Assault': [],
+    'Car Accident': [],
   };
 
   return (
@@ -179,13 +272,27 @@ function SubmitResourcePage() {
               onFocus={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setDisordersOpen(true);
+                setDisordersOpen(!disordersOpen);
+                setDisorderState(defaultDisorders);
+                setCurrLayer(0);
               }}
               onChange={(event, value) => {
                 event.preventDefault();
                 event.stopPropagation();
                 if (value) {
-                  setDisorderState([value]);
+                  if (currLayer === 0) {
+                    setDisorderState(masterDisorderObject[value]);
+                    setCurrLayer(1);
+                    console.log('new disorders: ', disorders);
+                  } else if (currLayer === 1) {
+                    setDisorderState(disordersLayer2[value]);
+                    setCurrLayer(2);
+                    console.log('new disorders: ', disorders);
+                  } else {
+                    setValue('disorder', value);
+                    setDisordersOpen(!disordersOpen);
+                    setCurrLayer(0);
+                  }
                 }
               }}
               renderInput={(params) => (
