@@ -56,6 +56,31 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  isProfessional: {
+    type: Boolean,
+    required: true,
+  },
+  profession: {
+    type: String,
+    required: true,
+  },
+  degree: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  settings: {
+    type: [String],
+    required: true,
+  },
+  percentCaseload: {
+    type: Number,
+    required: true,
+  },
+  difficulty: {
+    type: Number,
+    required: true,
+  },
 });
 
 interface IUser extends mongoose.Document {
@@ -71,6 +96,11 @@ interface IUser extends mongoose.Document {
   resetPasswordTokenExpiryDate: Date | null | undefined;
   admin: boolean;
   status: string;
+  isProfessional: boolean;
+  profession: string;
+  settings: [string];
+  percentCaseload: number;
+  difficulty: number;
 }
 
 const User = mongoose.model<IUser>('User', UserSchema);

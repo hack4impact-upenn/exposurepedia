@@ -22,6 +22,7 @@ import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
+import Exposurepedia from './Hierarchy/Exposurepedia';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                   {/* Routes accessed only if user is authenticated */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/exposurepedia" element={<Exposurepedia />} />
                     <Route path="/hierarchies" element={<HierarchiesPage />} />
                     <Route
                       path="/viewhierarchy"
