@@ -281,10 +281,12 @@ function SubmitResourcePage() {
                 event.stopPropagation();
                 if (value) {
                   if (currLayer === 0) {
+                    setValue('disorder', value);
                     setDisorderState(masterDisorderObject[value]);
                     setCurrLayer(1);
                     console.log('new disorders: ', disorders);
                   } else if (currLayer === 1) {
+                    setValue('disorder', value);
                     setDisorderState(disordersLayer2[value]);
                     setCurrLayer(2);
                     console.log('new disorders: ', disorders);
