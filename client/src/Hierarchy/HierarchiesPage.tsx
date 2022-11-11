@@ -4,8 +4,7 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import { Button, Paper } from '@mui/material';
-import PrimaryButton from '../components/buttons/PrimaryButton';
+import { Button } from '@mui/material';
 import HierarchyListItem from '../components/HierarchyListItem';
 
 const styles = {
@@ -14,7 +13,7 @@ const styles = {
   },
 };
 
-const hierarchyList: any[] = [
+const hierarchyList = [
   { name: 'ABC Disorder', date: '2021-01-01' },
   { name: 'XYZ Disorder', date: '2021-01-01' },
   { name: 'DEF Disorder', date: '2021-01-01' },
@@ -22,6 +21,7 @@ const hierarchyList: any[] = [
   { name: 'JKL Disorder', date: '2021-01-01' },
   { name: 'MNO Disorder', date: '2021-01-01' },
 ];
+
 function HierarchyPage() {
   return (
     <div
