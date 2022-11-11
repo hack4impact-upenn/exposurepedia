@@ -18,13 +18,24 @@ const ExposureItemSchema = new mongoose.Schema({
   keywords: [{ type: Schema.Types.ObjectId, ref: 'Keyword' }],
   modifications: {
     type: String,
-    required: true,
+    required: false,
   },
   link: {
     type: String,
+    required: false,
+  },
+  numLikes: {
+    type: Number,
     required: true,
   },
-  userLikes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  isLinkBroken: {
+    type: Boolean,
+    required: true,
+  },
+  isApproved: {
+    type: Boolean,
+    required: true,
+  },
   dateUpdated: {
     type: Date,
     required: true,
@@ -41,7 +52,9 @@ interface IExposureItem extends mongoose.Document {
   keywords: string[];
   modifications: string;
   link: string;
-  userLikes: string[];
+  numLikes: number;
+  isLinkBroken: boolean;
+  isApproved: boolean;
   dateUpdated: Date;
 }
 

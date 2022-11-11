@@ -2,12 +2,16 @@
  * Defines the Disorder model for the database and also the interface to
  * access the model in TypeScript.
  */
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const DisorderSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+  },
+  subdisorder: {
+    type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
+    required: false,
   },
 });
 

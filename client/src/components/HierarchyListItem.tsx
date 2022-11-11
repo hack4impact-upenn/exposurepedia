@@ -1,7 +1,5 @@
-import { Paper } from '@mui/material';
 import React from 'react';
 import InvertedPrimaryButton from './buttons/InvertedPrimaryButton';
-import PrimaryButton from './buttons/PrimaryButton';
 
 interface HierarchyListItemProps {
   name: string;
