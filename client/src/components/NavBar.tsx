@@ -17,6 +17,8 @@ interface NavTabProps {
 const tabStyle = {
   color: '#397FBF',
   borderRadius: 30,
+  minHeight: '0px',
+  textTransform: 'none',
   '&:hover': {
     color: '#40a9ff',
     opacity: 1,
@@ -24,6 +26,8 @@ const tabStyle = {
   '&.Mui-selected': {
     color: '#ffffff',
     backgroundColor: '#397FBF',
+    height: '10px',
+    margin: 'auto',
   },
   '&.Mui-focusVisible': {
     backgroundColor: '#d1eaff',
@@ -35,10 +39,9 @@ function NavTab(props: NavTabProps) {
     <Tab
       disableRipple
       sx={tabStyle}
-      component="a"
-      onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        event.preventDefault();
-      }}
+      component={Link}
+      // eslint-disable-next-line react/destructuring-assignment
+      to={`${props.href}`}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
@@ -47,20 +50,37 @@ function NavTab(props: NavTabProps) {
 
 export default function NavBar() {
   const [value, setValue] = React.useState(0);
-
   const data = useData('auth/authstatus');
   const self = useAppSelector(selectUser);
   const location = useLocation();
-  console.log(self);
-  console.log(location.pathname);
 
+  React.useEffect(() => {
+    if (location.pathname === '/home' || location.pathname === '/login') {
+      setValue(0);
+    } else if (
+      location.pathname === '/exposurepedia' ||
+      (location.pathname === '/contact' && data?.error)
+    ) {
+      setValue(1);
+    } else if (location.pathname === '/submitresources') {
+      setValue(2);
+    } else if (location.pathname === '/hierarchies') {
+      setValue(3);
+    } else if (location.pathname === '/contact') {
+      setValue(4);
+    }
+  }, [data?.error, location.pathname]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
   return !data?.error ? (
     <Box
-      sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
+      sx={{
+        width: '99%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        margin: 'auto',
+      }}
     >
       <Tabs
         value={value}
@@ -71,8 +91,8 @@ export default function NavBar() {
         }}
       >
         <NavTab label="Home" href="/home" />
-        <NavTab label="Exposurepedia" href="/trash" />
-        <NavTab label="Submit Resources" href="/spam" />
+        <NavTab label="Exposurepedia" href="/exposurepedia" />
+        <NavTab label="Submit Resources" href="/submitresources" />
         <NavTab label="Hierarchies" href="/hierarchies" />
         <NavTab label="Contact" href="/contact" />
       </Tabs>
@@ -80,7 +100,12 @@ export default function NavBar() {
     </Box>
   ) : (
     <Box
-      sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
+      sx={{
+        width: '99%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        margin: 'auto',
+      }}
     >
       <Tabs
         value={value}

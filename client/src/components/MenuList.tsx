@@ -7,8 +7,11 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import Stack from '@mui/material/Stack';
-import { Link } from 'react-router-dom';
-import { UserState } from '../util/redux/userSlice';
+import { ArrowDropDown } from '@material-ui/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserState, logout as logoutAction } from '../util/redux/userSlice';
+import { useAppDispatch } from '../util/redux/hooks';
+import { logout as logoutApi } from '../Home/api';
 
 interface MenuListProps {
   user: UserState;
@@ -52,11 +55,25 @@ export default function MenuListComposition({ user }: MenuListProps) {
 
     prevOpen.current = open;
   }, [open]);
+  const dispatch = useAppDispatch();
+  const navigator = useNavigate();
+  const logoutDispatch = () => dispatch(logoutAction());
+  const handleLogout = async (
+    event: Event | React.SyntheticEvent<Element, Event>,
+  ) => {
+    if (await logoutApi()) {
+      logoutDispatch();
+      window.location.reload();
+      navigator('/login', { replace: true });
+      handleClose(event);
+    }
+  };
 
   return (
     <Stack direction="row" spacing={2}>
       <div>
         <Button
+          sx={{ textTransform: 'none', padding: '10px 5px' }}
           ref={anchorRef}
           id="composition-button"
           aria-controls={open ? 'composition-menu' : undefined}
@@ -64,7 +81,16 @@ export default function MenuListComposition({ user }: MenuListProps) {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          {user.firstName} {user.lastName}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            {user.firstName} {user.lastName}
+            <ArrowDropDown />
+          </div>
         </Button>
         <Popper
           open={open}
@@ -93,9 +119,21 @@ export default function MenuListComposition({ user }: MenuListProps) {
                     onKeyDown={handleListKeyDown}
                   >
                     {user.admin && (
-                      <MenuItem onClick={handleClose}>Admin Dashboard</MenuItem>
+                      <MenuItem
+                        onClick={handleClose}
+                        component={Link}
+                        to="/users"
+                      >
+                        Admin Dashboard
+                      </MenuItem>
                     )}
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    <MenuItem
+                      onClick={(event) => handleLogout(event)}
+                      component={Link}
+                      to="/"
+                    >
+                      Logout
+                    </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
