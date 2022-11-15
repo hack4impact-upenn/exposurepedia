@@ -5,8 +5,7 @@
 import express from 'express';
 // import ApiError from '../util/apiError';
 import StatusCode from '../util/statusCode';
-// import { ExposureItem } from '../models/exposureItem.model';
-// import {} from '../services/exposure.service';
+import { getByID, deleteByID } from '../services/exposure.service';
 
 /**
  *
@@ -17,8 +16,9 @@ const getExposureItemByID = async (
   // next: express.NextFunction,
 ) => {
   const { id } = req.params;
+  const item = await getByID(id);
   console.log(id);
-  res.sendStatus(StatusCode.OK);
+  res.sendStatus(StatusCode.OK).send(item);
 };
 
 /**
@@ -43,8 +43,9 @@ const deleteExposureItemByID = async (
   // next: express.NextFunction,
 ) => {
   const { id } = req.params;
+  const item = await deleteByID(id);
   console.log(id);
-  res.sendStatus(StatusCode.OK);
+  res.sendStatus(StatusCode.OK).send(item);
 };
 
 export { getExposureItemByID, patchExposureItemByID, deleteExposureItemByID };

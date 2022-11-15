@@ -3,24 +3,14 @@
  */
 import { ExposureItem } from '../models/exposureItem.model';
 
-interface Filter {
-  disorders?: string[];
-  format?: string[];
-  intervention_types?: string[];
-  keywords?: string[];
-}
-
-const getItems = async (query?: string, filters?: Filter) => {
-  const items = await ExposureItem.find({
-    name: { $search: query },
-    filters,
-  }).exec();
-  return items;
-};
-
-const getItemByID = async (id: number) => {
+const getByID = async (id: string) => {
   const item = await ExposureItem.findById(id).exec();
   return item;
 };
 
-export { getItems, getItemByID };
+const deleteByID = async (id: string) => {
+  const item = await ExposureItem.findByIdAndDelete(id).exec();
+  return item;
+};
+
+export { getByID, deleteByID };
