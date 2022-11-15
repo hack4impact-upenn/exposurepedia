@@ -5,67 +5,37 @@
 import express from 'express';
 import { isAdmin } from '../controllers/admin.middleware';
 import {
-  getAllUsers,
-  upgradePrivilege,
-  deleteUser,
-  approveUser,
-} from '../controllers/admin.controller';
+  getExposureItemByID,
+  patchExposureItemByID,
+  deleteExposureItemByID,
+} from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
-import { approve } from '../controllers/auth.controller';
-import 'dotenv/config';
 
 const router = express.Router();
 
 /**
- * A GET route to get all users. Checks first if the requestor is a
- * authenticated and is an admin.
+ * A GET route to get exposure item with the specified id.
  */
-router.get('/all', isAuthenticated, isAdmin, getAllUsers);
+router.get('/exposure/:exposure_id', isAuthenticated, getExposureItemByID);
 
 /**
- * A GET route to check if the requestor is an admin. Checks first if the
- * requestor is a authenticated. Throws an error if the requestor is not an admin.
+ * A PATCH route to edit the exposure item with the specified id.
  */
-router.get('/adminstatus', isAuthenticated, isAdmin, approve);
+router.patch(
+  '/exposure/:exposure_id',
+  isAuthenticated,
+  isAdmin,
+  patchExposureItemByID,
+);
 
 /**
- * A PUT route to upgrade a user's privilege. Checks first if the requestor
- * is a authenticated and is an admin.
- * Expects a JSON body with the following fields:
- * - email (string) - The email of the user to be promoted
+ * A DELETE route to delete the exposure item with the specified id.
  */
-router.put('/promote', isAuthenticated, isAdmin, upgradePrivilege);
-
-/**
- * A PUT route to upgrade a user's privilege
- * Expects a JSON body with the following fields:
- * - email (string) - The email of the user to be promoted
- */
-// delete during deployment
-router.put('/autopromote', upgradePrivilege);
-
-/**
- * A PUT route to approve user access. Checks first if the requestor
- * is a authenticated and is an admin.
- * Expects a JSON body with the following fields:
- * - email (string) - The email of the user to be approved
- */
-router.put('/approve', isAuthenticated, isAdmin, approveUser);
-
-/**
- * A PUT route to approve a user for testing
- * Expects a JSON body with the following fields:
- * - email (string) - The email of the user to be promoted
- */
-// delete during deployment
-router.put('/autoapprove', approveUser);
-
-/**
- * A PUT route to delete a user. Checks first if the requestor
- * is a authenticated and is an admin.
- * Expects the following fields in the URL:
- * email (string) - The email of the user to be deleted
- */
-router.delete('/:email', isAuthenticated, isAdmin, deleteUser);
+router.delete(
+  '/exposure/:exposure_id',
+  isAuthenticated,
+  isAdmin,
+  deleteExposureItemByID,
+);
 
 export default router;
