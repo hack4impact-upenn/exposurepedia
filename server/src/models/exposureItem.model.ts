@@ -9,7 +9,10 @@ const ExposureItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  disorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }],
+  disorders_level1: [String],
+  disorders_level2: [String],
+  disorders_level3: [String],
+  disorders_level4: [String],
   formats: [{ type: Schema.Types.ObjectId, ref: 'Format' }],
   interventionTypes: [
     { type: Schema.Types.ObjectId, ref: 'Intervention Type' },
