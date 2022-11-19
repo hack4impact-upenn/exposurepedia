@@ -119,13 +119,29 @@ export default function MenuListComposition({ user }: MenuListProps) {
                     onKeyDown={handleListKeyDown}
                   >
                     {user.admin && (
-                      <MenuItem
-                        onClick={handleClose}
-                        component={Link}
-                        to="/users"
-                      >
-                        Admin Dashboard
-                      </MenuItem>
+                      <div>
+                        <MenuItem
+                          onClick={handleClose}
+                          component={Link}
+                          to="/users"
+                        >
+                          Admin Dashboard
+                        </MenuItem>
+                        <MenuItem
+                          onClick={handleClose}
+                          component={Link}
+                          to="/approve"
+                        >
+                          Approve Resources
+                        </MenuItem>
+                        <MenuItem
+                          onClick={handleClose}
+                          component={Link}
+                          to="/broken"
+                        >
+                          Fix Broken Links
+                        </MenuItem>
+                      </div>
                     )}
                     <MenuItem
                       onClick={(event) => handleLogout(event)}

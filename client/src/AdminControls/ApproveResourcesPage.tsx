@@ -1,24 +1,7 @@
-/* eslint-disable react/react-in-jsx-scope */
-
+import React from 'react';
 import { ExposureItemTable } from '../components/ExposureItemTable';
 
-/**
- * A page only accessible to authenticated users that displays hierarchies
- * in a table and allows users to expand and delete hierarchies.
- */
-
-interface Item {
-  title: string;
-  disorder: string[];
-  format: string[];
-  interventionType: string[];
-  maturity: string[];
-  keywords: string[];
-  modifications: string;
-  link: string;
-}
-
-function Exposurepedia() {
+const ApproveResourcesPage = function () {
   const rows = [
     {
       key: '1',
@@ -44,17 +27,21 @@ function Exposurepedia() {
   ];
 
   const columns = [
-    { id: 'checkbox', label: '', minWidth: 15 },
     { id: 'title', label: 'Title', minWidth: 170 },
     { id: 'format', label: 'Format', minWidth: 100 },
-    { id: 'likes', label: 'Likes', minWidth: 100 },
     { id: 'date', label: 'Date', minWidth: 100 },
   ];
+
   return (
-    <div>
-      <ExposureItemTable rows={rows} columns={columns} isExposurepedia />
+    <div style={{ width: '90%', margin: 'auto' }}>
+      <h1> Approve Resources </h1>
+      <ExposureItemTable
+        rows={rows}
+        columns={columns}
+        isExposurepedia={false}
+      />
     </div>
   );
-}
+};
 
-export default Exposurepedia;
+export default ApproveResourcesPage;
