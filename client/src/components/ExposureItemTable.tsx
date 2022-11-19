@@ -10,6 +10,8 @@ import {
   TableRow,
   Checkbox,
 } from '@mui/material';
+import { makeStyles, createStyles } from '@mui/styles';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * interface for the props of the {@link PaginationTable} component
@@ -60,20 +62,43 @@ interface TRow {
  */
 function Row({ row, columns, isExposurepedia }: RowProps) {
   const [checked, setChecked] = useState(false);
+  const navigate = useNavigate();
+  const useStyles = makeStyles(() => ({
+    tableRow: {
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  }));
+  const classes = useStyles();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+  const handleNavigate = () => {
+    navigate('/exposureitem', {
+      state: {
+        key: row.key,
+        title: row.title,
+        format: row.format,
+        likes: row.likes,
+        date: row.date,
+      },
+    });
+  };
 
   return (
-    <TableRow hover role="checkbox" tabIndex={-1} key={`${row.key}TR`}>
-      {isExposurepedia && (
+    <TableRow role="checkbox" hover tabIndex={-1} key={`${row.key}TR`}>
+    {isExposurepedia && (
+      <TableCell style={{ width: '30px' }}>
         <Checkbox
           checked={checked}
           onChange={handleChange}
           inputProps={{ 'aria-label': 'controlled' }}
         />
       )}
+      </TableCell>
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       {columns.map((column) => {
         const value = row[column.id];
         console.log(value);
@@ -81,7 +106,12 @@ function Row({ row, columns, isExposurepedia }: RowProps) {
           return null;
         }
         return (
-          <TableCell key={column.id + row.key} align={column.align || 'left'}>
+          <TableCell
+            onClick={() => handleNavigate()}
+            className={classes.tableRow}
+            key={column.id + row.key}
+            align={column.align || 'left'}
+          >
             {value}
           </TableCell>
         );
@@ -114,10 +144,12 @@ function ExposureItemTable({ rows, columns, isExposurepedia }: TableProps) {
   return (
     <Paper
       sx={{
-        width: '100%',
+        width: '80%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
+        margin: 'auto',
       }}
     >
       <TableContainer sx={{ flexGrow: 1, flexShrink: 1 }}>
