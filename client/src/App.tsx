@@ -24,12 +24,14 @@ import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
 import ExposureItem from './components/ExposureItem';
+import NavBar from './components/NavBar';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Provider store={store}>
+          <NavBar />
           <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider theme={theme}>
               <CssBaseline>
