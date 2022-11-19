@@ -36,6 +36,7 @@
     "@material-ui/icons": "^4.11.3",
     "@material-ui/utils": "^4.11.3",
     "@mui/material": "^5.5.3",
+    "@mui/styles": "^5.10.9",
     "@mui/system": "^5.5.2",
     "@reduxjs/toolkit": "^1.8.1",
     "axios": "^1.1.2",

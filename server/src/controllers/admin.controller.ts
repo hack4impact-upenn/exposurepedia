@@ -11,6 +11,7 @@ import {
   getUserByEmail,
   getAllUsersFromDB,
   deleteUserById,
+  approveUserById,
 } from '../services/user.service';
 
 /**
@@ -53,6 +54,10 @@ const upgradePrivilege = async (
     next(ApiError.notFound(`User with email ${email} does not exist`));
     return;
   }
+  if (user.status && user.status === 'pending') {
+    next(ApiError.badRequest(`User is not approved`));
+    return;
+  }
   if (user.admin) {
     next(ApiError.badRequest(`User is already an admin`));
     return;
@@ -65,6 +70,40 @@ const upgradePrivilege = async (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .catch((e) => {
       next(ApiError.internal('Unable to upgrade user to admin.'));
+    });
+};
+
+/**
+ * Approves a user. The email of the user is expected to be in the request parameter (url). Send a 200 OK status code on success.
+ */
+const approveUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const { email } = req.body;
+  if (!email) {
+    next(ApiError.missingFields(['email']));
+    return;
+  }
+
+  // Check if user to delete is an admin
+  const user: IUser | null = await getUserByEmail(email);
+  if (!user) {
+    next(ApiError.notFound(`User with email ${email} does not exist`));
+    return;
+  }
+
+  if (user.status && user.status !== 'pending') {
+    next(ApiError.forbidden('User already approved.'));
+    return;
+  }
+
+  approveUserById(user._id)
+    .then(() => res.sendStatus(StatusCode.OK))
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .catch((e) => {
+      next(ApiError.internal('Failed to approve user.'));
     });
 };
 
@@ -107,4 +146,4 @@ const deleteUser = async (
     });
 };
 
-export { getAllUsers, upgradePrivilege, deleteUser };
+export { getAllUsers, upgradePrivilege, approveUser, deleteUser };

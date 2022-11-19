@@ -142,8 +142,14 @@ describe('testing authentication routes', () => {
     });
 
     it('logging in with correct credentials returns 200 OK', async () => {
+      // Approve user
+      let response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail,
+      });
+      expect(response.status).toBe(StatusCode.OK);
+
       // Login user
-      const response = await agent.post('/api/auth/login').send({
+      response = await agent.post('/api/auth/login').send({
         email: testEmail,
         password: testPassword,
       });
@@ -166,6 +172,12 @@ describe('testing authentication routes', () => {
       expect(response.status).toBe(StatusCode.CREATED);
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
       expect(await Session.countDocuments()).toBe(0);
+
+      // Approve user
+      response = await agent.put('/api/admin/autoapprove').send({
+        email: testEmail,
+      });
+      expect(response.status).toBe(StatusCode.OK);
 
       // Login user
       response = await agent.post('/api/auth/login').send({
