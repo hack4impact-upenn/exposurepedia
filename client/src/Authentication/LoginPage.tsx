@@ -119,6 +119,7 @@ function LoginPage() {
             user.lastName!,
             user.admin!,
           );
+          window.location.reload();
           navigate('/home');
         })
         .catch((e) => {
