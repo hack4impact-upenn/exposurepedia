@@ -38,7 +38,8 @@ const ApproveResourcesPage = function () {
       <ExposureItemTable
         rows={rows}
         columns={columns}
-        isExposurepedia={false}
+        isApprove
+        isBroken={false}
       />
     </div>
   );

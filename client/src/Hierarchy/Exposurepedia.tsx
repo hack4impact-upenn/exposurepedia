@@ -52,7 +52,12 @@ function Exposurepedia() {
   ];
   return (
     <div>
-      <ExposureItemTable rows={rows} columns={columns} isExposurepedia />
+      <ExposureItemTable
+        rows={rows}
+        columns={columns}
+        isApprove={false}
+        isBroken={false}
+      />
     </div>
   );
 }

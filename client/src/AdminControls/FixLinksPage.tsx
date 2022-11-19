@@ -38,7 +38,8 @@ const FixLinksPage = function () {
       <ExposureItemTable
         rows={rows}
         columns={columns}
-        isExposurepedia={false}
+        isApprove={false}
+        isBroken
       />
     </div>
   );

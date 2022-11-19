@@ -21,13 +21,15 @@ import { useNavigate } from 'react-router-dom';
 interface TableProps {
   rows: TRow[];
   columns: TColumn[];
-  isExposurepedia: boolean;
+  isApprove: boolean;
+  isBroken: boolean;
 }
 
 interface RowProps {
   row: TRow;
   columns: TColumn[];
-  isExposurepedia: boolean;
+  isApprove: boolean;
+  isBroken: boolean;
 }
 
 /**
@@ -60,7 +62,7 @@ interface TRow {
  * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
-function Row({ row, columns, isExposurepedia }: RowProps) {
+function Row({ row, columns, isApprove, isBroken }: RowProps) {
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const useStyles = makeStyles(() => ({
@@ -83,22 +85,23 @@ function Row({ row, columns, isExposurepedia }: RowProps) {
         format: row.format,
         likes: row.likes,
         date: row.date,
+        isApprove,
+        isBroken,
       },
     });
   };
 
   return (
     <TableRow role="checkbox" hover tabIndex={-1} key={`${row.key}TR`}>
-    {isExposurepedia && (
-      <TableCell style={{ width: '30px' }}>
-        <Checkbox
-          checked={checked}
-          onChange={handleChange}
-          inputProps={{ 'aria-label': 'controlled' }}
-        />
+      {!isApprove && !isBroken && (
+        <TableCell style={{ width: '30px' }}>
+          <Checkbox
+            checked={checked}
+            onChange={handleChange}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+        </TableCell>
       )}
-      </TableCell>
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       {columns.map((column) => {
         const value = row[column.id];
         console.log(value);
@@ -126,7 +129,7 @@ function Row({ row, columns, isExposurepedia }: RowProps) {
  * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
-function ExposureItemTable({ rows, columns, isExposurepedia }: TableProps) {
+function ExposureItemTable({ rows, columns, isApprove, isBroken }: TableProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -176,7 +179,8 @@ function ExposureItemTable({ rows, columns, isExposurepedia }: TableProps) {
                     row={row}
                     key={row.key}
                     columns={columns}
-                    isExposurepedia={isExposurepedia}
+                    isApprove={isApprove}
+                    isBroken={isBroken}
                   />
                 );
               })}
