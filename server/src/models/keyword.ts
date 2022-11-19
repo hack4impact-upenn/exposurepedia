@@ -1,21 +1,21 @@
 /**
- * Defines the Disorder model for the database and also the interface to
+ * Defines the Keyword model for the database and also the interface to
  * access the model in TypeScript.
  */
 import mongoose from 'mongoose';
 
-const DisorderSchema = new mongoose.Schema({
+const KeywordSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
 });
 
-interface IDisorder extends mongoose.Document {
+interface IKeyword extends mongoose.Document {
   _id: string;
   name: string;
 }
 
-const Disorder = mongoose.model<IDisorder>('Disorder', DisorderSchema);
+const Keyword = mongoose.model<IKeyword>('Keyword', KeywordSchema);
 
-export { IDisorder, Disorder };
+export { IKeyword, Keyword };

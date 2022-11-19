@@ -22,6 +22,8 @@ import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
+import ApproveResourcesPage from './AdminControls/ApproveResourcesPage';
+import FixLinksPage from './AdminControls/FixLinksPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
 import NavBar from './components/NavBar';
 
@@ -64,6 +66,8 @@ function App() {
                   </Route>
                   <Route element={<AdminRoutesWrapper />}>
                     <Route path="/users" element={<AdminDashboardPage />} />
+                    <Route path="/approve" element={<ApproveResourcesPage />} />
+                    <Route path="/broken" element={<FixLinksPage />} />
                   </Route>
 
                   {/* Route which redirects to a different page depending on if the user is an authenticated or not by utilizing the DynamicRedirect component */}
