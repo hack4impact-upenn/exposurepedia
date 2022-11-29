@@ -23,6 +23,7 @@ interface TableProps {
   columns: TColumn[];
   isApprove: boolean;
   isBroken: boolean;
+  setCount?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface RowProps {
@@ -30,6 +31,7 @@ interface RowProps {
   columns: TColumn[];
   isApprove: boolean;
   isBroken: boolean;
+  setCount?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 /**
@@ -62,7 +64,7 @@ interface TRow {
  * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
-function Row({ row, columns, isApprove, isBroken }: RowProps) {
+function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const useStyles = makeStyles(() => ({
@@ -75,6 +77,13 @@ function Row({ row, columns, isApprove, isBroken }: RowProps) {
   const classes = useStyles();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (setCount) {
+      if (checked) {
+        setCount((count) => count - 1);
+      } else {
+        setCount((count) => count + 1);
+      }
+    }
     setChecked(event.target.checked);
   };
   const handleNavigate = () => {
@@ -129,7 +138,13 @@ function Row({ row, columns, isApprove, isBroken }: RowProps) {
  * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
-function ExposureItemTable({ rows, columns, isApprove, isBroken }: TableProps) {
+function ExposureItemTable({
+  rows,
+  columns,
+  isApprove,
+  isBroken,
+  setCount,
+}: TableProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -181,6 +196,7 @@ function ExposureItemTable({ rows, columns, isApprove, isBroken }: TableProps) {
                     columns={columns}
                     isApprove={isApprove}
                     isBroken={isBroken}
+                    setCount={setCount}
                   />
                 );
               })}
