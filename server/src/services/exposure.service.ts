@@ -31,6 +31,16 @@ const updateExposureItemInDB = async (
 };
 
 /**
+ * Creates the exposure item from the DB with the specified id
+ * @param updatedItem The new exposure item
+ * @returns the new item
+ */
+const createExposureItemInDB = async (updatedItem: IExposureItem) => {
+  const item = await updatedItem.save();
+  return item;
+};
+
+/**
  * Deletes the exposure item from the DB with the specified id
  * @param id The id of the exposure item to delete
  * @returns The deleted exposure item
@@ -44,4 +54,5 @@ export {
   getExposureItemFromDB,
   updateExposureItemInDB,
   deleteExposureItemFromDB,
+  createExposureItemInDB,
 };

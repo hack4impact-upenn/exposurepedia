@@ -9,6 +9,7 @@ import {
   getExposureItemFromDB,
   updateExposureItemInDB,
   deleteExposureItemFromDB,
+  createExposureItemInDB,
 } from '../services/exposure.service';
 
 /**
@@ -66,4 +67,27 @@ const deleteExposureItemByID = async (
     });
 };
 
-export { getExposureItemByID, patchExposureItemByID, deleteExposureItemByID };
+/**
+ * Creates the new item. Upon success, returns 200 OK status code.
+ */
+const createItemInDB = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const updatedItem = req.body;
+  createExposureItemInDB(updatedItem)
+    .then(() => {
+      res.sendStatus(StatusCode.OK);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to create exposure item'));
+    });
+};
+
+export {
+  getExposureItemByID,
+  patchExposureItemByID,
+  deleteExposureItemByID,
+  createItemInDB,
+};

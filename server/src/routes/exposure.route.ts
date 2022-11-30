@@ -8,6 +8,7 @@ import {
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
+  createItemInDB,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
@@ -16,26 +17,26 @@ const router = express.Router();
 /**
  * A GET route to get exposure item with the specified id.
  */
-router.get('/exposure/:exposure_id', isAuthenticated, getExposureItemByID);
+router.get('/:exposure_id', isAuthenticated, getExposureItemByID);
 
 /**
  * A PATCH route to edit the exposure item with the specified id.
  */
-router.patch(
-  '/exposure/:exposure_id',
-  isAuthenticated,
-  isAdmin,
-  patchExposureItemByID,
-);
+router.patch('/:exposure_id', isAuthenticated, isAdmin, patchExposureItemByID);
 
 /**
  * A DELETE route to delete the exposure item with the specified id.
  */
 router.delete(
-  '/exposure/:exposure_id',
+  '/:exposure_id',
   isAuthenticated,
   isAdmin,
   deleteExposureItemByID,
 );
+
+/**
+ * A POST route to create exposure items.
+ */
+router.post('/', isAuthenticated, isAdmin, createItemInDB);
 
 export default router;
