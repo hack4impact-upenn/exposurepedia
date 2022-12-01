@@ -70,24 +70,22 @@ const deleteExposureItemByID = async (
 /**
  * Creates the new item. Upon success, returns 200 OK status code.
  */
-const postItemInDB = async (
+const postExposureItemInDB = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const updatedItem = req.body;
-  createExposureItemInDB(updatedItem)
-    .then(() => {
-      res.sendStatus(StatusCode.OK);
-    })
-    .catch(() => {
-      next(ApiError.internal('Unable to create exposure item'));
-    });
+  try {
+    const exposureItem = await createExposureItemInDB(req.body);
+    res.status(StatusCode.OK).json(exposureItem);
+  } catch (err) {
+    next(ApiError.internal('Unable to create exposure item'));
+  }
 };
 
 export {
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
-  postItemInDB as createItemInDB,
+  postExposureItemInDB,
 };

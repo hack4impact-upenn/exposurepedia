@@ -3,6 +3,9 @@
  */
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem, IExposureItem } from '../models/exposureItem.model';
+import { Format } from '../models/format.model';
+import { InterventionType } from '../models/interventionType.model';
+import { Keyword } from '../models/keyword.model';
 
 /**
  * Get exposure item from DB given id string.
@@ -33,37 +36,45 @@ const updateExposureItemInDB = async (
 
 /**
  * Creates the exposure item from the DB with the specified id
- * @param updatedItem The new exposure item
+ * @param exposureItem The new exposure item
  * @returns the new item
  */
-const createExposureItemInDB = async (
-  name: string,
-  disorders: string[],
-  formats: string[],
-  interventionTypes: string[],
-  maturities: string[],
-  keywords: string[],
-  modifications: string,
-  link: string,
-  numLikes: number,
-  isLinkBroken: boolean,
-  isApproved: boolean,
-  dateUpdated: Date,
-) => {
-  const newDisorders = await Disorder.findOne({ name: disorders[0] }).exec();
+const createExposureItemInDB = async (exposureItem: IExposureItem) => {
+  // updateOne does not return documents, so must update/create and then find
+  exposureItem.keywords.forEach(async (keyword) => {
+    await Keyword.updateOne(
+      { name: keyword },
+      { name: keyword },
+      { upsert: true },
+    ).exec();
+  });
+
+  const newDisorders = await Disorder.find({
+    name: { $in: exposureItem.disorders },
+  }).exec();
+  const newFormats = await Format.find({
+    name: { $in: exposureItem.formats },
+  }).exec();
+  const newInterventionTypes = await InterventionType.find({
+    name: { $in: exposureItem.interventionTypes },
+  }).exec();
+  const newKeywords = await Keyword.find({
+    name: { $in: exposureItem.keywords },
+  }).exec();
+
   const newExposureItem = new ExposureItem({
-    name,
-    newDisorders,
-    formats,
-    interventionTypes,
-    maturities,
-    keywords,
-    modifications,
-    link,
-    numLikes,
-    isLinkBroken,
-    isApproved,
-    dateUpdated,
+    name: exposureItem.name,
+    disorders: newDisorders,
+    formats: newFormats,
+    interventionTypes: newInterventionTypes,
+    isAdultAppropriate: exposureItem.isAdultAppropriate,
+    isChildAppropriate: exposureItem.isChildAppropriate,
+    keywords: newKeywords,
+    modifications: exposureItem.modifications,
+    link: exposureItem.link,
+    numLikes: 0,
+    isLinkBroken: false,
+    isApproved: false,
   });
   const item = await newExposureItem.save();
   return item;

@@ -4,43 +4,49 @@
  */
 import mongoose, { Schema } from 'mongoose';
 
-const ExposureItemSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const ExposureItemSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    disorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }],
+    formats: [{ type: Schema.Types.ObjectId, ref: 'Format' }],
+    interventionTypes: [
+      { type: Schema.Types.ObjectId, ref: 'Intervention Type' },
+    ],
+    isAdultAppropriate: {
+      type: Boolean,
+      required: true,
+    },
+    isChildAppropriate: {
+      type: Boolean,
+      required: true,
+    },
+    keywords: [{ type: Schema.Types.ObjectId, ref: 'Keyword' }],
+    modifications: {
+      type: String,
+      required: false,
+    },
+    link: {
+      type: String,
+      required: false,
+    },
+    numLikes: {
+      type: Number,
+      required: true,
+    },
+    isLinkBroken: {
+      type: Boolean,
+      required: true,
+    },
+    isApproved: {
+      type: Boolean,
+      required: true,
+    },
   },
-  disorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }],
-  formats: [{ type: Schema.Types.ObjectId, ref: 'Format' }],
-  interventionTypes: [
-    { type: Schema.Types.ObjectId, ref: 'Intervention Type' },
-  ],
-  maturities: [{ type: Schema.Types.ObjectId, ref: 'Maturity' }],
-  keywords: [{ type: Schema.Types.ObjectId, ref: 'Keyword' }],
-  modifications: {
-    type: String,
-    required: false,
-  },
-  link: {
-    type: String,
-    required: false,
-  },
-  numLikes: {
-    type: Number,
-    required: true,
-  },
-  isLinkBroken: {
-    type: Boolean,
-    required: true,
-  },
-  isApproved: {
-    type: Boolean,
-    required: true,
-  },
-  dateUpdated: {
-    type: Date,
-    required: true,
-  },
-});
+  { timestamps: true },
+);
 
 interface IExposureItem extends mongoose.Document {
   _id: string;
@@ -48,14 +54,14 @@ interface IExposureItem extends mongoose.Document {
   disorders: string[];
   formats: string[];
   interventionTypes: string[];
-  maturities: string[];
+  isAdultAppropriate: boolean;
+  isChildAppropriate: boolean;
   keywords: string[];
   modifications: string;
   link: string;
   numLikes: number;
   isLinkBroken: boolean;
   isApproved: boolean;
-  dateUpdated: Date;
 }
 
 const ExposureItem = mongoose.model<IExposureItem>(

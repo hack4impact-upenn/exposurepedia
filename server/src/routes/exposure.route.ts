@@ -8,7 +8,7 @@ import {
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
-  createItemInDB,
+  postExposureItemInDB,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
@@ -22,7 +22,7 @@ router.get('/:exposure_id', isAuthenticated, getExposureItemByID);
 /**
  * A PATCH route to edit the exposure item with the specified id.
  */
-router.patch('/:exposure_id', isAuthenticated, isAdmin, patchExposureItemByID);
+router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
 
 /**
  * A DELETE route to delete the exposure item with the specified id.
@@ -37,6 +37,6 @@ router.delete(
 /**
  * A POST route to create exposure items.
  */
-router.post('/', isAuthenticated, isAdmin, createItemInDB);
+router.post('/', isAuthenticated, postExposureItemInDB);
 
 export default router;
