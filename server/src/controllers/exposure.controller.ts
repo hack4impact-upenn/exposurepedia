@@ -70,7 +70,7 @@ const deleteExposureItemByID = async (
 /**
  * Creates the new item. Upon success, returns 200 OK status code.
  */
-const createItemInDB = async (
+const postItemInDB = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction,
@@ -89,5 +89,5 @@ export {
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
-  createItemInDB,
+  postItemInDB as createItemInDB,
 };

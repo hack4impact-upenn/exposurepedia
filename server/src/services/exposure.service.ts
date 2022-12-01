@@ -1,6 +1,7 @@
 /**
  * All the functions for interacting with exposure data in the MongoDB database
  */
+import { Disorder } from '../models/disorder.model';
 import { ExposureItem, IExposureItem } from '../models/exposureItem.model';
 
 /**
@@ -35,8 +36,36 @@ const updateExposureItemInDB = async (
  * @param updatedItem The new exposure item
  * @returns the new item
  */
-const createExposureItemInDB = async (updatedItem: IExposureItem) => {
-  const item = await updatedItem.save();
+const createExposureItemInDB = async (
+  name: string,
+  disorders: string[],
+  formats: string[],
+  interventionTypes: string[],
+  maturities: string[],
+  keywords: string[],
+  modifications: string,
+  link: string,
+  numLikes: number,
+  isLinkBroken: boolean,
+  isApproved: boolean,
+  dateUpdated: Date,
+) => {
+  const newDisorders = await Disorder.findOne({ name: disorders[0] }).exec();
+  const newExposureItem = new ExposureItem({
+    name,
+    newDisorders,
+    formats,
+    interventionTypes,
+    maturities,
+    keywords,
+    modifications,
+    link,
+    numLikes,
+    isLinkBroken,
+    isApproved,
+    dateUpdated,
+  });
+  const item = await newExposureItem.save();
   return item;
 };
 
