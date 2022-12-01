@@ -25,6 +25,7 @@ import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import ApproveResourcesPage from './AdminControls/ApproveResourcesPage';
 import FixLinksPage from './AdminControls/FixLinksPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
+import SubmitResourcePage from './SubmitResource/SubmitResourcePage';
 import ExposureItem from './components/ExposureItem';
 import NavBar from './components/NavBar';
 
@@ -42,6 +43,10 @@ function App() {
                   <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                      path="/submit-resource"
+                      element={<SubmitResourcePage />}
+                    />
                     <Route
                       path="/verify-account/:token"
                       element={<VerifyAccountPage />}
