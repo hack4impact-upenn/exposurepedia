@@ -1,13 +1,41 @@
 /* eslint-disable react/react-in-jsx-scope */
 
+import { useState } from 'react';
 import { ExposureItemTable } from '../components/ExposureItemTable';
+import HierarchyDropdown from './HierarchyDropdown';
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
 
+interface Item {
+  title: string;
+  disorder: string[];
+  format: string[];
+  interventionType: string[];
+  maturity: string[];
+  keywords: string[];
+  modifications: string;
+  link: string;
+}
+
 function Exposurepedia() {
+  const [count, setCount] = useState(0);
+
+  const hierarchies = [
+    'Hierarchy 0',
+    'Hierarchy 1',
+    'Hierarchy 2',
+    'Hierarchy 3',
+    'Hierarchy 4',
+    'Hierarchy 5',
+    'Hierarchy 6',
+    'Hierarchy 7',
+    'Hierarchy 8',
+    'Hierarchy 9',
+  ];
+
   const rows = [
     {
       key: '1',
@@ -40,8 +68,23 @@ function Exposurepedia() {
     { id: 'date', label: 'Date', minWidth: 100 },
   ];
   return (
-    <div>
-      <ExposureItemTable rows={rows} columns={columns} />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <HierarchyDropdown hierarchies={hierarchies} count={count} />
+      <ExposureItemTable
+        rows={rows}
+        columns={columns}
+        isApprove={false}
+        isBroken={false}
+        setCount={setCount}
+      />
     </div>
   );
 }
