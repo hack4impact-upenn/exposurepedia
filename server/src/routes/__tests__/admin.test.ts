@@ -131,7 +131,6 @@ describe('testing admin routes', () => {
         ...defaultRegistrationOptions,
       });
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
-      expect(await Session.countDocuments()).toBe(0);
 
       response = await agent.post('/api/auth/register').send({
         email: testEmail2,
