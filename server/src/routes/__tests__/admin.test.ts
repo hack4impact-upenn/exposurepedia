@@ -130,7 +130,6 @@ describe('testing admin routes', () => {
         lastName: testLastName,
         ...defaultRegistrationOptions,
       });
-      expect(response.status).toBe(StatusCode.OK); // TODO: should be StatusCode.OK
       expect(await User.findOne({ email: testEmail })).toBeTruthy();
       expect(await Session.countDocuments()).toBe(0);
 
