@@ -8,8 +8,15 @@ import React from 'react';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import { Mode } from '@mui/icons-material';
-import { Button, TextField } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+} from '@mui/material';
 import { ViewHierarchyTable } from '../components/ViewHierarchyTable';
 
 const ViewHierarchyPage = function () {
@@ -110,11 +117,20 @@ const ViewHierarchyPage = function () {
           paddingTop: '55px',
         }}
       >
-        <TextField
-          id="outlined-basic"
-          label="Add Custom Item"
-          variant="outlined"
-        />
+        <FormControl sx={{ m: 1, width: '120ch' }}>
+          <InputLabel htmlFor="outlined-adornment-amount">
+            Add Custom Item
+          </InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-amount"
+            startAdornment={
+              <InputAdornment position="start">
+                <AddCircleOutlineRoundedIcon />
+              </InputAdornment>
+            }
+            label="Add Custom Item"
+          />
+        </FormControl>
         <Button
           variant="outlined"
           sx={{

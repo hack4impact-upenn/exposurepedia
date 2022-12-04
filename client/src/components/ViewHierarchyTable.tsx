@@ -93,26 +93,10 @@ function Row({ row, columns }: RowProps) {
 }
 
 /**
- * A pagination table component, mainly used in tables that require
- * multiple pages, for example the user tables in admin-view. This table will fill 100% of its parent container, so a wrapper should be added if you wish to constrain the table's width and height
  * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
 function ViewHierarchyTable({ rows, columns }: TableProps) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
   return (
     <Paper
       sx={{
@@ -140,24 +124,12 @@ function ViewHierarchyTable({ rows, columns }: TableProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return <Row row={row} key={row.key} columns={columns} />;
-              })}
+            {rows.map((row) => {
+              return <Row row={row} key={row.key} columns={columns} />;
+            })}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{ flexShrink: 0, flexGrow: 0 }}
-      />
     </Paper>
   );
 }
