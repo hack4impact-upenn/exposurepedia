@@ -33,12 +33,9 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   const [isEdit, setIsEdit] = useState(false);
   const location = useLocation();
   const { isApprove, isBroken } = location.state;
-  console.log(isApprove);
-  console.log(isBroken);
 
   const saveChanges = () => {
     setIsEdit(false);
-    console.log('saved!');
   };
   return (
     <div>

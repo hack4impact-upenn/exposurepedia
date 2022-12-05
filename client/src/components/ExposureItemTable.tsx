@@ -113,7 +113,6 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
       )}
       {columns.map((column) => {
         const value = row[column.id];
-        console.log(value);
         if (value === null || value === undefined) {
           return null;
         }
