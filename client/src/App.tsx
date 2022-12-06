@@ -83,7 +83,21 @@ function App() {
                         />
                       }
                     />
-                    <Route path="/hierarchies" element={<HierarchiesPage />} />
+                    <Route
+                      path="/hierarchies"
+                      element={
+                        <HierarchiesPage
+                          h={{
+                            title: 'hierarchy title',
+                            items: ['item1', 'item2'],
+                            date: '11.2',
+                            description: 'desc',
+                            suds: 2,
+                            order: 1,
+                          }}
+                        />
+                      }
+                    />
                     <Route
                       path="/viewhierarchy"
                       element={<ViewHierarchyPage />}
