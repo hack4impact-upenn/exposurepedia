@@ -7,22 +7,30 @@
 import { Button } from '@mui/material';
 import HierarchyListItem from '../components/HierarchyListItem';
 
+import { useData } from '../util/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
+
 const styles = {
   button: {
     padding: '8px 15px',
   },
 };
 
-const hierarchyList = [
-  { name: 'ABC Disorder', date: '2021-01-01' },
-  { name: 'XYZ Disorder', date: '2021-01-01' },
-  { name: 'DEF Disorder', date: '2021-01-01' },
-  { name: 'GHI Disorder', date: '2021-01-01' },
-  { name: 'JKL Disorder', date: '2021-01-01' },
-  { name: 'MNO Disorder', date: '2021-01-01' },
-];
+export interface HierarchyListItem {
+  id: string;
+  title: string;
+  updated_at: string;
+  index: number;
+}
 
 function HierarchyPage() {
+  const user = useAppSelector(selectUser);
+
+  const hierarchies = useData('hierarchy/635af65babcb6dabb12ed65e');
+
+  console.log(hierarchies);
+
   return (
     <div
       style={{
@@ -36,12 +44,13 @@ function HierarchyPage() {
       <div style={{ width: '100%' }}>
         <h1 style={{ fontSize: '42px', fontWeight: 'bold' }}>Hierarchies</h1>
       </div>
-      {hierarchyList.map((hierarchy_) => (
+      {hierarchies?.data?.map((hierarchy_: HierarchyListItem) => (
         <HierarchyListItem
-          key={hierarchy_.name}
-          index={hierarchyList.indexOf(hierarchy_)}
-          name={hierarchy_.name}
-          date={hierarchy_.date}
+          key={hierarchy_.title}
+          index={hierarchies?.data.indexOf(hierarchy_)}
+          title={hierarchy_.title}
+          updatedAt={hierarchy_.updated_at}
+          id={hierarchy_.id}
         />
       ))}
 
