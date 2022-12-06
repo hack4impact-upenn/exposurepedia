@@ -64,7 +64,7 @@ interface IExposureItem extends mongoose.Document {
 }
 
 const ExposureItem = mongoose.model<IExposureItem>(
-  'ExposureItem',
+  'Exposure Item',
   ExposureItemSchema,
 );
 
