@@ -1,3 +1,7 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint react/prop-types: 0 */
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useState } from 'react';
 import {
   Paper,
@@ -8,9 +12,16 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Checkbox,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles, createStyles } from '@mui/styles';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  OnDragEndResponder,
+  DropResult,
+} from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -88,15 +99,43 @@ function Row({ row, columns }: RowProps) {
           </TableCell>
         );
       })}
+      <TableCell style={{ width: '30px' }}>
+        <DeleteIcon />
+      </TableCell>
     </TableRow>
   );
 }
+
+const reorder = (list: TRow[], startIndex: number, endIndex: number) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 /**
  * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
 function ViewHierarchyTable({ rows, columns }: TableProps) {
+  const [rowItems, setRowItems] = useState(rows);
+
+  function onDragEnd(result: DropResult) {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const reorderedItems: TRow[] = reorder(
+      rowItems,
+      result.source.index,
+      result.destination.index,
+    );
+
+    setRowItems(reorderedItems);
+  }
+
   return (
     <Paper
       sx={{
@@ -124,9 +163,41 @@ function ViewHierarchyTable({ rows, columns }: TableProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => {
-              return <Row row={row} key={row.key} columns={columns} />;
-            })}
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided, snapshot) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    style={{ width: '100%' }}
+                    // style={getListStyle(snapshot.isDraggingOver)}
+                  >
+                    {rowItems.map((row, index) => (
+                      <Draggable
+                        key={row.key}
+                        draggableId={row.key}
+                        index={index}
+                      >
+                        {(p, s) => (
+                          <div
+                            ref={p.innerRef}
+                            {...p.draggableProps}
+                            {...p.dragHandleProps}
+                            // style={getItemStyle(
+                            //   snapshot.isDragging,
+                            //   provided.draggableProps.style,
+                            // )}
+                          >
+                            <Row row={row} key={row.key} columns={columns} />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </TableBody>
         </Table>
       </TableContainer>
