@@ -100,15 +100,11 @@ function Popup({ category, setPopupState, setCurItem }: PopupProps) {
             variant="contained"
             color="primary"
             onClick={() => {
-              // setCurItem((prev) => {
-              //   const newCurItem = { ...prev };
-              //   Object(newCurItem)[category].push(val);
-              //   // console.log(newCurItem);
-              //   // return newCurItem;
-              //   console.log(category);
-              //   return prev;
-              // });
-              setCurItem((prev) => prev);
+              setCurItem((prev) => {
+                console.log(prev);
+                Object(prev)[category].push(val);
+                return prev;
+              });
               setPopupState('');
             }}
           >

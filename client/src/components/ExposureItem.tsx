@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
+import { string } from 'prop-types';
 import Popup from './Popup';
 
 interface ExposureItemProps {
@@ -34,22 +35,33 @@ interface Item {
 }
 
 export default function ExposureItem({ item }: ExposureItemProps) {
-  const [curItem, setCurItem] = useState(item);
   const [isEdit, setIsEdit] = useState(false);
   const [liked, setLiked] = useState(false);
   const [popupState, setPopupState] = useState('');
-  ['disorder', 'format', 'interventionType', 'maturity', 'keywords'].forEach(
-    (key) => {
-      Object(curItem)[key] = Object(curItem)[key].map((data: string) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [isDisplayed, setIsDisplayed] = useState(true);
-        return [data, isDisplayed, setIsDisplayed];
-      });
-    },
-  );
+  const [curItem, setCurItem] = useState(item);
+  const [savedItem, setSavedItem] = useState(item);
   const saveChanges = () => {
     setIsEdit(false);
+    setSavedItem(curItem);
     console.log('saved!');
+  };
+
+  const cancelChanges = () => {
+    setIsEdit(false);
+    setCurItem(savedItem);
+    console.log('cancelled!');
+  };
+
+  const handleDelete = (key: string, data: string) => {
+    setCurItem((prevItem) => {
+      const usedKey = key as keyof Item;
+      const newsavedItem: Item = JSON.parse(JSON.stringify(prevItem));
+      const changedArray: string[] = prevItem[usedKey] as string[];
+      return {
+        ...newsavedItem,
+        [usedKey]: changedArray.filter((changedItem) => changedItem !== data),
+      };
+    });
   };
 
   return (
@@ -81,6 +93,12 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                 InputProps={{ style: { fontSize: '24px', fontWeight: 'bold' } }}
                 id="standard-basic"
                 variant="standard"
+                onChange={(e) => {
+                  setCurItem((prevItem) => ({
+                    ...prevItem,
+                    title: e.target.value,
+                  }));
+                }}
                 defaultValue={curItem.title}
               />
             ) : (
@@ -110,14 +128,24 @@ export default function ExposureItem({ item }: ExposureItemProps) {
         >
           <Typography>Last updated October 1st 2022</Typography>
           {isEdit ? (
-            <Button
-              variant="outlined"
-              sx={{ maxWidth: '180px', borderColor: 'green', color: 'green' }}
-              onClick={() => saveChanges()}
-            >
-              <span style={{ marginRight: '5px' }}>Save Changes</span>
-              <CheckIcon />
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                sx={{ maxWidth: '200px', borderColor: 'green', color: 'green' }}
+                onClick={() => saveChanges()}
+              >
+                <span style={{ marginRight: '5px' }}>Save Changes</span>
+                <CheckIcon />
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{ maxWidth: '200x', borderColor: 'gray', color: 'gray' }}
+                onClick={() => cancelChanges()}
+              >
+                <span style={{ marginRight: '5px' }}>Cancel Changes</span>
+                <CheckIcon />
+              </Button>
+            </>
           ) : (
             <Button
               variant="outlined"
@@ -145,44 +173,37 @@ export default function ExposureItem({ item }: ExposureItemProps) {
               <Typography>
                 <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
               </Typography>
-              {Object(curItem)[key].map(
-                (
-                  value: [
-                    string,
-                    boolean,
-                    React.Dispatch<React.SetStateAction<boolean>>,
-                  ],
-                ) =>
-                  value[1] && (
-                    <Chip
-                      sx={{
-                        mx: '0.25rem',
-                        background: '#397FBF',
-                        color: 'white',
-                        height: '30px',
-                        margin: '2px',
-                        '& .MuiChip-deleteIcon': {
-                          color: 'rgba(237,237,237,0.9)',
-                        },
-                      }}
-                      label={value[0]}
-                      onDelete={() => {
-                        value[2](false);
-                      }}
-                      deleteIcon={
-                        isEdit ? (
-                          <Cancel sx={{ backgroundClip: 'red' }} />
-                        ) : (
-                          <span />
-                        )
-                      }
-                    />
-                  ),
+              {Object(curItem)[key].map((data: string) => (
+                <Chip
+                  sx={{
+                    mx: '0.25rem',
+                    background: '#397FBF',
+                    color: 'white',
+                    height: '30px',
+                    margin: '2px',
+                    '& .MuiChip-deleteIcon': {
+                      color: 'rgba(237,237,237,0.9)',
+                    },
+                  }}
+                  label={data}
+                  onDelete={() => {
+                    handleDelete(key, data);
+                  }}
+                  deleteIcon={
+                    isEdit ? (
+                      <Cancel sx={{ backgroundClip: 'red' }} />
+                    ) : (
+                      <span />
+                    )
+                  }
+                />
+              ))}
+              {isEdit && (
+                <AddCircle
+                  style={{ color: '009054' }}
+                  onClick={() => setPopupState(key)}
+                />
               )}
-              <AddCircle
-                style={{ color: '009054' }}
-                onClick={() => setPopupState(key)}
-              />
               {/* {popupState === key && <Popup category={key} />} */}
               {popupState === key && (
                 <Popup
@@ -211,6 +232,12 @@ export default function ExposureItem({ item }: ExposureItemProps) {
               InputProps={{ style: { fontSize: '16px' } }}
               id="standard-basic"
               variant="standard"
+              onChange={(e) => {
+                setCurItem((prevItem) => ({
+                  ...prevItem,
+                  modifications: e.target.value,
+                }));
+              }}
               defaultValue={curItem.modifications}
             />
           ) : (
