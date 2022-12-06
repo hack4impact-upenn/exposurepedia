@@ -64,4 +64,22 @@ const emailVerificationLink = async (email: string, token: string) => {
   await SGmail.send(mailSettings);
 };
 
-export { emailVerificationLink, emailResetPasswordLink };
+/**
+ * Sends an email to notify user access denial
+ * @param email The email of the user to send the notification to
+ */
+const emailAccessDenial = async (email: string) => {
+  const mailSettings: MailDataRequired = {
+    from: {
+      email: process.env.SENDGRID_EMAIL_ADDRESS || 'missing@mail.com',
+      name: senderName,
+    },
+    to: email,
+    subject: 'Access Denied',
+    html: `<p>Your account has been removed. Please register again if this is a mistake.</p>`,
+  };
+  // Send the email and propogate the error up if one exists
+  await SGmail.send(mailSettings);
+};
+
+export { emailVerificationLink, emailResetPasswordLink, emailAccessDenial };

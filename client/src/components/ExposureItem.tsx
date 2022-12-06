@@ -14,11 +14,10 @@ import {
   Favorite,
   AddCircle,
 } from '@mui/icons-material';
-import WarningIcon from '@mui/icons-material/Warning';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation } from 'react-router-dom';
-import { string } from 'prop-types';
+import WarningIcon from '@mui/icons-material/Warning';
 import Popup from './Popup';
 
 interface ExposureItemProps {
