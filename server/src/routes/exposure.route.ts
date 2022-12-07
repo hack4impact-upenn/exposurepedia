@@ -22,7 +22,8 @@ router.get('/:exposure_id', isAuthenticated, getExposureItemByID);
 /**
  * A POST route to create exposure items.
  */
-router.post('/', isAuthenticated, postExposureItemInDB);
+// router.post('/', isAuthenticated, postExposureItemInDB);
+router.post('/', postExposureItemInDB);
 
 /**
  * A PATCH route to edit the exposure item with the specified id.

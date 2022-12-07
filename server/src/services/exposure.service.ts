@@ -42,8 +42,12 @@ const createExposureItemInDB = async (
     ).exec();
   });
 
+  const regexDisorders = [];
+  for (let i = 0; i < disorders.length; i += 1) {
+    regexDisorders[i] = new RegExp(disorders[i]);
+  }
   const newDisorders = await Disorder.find({
-    name: { $in: disorders },
+    name: { $in: regexDisorders },
   }).exec();
   const newFormats = await Format.find({
     name: { $in: formats },
@@ -54,6 +58,13 @@ const createExposureItemInDB = async (
   const newKeywords = await Keyword.find({
     name: { $in: keywords },
   }).exec();
+
+  if (
+    newDisorders.length !== disorders.length ||
+    newFormats.length !== formats.length ||
+    newInterventionTypes.length !== interventionTypes.length
+  )
+    throw new Error('Invalid disorders, formats, and/or intervention types');
 
   const newExposureItem = new ExposureItem({
     name,
