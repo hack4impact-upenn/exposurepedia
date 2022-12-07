@@ -162,7 +162,7 @@ function ExposureItemTable({
   return (
     <Paper
       sx={{
-        width: '80%',
+        width: '90%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',

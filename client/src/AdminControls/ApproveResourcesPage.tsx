@@ -1,3 +1,4 @@
+import { Toolbar } from '@mui/material';
 import React from 'react';
 import { ExposureItemTable } from '../components/ExposureItemTable';
 
@@ -24,6 +25,43 @@ const ApproveResourcesPage = function () {
       likes: 100,
       date: '2021-11-04',
     },
+    {
+      key: '4',
+      title:
+        'Leave electrical appliances plugged in/lights on (e.g., coffee maker) ',
+      format: 'Idea',
+      likes: 51,
+      date: '2021-11-24',
+    },
+    {
+      key: '5',
+      title: 'The Office: Michael accidentally hits Meredith with his car',
+      format: 'Video',
+      likes: 10,
+      date: '2021-11-24',
+    },
+    {
+      key: '6',
+      title: 'Write your own obituary',
+      format: 'Reading',
+      likes: 74,
+      date: '2021-12-01',
+    },
+    {
+      key: '7',
+      title: 'Write something inaccurate on social media',
+      format: 'Idea',
+      likes: 2,
+      date: '2021-12-03',
+    },
+    {
+      key: '8',
+      title:
+        'Write an insult about therapist and reflect on how that might make you...',
+      format: 'Idea',
+      likes: 0,
+      date: '2021-12-14',
+    },
   ];
 
   const columns = [
@@ -34,6 +72,7 @@ const ApproveResourcesPage = function () {
 
   return (
     <div style={{ width: '90%', margin: 'auto' }}>
+      <Toolbar />
       <h1> Approve Resources </h1>
       <ExposureItemTable
         rows={rows}
