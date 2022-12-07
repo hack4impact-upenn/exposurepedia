@@ -17,17 +17,17 @@ interface NavTabProps {
 }
 
 const tabStyle = {
-  color: '#397FBF',
+  color: 'black',
   borderRadius: 30,
   minHeight: '0px',
   textTransform: 'none',
+  fontSize: '16px',
   '&:hover': {
     color: '#40a9ff',
     opacity: 1,
   },
   '&.Mui-selected': {
-    color: '#ffffff',
-    backgroundColor: '#397FBF',
+    color: '#397FBF',
     height: '10px',
     margin: 'auto',
   },
@@ -88,6 +88,7 @@ export default function NavBar() {
         sx={{
           justifyContent: 'space-between',
         }}
+        disableGutters
       >
         <Tabs
           value={value}

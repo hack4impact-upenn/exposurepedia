@@ -85,6 +85,7 @@ export default function MenuListComposition({ user }: MenuListProps) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              fontSize: '16px',
             }}
           >
             {user.firstName} {user.lastName}

@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   TextField,
+  Toolbar,
 } from '@mui/material';
 import { Cancel, FavoriteBorder } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
@@ -39,6 +40,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   };
   return (
     <div>
+      <Toolbar />
       {isApprove && (
         <div
           style={{

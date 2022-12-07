@@ -9,6 +9,7 @@ import {
   TablePagination,
   TableRow,
   Checkbox,
+  Toolbar,
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
@@ -166,7 +167,7 @@ function ExposureItemTable({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        margin: 'auto',
+        margin: '10px auto',
       }}
     >
       <TableContainer sx={{ flexGrow: 1, flexShrink: 1 }}>
