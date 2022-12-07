@@ -2,6 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Toolbar from '@mui/material/Toolbar';
+import AppBar from '@mui/material/AppBar';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@mui/material';
 import MenuListComposition from './MenuList';
@@ -15,17 +17,17 @@ interface NavTabProps {
 }
 
 const tabStyle = {
-  color: '#397FBF',
+  color: 'black',
   borderRadius: 30,
   minHeight: '0px',
   textTransform: 'none',
+  fontSize: '16px',
   '&:hover': {
     color: '#40a9ff',
     opacity: 1,
   },
   '&.Mui-selected': {
-    color: '#ffffff',
-    backgroundColor: '#397FBF',
+    color: '#397FBF',
     height: '10px',
     margin: 'auto',
   },
@@ -74,30 +76,37 @@ export default function NavBar() {
     setValue(newValue);
   };
   return !data?.error ? (
-    <Box
+    <AppBar
+      position="fixed"
       sx={{
-        width: '99%',
-        display: 'flex',
-        justifyContent: 'space-between',
-        margin: 'auto',
+        backgroundColor: '#ffffff',
+        zIndex: (theme: { zIndex: { drawer: number } }) =>
+          theme.zIndex.drawer + 1,
       }}
     >
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="nav tabs example"
-        TabIndicatorProps={{
-          hidden: true,
+      <Toolbar
+        sx={{
+          justifyContent: 'space-between',
         }}
+        disableGutters
       >
-        <NavTab label="Home" href="/home" />
-        <NavTab label="Exposurepedia" href="/exposurepedia" />
-        <NavTab label="Submit Resources" href="/submitresources" />
-        <NavTab label="Hierarchies" href="/hierarchies" />
-        <NavTab label="Contact" href="/contact" />
-      </Tabs>
-      <MenuListComposition user={self} />
-    </Box>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="nav tabs example"
+          TabIndicatorProps={{
+            hidden: true,
+          }}
+        >
+          <NavTab label="Home" href="/home" />
+          <NavTab label="Exposurepedia" href="/exposurepedia" />
+          <NavTab label="Submit Resources" href="/submitresources" />
+          <NavTab label="Hierarchies" href="/hierarchies" />
+          <NavTab label="Contact" href="/contact" />
+        </Tabs>
+        <MenuListComposition user={self} />
+      </Toolbar>
+    </AppBar>
   ) : (
     <Box
       sx={{

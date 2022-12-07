@@ -3,6 +3,10 @@
  * access the model in TypeScript.
  */
 import mongoose, { Schema } from 'mongoose';
+import { IDisorder } from './disorder.model';
+import { IFormat } from './format.model';
+import { IInterventionType } from './interventionType.model';
+import { IKeyword } from './keyword.model';
 
 const ExposureItemSchema = new mongoose.Schema(
   {
@@ -32,10 +36,6 @@ const ExposureItemSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    numLikes: {
-      type: Number,
-      required: true,
-    },
     isLinkBroken: {
       type: Boolean,
       required: true,
@@ -51,21 +51,20 @@ const ExposureItemSchema = new mongoose.Schema(
 interface IExposureItem extends mongoose.Document {
   _id: string;
   name: string;
-  disorders: string[];
-  formats: string[];
-  interventionTypes: string[];
+  disorders: IDisorder[];
+  formats: IFormat[];
+  interventionTypes: IInterventionType[];
   isAdultAppropriate: boolean;
   isChildAppropriate: boolean;
-  keywords: string[];
+  keywords: IKeyword[];
   modifications: string;
   link: string;
-  numLikes: number;
   isLinkBroken: boolean;
   isApproved: boolean;
 }
 
 const ExposureItem = mongoose.model<IExposureItem>(
-  'ExposureItem',
+  'Exposure Item',
   ExposureItemSchema,
 );
 

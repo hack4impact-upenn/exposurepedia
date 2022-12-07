@@ -20,6 +20,11 @@ const router = express.Router();
 router.get('/:exposure_id', isAuthenticated, getExposureItemByID);
 
 /**
+ * A POST route to create exposure items.
+ */
+router.post('/', isAuthenticated, postExposureItemInDB);
+
+/**
  * A PATCH route to edit the exposure item with the specified id.
  */
 router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
@@ -33,10 +38,5 @@ router.delete(
   isAdmin,
   deleteExposureItemByID,
 );
-
-/**
- * A POST route to create exposure items.
- */
-router.post('/', isAuthenticated, postExposureItemInDB);
 
 export default router;

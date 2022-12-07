@@ -2,7 +2,7 @@
  * All the functions for interacting with exposure data in the MongoDB database
  */
 import { Disorder } from '../models/disorder.model';
-import { ExposureItem, IExposureItem } from '../models/exposureItem.model';
+import { ExposureItem } from '../models/exposureItem.model';
 import { Format } from '../models/format.model';
 import { InterventionType } from '../models/interventionType.model';
 import { Keyword } from '../models/keyword.model';
@@ -18,30 +18,23 @@ const getExposureItemFromDB = async (id: string) => {
 };
 
 /**
- * Update exposure item in DB given id and new exposure item
- * @param id The id of the exposure item to update
- * @param updatedItem The new exposure item
- * @returns The old exposure item
- */
-const updateExposureItemInDB = async (
-  id: string,
-  updatedItem: IExposureItem,
-) => {
-  const item = await ExposureItem.findOneAndReplace(
-    { _id: id },
-    updatedItem,
-  ).exec();
-  return item;
-};
-
-/**
  * Creates the exposure item from the DB with the specified id
  * @param exposureItem The new exposure item
  * @returns the new item
  */
-const createExposureItemInDB = async (exposureItem: IExposureItem) => {
+const createExposureItemInDB = async (
+  name: string,
+  disorders: string[],
+  formats: string[],
+  interventionTypes: string[],
+  isAdultAppropriate: boolean,
+  isChildAppropriate: boolean,
+  keywords: string[],
+  modifications: string,
+  link: string,
+) => {
   // updateOne does not return documents, so must update/create and then find
-  exposureItem.keywords.forEach(async (keyword) => {
+  keywords.forEach(async (keyword) => {
     await Keyword.updateOne(
       { name: keyword },
       { name: keyword },
@@ -50,29 +43,28 @@ const createExposureItemInDB = async (exposureItem: IExposureItem) => {
   });
 
   const newDisorders = await Disorder.find({
-    name: { $in: exposureItem.disorders },
+    name: { $in: disorders },
   }).exec();
   const newFormats = await Format.find({
-    name: { $in: exposureItem.formats },
+    name: { $in: formats },
   }).exec();
   const newInterventionTypes = await InterventionType.find({
-    name: { $in: exposureItem.interventionTypes },
+    name: { $in: interventionTypes },
   }).exec();
   const newKeywords = await Keyword.find({
-    name: { $in: exposureItem.keywords },
+    name: { $in: keywords },
   }).exec();
 
   const newExposureItem = new ExposureItem({
-    name: exposureItem.name,
+    name,
     disorders: newDisorders,
     formats: newFormats,
     interventionTypes: newInterventionTypes,
-    isAdultAppropriate: exposureItem.isAdultAppropriate,
-    isChildAppropriate: exposureItem.isChildAppropriate,
+    isAdultAppropriate,
+    isChildAppropriate,
     keywords: newKeywords,
-    modifications: exposureItem.modifications,
-    link: exposureItem.link,
-    numLikes: 0,
+    modifications,
+    link,
     isLinkBroken: false,
     isApproved: false,
   });
@@ -92,7 +84,6 @@ const deleteExposureItemFromDB = async (id: string) => {
 
 export {
   getExposureItemFromDB,
-  updateExposureItemInDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
 };
