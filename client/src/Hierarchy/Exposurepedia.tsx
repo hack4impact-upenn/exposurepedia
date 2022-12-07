@@ -1,8 +1,25 @@
 /* eslint-disable react/react-in-jsx-scope */
 
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import AppBar from '@mui/material/AppBar';
+import CssBaseline from '@mui/material/CssBaseline';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
 import { useState } from 'react';
+import Checkbox from '@mui/material/Checkbox';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ExposureItemTable } from '../components/ExposureItemTable';
 import HierarchyDropdown from './HierarchyDropdown';
+import Filtering from './Filtering';
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
@@ -67,24 +84,34 @@ function Exposurepedia() {
     { id: 'likes', label: 'Likes', minWidth: 100 },
     { id: 'date', label: 'Date', minWidth: 100 },
   ];
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-      }}
-    >
-      <HierarchyDropdown hierarchies={hierarchies} count={count} />
-      <ExposureItemTable
-        rows={rows}
-        columns={columns}
-        isApprove={false}
-        isBroken={false}
-        setCount={setCount}
-      />
+    <div>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <Filtering />
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Toolbar />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+            }}
+          >
+            <HierarchyDropdown hierarchies={hierarchies} count={count} />
+            <ExposureItemTable
+              rows={rows}
+              columns={columns}
+              isApprove={false}
+              isBroken={false}
+              setCount={setCount}
+            />
+          </div>
+        </Box>
+      </Box>
     </div>
   );
 }

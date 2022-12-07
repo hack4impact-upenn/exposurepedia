@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   TextField,
+  Toolbar,
 } from '@mui/material';
 import { Cancel, FavoriteBorder } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
@@ -33,15 +34,13 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   const [isEdit, setIsEdit] = useState(false);
   const location = useLocation();
   const { isApprove, isBroken } = location.state;
-  console.log(isApprove);
-  console.log(isBroken);
 
   const saveChanges = () => {
     setIsEdit(false);
-    console.log('saved!');
   };
   return (
     <div>
+      <Toolbar />
       {isApprove && (
         <div
           style={{
