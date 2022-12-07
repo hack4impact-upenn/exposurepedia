@@ -11,6 +11,7 @@ import adminRouter from './admin.route';
 import authRouter from './auth.route';
 import exposureRouter from './exposure.route';
 import hierarchyRouter from './hierarchy.route';
+import contactRouter from './contact.route';
 
 const prefixToRouterMap: { prefix: string; router: Router }[] = [
   {
@@ -28,6 +29,11 @@ const prefixToRouterMap: { prefix: string; router: Router }[] = [
   {
     prefix: '/api/hierarchy',
     router: hierarchyRouter,
+  },
+
+  {
+    prefix: '/api/contact',
+    router: contactRouter,
   },
 ];
 
