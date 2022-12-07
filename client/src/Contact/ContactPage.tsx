@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Grid, Typography } from '@mui/material';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { TextField, Grid, Typography, Alert, Snackbar } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import FormCol from '../components/form/FormCol';
 import {
   emailRegex,
@@ -8,6 +8,7 @@ import {
   nameRegex,
 } from '../util/inputvalidation';
 import AlertDialog from '../components/AlertDialog';
+
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import { contact } from './api';
 
@@ -16,8 +17,6 @@ import { contact } from './api';
  * fields such as their name, email, and password.
  */
 function ContactPage() {
-  const navigate = useNavigate();
-
   const bottomTextValue =
     'Note: If you have a resource you would like added to The Exposurepedia, please use the Submit Resources form, not this page! If you would like to provide feedback about the site or contact us for another reason, please do so below. Name and email address are not required, but we cannot respond unless you provide an email. If you would like to be contacted once the resources have been made public, note that below, and be sure to include your email.';
 
@@ -45,7 +44,6 @@ function ContactPage() {
   const [values, setValueState] = useState(defaultValues);
   const [showError, setShowErrorState] = useState(defaultShowErrors);
   const [errorMessage, setErrorMessageState] = useState(defaultErrorMessages);
-  const [alertTitle, setAlertTitle] = useState('Error');
   const [contacted, setContacted] = useState(false);
 
   // Helper functions for changing only one field in a state object
@@ -69,9 +67,6 @@ function ContactPage() {
   };
 
   const handleAlertClose = () => {
-    if (contacted) {
-      navigate('/contact');
-    }
     setShowError('alert', false);
   };
 
@@ -113,9 +108,9 @@ function ContactPage() {
       contact(values.name, values.email, values.message)
         .then(() => {
           setShowError('alert', true);
-          setAlertTitle('');
           setContacted(true);
           setErrorMessage('alert', 'Contacted!');
+          setValueState(defaultValues);
         })
         .catch((e) => {
           setShowError('alert', true);
@@ -199,12 +194,19 @@ function ContactPage() {
         </FormCol>
         {/* The alert that pops up */}
         <Grid item>
-          <AlertDialog
-            showAlert={showError.alert}
-            title={alertTitle}
-            message={errorMessage.alert}
+          <Snackbar
+            open={showError.alert}
+            autoHideDuration={6000}
             onClose={handleAlertClose}
-          />
+          >
+            <Alert
+              onClose={handleAlertClose}
+              severity={contacted ? 'success' : 'error'}
+              sx={{ width: '100%' }}
+            >
+              {errorMessage.alert}
+            </Alert>
+          </Snackbar>
         </Grid>
         <br />
         <br />
