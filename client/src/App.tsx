@@ -25,8 +25,10 @@ import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import ApproveResourcesPage from './AdminControls/ApproveResourcesPage';
 import FixLinksPage from './AdminControls/FixLinksPage';
 import Exposurepedia from './Hierarchy/Exposurepedia';
+import SubmitResourcePage from './SubmitResource/SubmitResourcePage';
 import ExposureItem from './components/ExposureItem';
 import NavBar from './components/NavBar';
+import ContactPage from './Contact/ContactPage';
 
 function App() {
   return (
@@ -38,6 +40,7 @@ function App() {
             <ThemeProvider theme={theme}>
               <CssBaseline>
                 <Routes>
+                  <Route path="/contact" element={<ContactPage />} />
                   {/* Routes accessed only if user is not authenticated */}
                   <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/login" element={<LoginPage />} />
@@ -58,6 +61,10 @@ function App() {
                   {/* Routes accessed only if user is authenticated */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
+                    <Route
+                      path="/submitresources"
+                      element={<SubmitResourcePage />}
+                    />
                     <Route path="/exposurepedia" element={<Exposurepedia />} />
                     <Route
                       path="/exposureitem"
@@ -94,7 +101,10 @@ function App() {
                   <Route
                     path="/"
                     element={
-                      <DynamicRedirect unAuthPath="/login" authPath="/home" />
+                      <DynamicRedirect
+                        unAuthPath="/login"
+                        authPath="/exposurepedia"
+                      />
                     }
                   />
 

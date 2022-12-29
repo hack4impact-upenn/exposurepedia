@@ -3,63 +3,68 @@
  * access the model in TypeScript.
  */
 import mongoose, { Schema } from 'mongoose';
+import { IDisorder } from './disorder.model';
+import { IFormat } from './format.model';
+import { IInterventionType } from './interventionType.model';
+import { IKeyword } from './keyword.model';
 
-const ExposureItemSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const ExposureItemSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    disorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }],
+    formats: [{ type: Schema.Types.ObjectId, ref: 'Format' }],
+    interventionTypes: [
+      { type: Schema.Types.ObjectId, ref: 'Intervention Type' },
+    ],
+    isAdultAppropriate: {
+      type: Boolean,
+      required: true,
+    },
+    isChildAppropriate: {
+      type: Boolean,
+      required: true,
+    },
+    keywords: [{ type: Schema.Types.ObjectId, ref: 'Keyword' }],
+    modifications: {
+      type: String,
+      required: false,
+    },
+    link: {
+      type: String,
+      required: false,
+    },
+    isLinkBroken: {
+      type: Boolean,
+      required: true,
+    },
+    isApproved: {
+      type: Boolean,
+      required: true,
+    },
   },
-  disorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }],
-  formats: [{ type: Schema.Types.ObjectId, ref: 'Format' }],
-  interventionTypes: [
-    { type: Schema.Types.ObjectId, ref: 'Intervention Type' },
-  ],
-  maturities: [{ type: Schema.Types.ObjectId, ref: 'Maturity' }],
-  keywords: [{ type: Schema.Types.ObjectId, ref: 'Keyword' }],
-  modifications: {
-    type: String,
-    required: false,
-  },
-  link: {
-    type: String,
-    required: false,
-  },
-  numLikes: {
-    type: Number,
-    required: true,
-  },
-  isLinkBroken: {
-    type: Boolean,
-    required: true,
-  },
-  isApproved: {
-    type: Boolean,
-    required: true,
-  },
-  dateUpdated: {
-    type: Date,
-    required: true,
-  },
-});
+  { timestamps: true },
+);
 
 interface IExposureItem extends mongoose.Document {
   _id: string;
   name: string;
-  disorder: string[];
-  formats: string[];
-  interventionTypes: string[];
-  maturities: string[];
-  keywords: string[];
+  disorders: IDisorder[];
+  formats: IFormat[];
+  interventionTypes: IInterventionType[];
+  isAdultAppropriate: boolean;
+  isChildAppropriate: boolean;
+  keywords: IKeyword[];
   modifications: string;
   link: string;
-  numLikes: number;
   isLinkBroken: boolean;
   isApproved: boolean;
-  dateUpdated: Date;
 }
 
 const ExposureItem = mongoose.model<IExposureItem>(
-  'ExposureItem',
+  'Exposure Item',
   ExposureItemSchema,
 );
 

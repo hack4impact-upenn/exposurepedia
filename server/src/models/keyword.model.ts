@@ -1,5 +1,5 @@
 /**
- * Defines the Keyword model for the database and also the interface to
+ * Defines the Disorder model for the database and also the interface to
  * access the model in TypeScript.
  */
 import mongoose from 'mongoose';

@@ -7,12 +7,19 @@ import {
   Typography,
   Button,
   TextField,
+  Toolbar,
 } from '@mui/material';
-import { Cancel, FavoriteBorder } from '@mui/icons-material';
-import { useLocation } from 'react-router-dom';
+import {
+  Cancel,
+  FavoriteBorder,
+  Favorite,
+  AddCircle,
+} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
+import { useLocation } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
+import Popup from './Popup';
 
 interface ExposureItemProps {
   item: Item;
@@ -31,17 +38,41 @@ interface Item {
 
 export default function ExposureItem({ item }: ExposureItemProps) {
   const [isEdit, setIsEdit] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [popupState, setPopupState] = useState('');
+  const [curItem, setCurItem] = useState(item);
+  const [savedItem, setSavedItem] = useState(item);
   const location = useLocation();
   const { isApprove, isBroken } = location.state;
   console.log(isApprove);
   console.log(isBroken);
-
   const saveChanges = () => {
     setIsEdit(false);
+    setSavedItem(curItem);
     console.log('saved!');
   };
+
+  const cancelChanges = () => {
+    setIsEdit(false);
+    setCurItem(savedItem);
+    console.log('cancelled!');
+  };
+
+  const handleDelete = (key: string, data: string) => {
+    setCurItem((prevItem) => {
+      const usedKey = key as keyof Item;
+      const newsavedItem: Item = JSON.parse(JSON.stringify(prevItem));
+      const changedArray: string[] = prevItem[usedKey] as string[];
+      return {
+        ...newsavedItem,
+        [usedKey]: changedArray.filter((changedItem) => changedItem !== data),
+      };
+    });
+  };
+
   return (
     <div>
+      <Toolbar />
       {isApprove && (
         <div
           style={{
@@ -157,6 +188,8 @@ export default function ExposureItem({ item }: ExposureItemProps) {
           flexDirection: 'column',
           padding: '1rem',
           margin: '1rem',
+          border: '1px solid #e9e9e9',
+          borderRadius: '16px',
         }}
       >
         <Box
@@ -181,14 +214,31 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                   }}
                   id="standard-basic"
                   variant="standard"
-                  defaultValue={item.title}
+                  onChange={(e) => {
+                    setCurItem((prevItem) => ({
+                      ...prevItem,
+                      title: e.target.value,
+                    }));
+                  }}
+                  defaultValue={curItem.title}
                 />
               ) : (
-                <strong style={{ width: '600px' }}>{item.title}</strong>
+                <strong style={{ width: '600px' }}>{curItem.title}</strong>
               )}
             </Typography>
-            <FavoriteBorder />
-            <Typography>0</Typography>
+            {liked ? (
+              <Favorite
+                style={{ color: 'CF0C0C' }}
+                onClick={() => setLiked((prevLiked) => !prevLiked)}
+              />
+            ) : (
+              <FavoriteBorder
+                style={{ color: 'CF0C0C' }}
+                onClick={() => setLiked((prevLiked) => !prevLiked)}
+              />
+            )}
+
+            <Typography color="GrayText">0</Typography>
           </Box>
           <Box
             sx={{
@@ -199,18 +249,40 @@ export default function ExposureItem({ item }: ExposureItemProps) {
           >
             <Typography>Last updated October 1st 2022</Typography>
             {isEdit ? (
-              <Button
-                variant="outlined"
-                sx={{ maxWidth: '180px', borderColor: 'green', color: 'green' }}
-                onClick={() => saveChanges()}
-              >
-                <span style={{ marginRight: '5px' }}>Save Changes</span>
-                <CheckIcon />
-              </Button>
+              <>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    maxWidth: '200px',
+                    borderColor: 'green',
+                    color: 'green',
+                    textTransform: 'none',
+                    marginTop: '10px',
+                  }}
+                  onClick={() => saveChanges()}
+                >
+                  <span style={{ marginRight: '5px' }}>Save Changes</span>
+                  <CheckIcon />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    maxWidth: '200x',
+                    borderColor: 'gray',
+                    color: 'gray',
+                    marginTop: '10px',
+                    textTransform: 'none',
+                  }}
+                  onClick={() => cancelChanges()}
+                >
+                  <span style={{ marginRight: '5px' }}>Cancel Changes</span>
+                  <CheckIcon />
+                </Button>
+              </>
             ) : (
               <Button
                 variant="outlined"
-                sx={{ maxWidth: '140px' }}
+                sx={{ maxWidth: '140px', marginTop: '10px' }}
                 onClick={() => setIsEdit(true)}
               >
                 <span style={{ marginRight: '5px' }}>Edit Item</span>
@@ -221,43 +293,61 @@ export default function ExposureItem({ item }: ExposureItemProps) {
         </Box>
 
         {['disorder', 'format', 'interventionType', 'maturity', 'keywords'].map(
-          (key) => (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                my: '0.25rem',
-              }}
-            >
-              <Typography>
-                <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
-              </Typography>
-              {Object(item)[key].map((value: string) => (
-                <Chip
-                  sx={{
-                    mx: '0.25rem',
-                    background: '#397FBF',
-                    color: 'white',
-                    height: '30px',
-                    margin: '2px',
-                    '& .MuiChip-deleteIcon': {
-                      color: 'rgba(237,237,237,0.9)',
-                    },
-                  }}
-                  label={value}
-                  onDelete={() => ({})}
-                  deleteIcon={
-                    isEdit ? (
-                      <Cancel sx={{ backgroundClip: 'red' }} />
-                    ) : (
-                      <span />
-                    )
-                  }
-                />
-              ))}
-            </Box>
-          ),
+          (key) => {
+            return (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  my: '0.25rem',
+                }}
+              >
+                <Typography>
+                  <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
+                </Typography>
+                {Object(curItem)[key].map((data: string) => (
+                  <Chip
+                    sx={{
+                      mx: '0.25rem',
+                      background: '#397FBF',
+                      color: 'white',
+                      height: '30px',
+                      margin: '2px',
+                      '& .MuiChip-deleteIcon': {
+                        color: 'rgba(237,237,237,0.9)',
+                      },
+                    }}
+                    label={data}
+                    onDelete={() => {
+                      handleDelete(key, data);
+                    }}
+                    deleteIcon={
+                      isEdit ? (
+                        <Cancel sx={{ backgroundClip: 'red' }} />
+                      ) : (
+                        <span />
+                      )
+                    }
+                  />
+                ))}
+                {isEdit && (
+                  <AddCircle
+                    style={{ color: '009054' }}
+                    onClick={() => setPopupState(key)}
+                  />
+                )}
+                {/* {popupState === key && <Popup category={key} />} */}
+                {popupState === key && (
+                  <Popup
+                    category={key}
+                    setPopupState={setPopupState}
+                    setCurItem={setCurItem}
+                  />
+                )}
+              </Box>
+            );
+          },
         )}
         <Box
           sx={{
@@ -275,14 +365,20 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                 InputProps={{ style: { fontSize: '16px' } }}
                 id="standard-basic"
                 variant="standard"
-                defaultValue={item.modifications}
+                onChange={(e) => {
+                  setCurItem((prevItem) => ({
+                    ...prevItem,
+                    modifications: e.target.value,
+                  }));
+                }}
+                defaultValue={curItem.modifications}
               />
             ) : (
-              <span style={{ width: '500px' }}>{item.modifications}</span>
+              <span style={{ width: '500px' }}>{curItem.modifications}</span>
             )}
           </Typography>
         </Box>
-        {item.link !== '' && (
+        {curItem.link !== '' && (
           <div>
             <Box
               sx={{
@@ -294,14 +390,14 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             >
               <Typography>
                 <strong>Link: </strong>
-                <Link href={item.link}>{item.link}</Link>
+                <Link href={curItem.link}>{curItem.link}</Link>
               </Typography>
             </Box>
-            {item.link.includes('youtube') && (
+            {curItem.link.includes('youtube') && (
               <iframe
                 width="640"
                 height="480"
-                src={`https://www.youtube.com/embed/${item.link
+                src={`https://www.youtube.com/embed/${curItem.link
                   .split('=')
                   .at(-1)}`}
                 frameBorder="0"

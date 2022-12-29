@@ -5,6 +5,7 @@
  * in a table and allows users to expand and delete hierarchies.
  */
 import { Button } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
 import HierarchyListItem from '../components/HierarchyListItem';
 
 import { useData } from '../util/api';
@@ -41,6 +42,7 @@ function HierarchyPage() {
         margin: 'auto',
       }}
     >
+      <Toolbar />
       <div style={{ width: '100%' }}>
         <h1 style={{ fontSize: '42px', fontWeight: 'bold' }}>Hierarchies</h1>
       </div>
