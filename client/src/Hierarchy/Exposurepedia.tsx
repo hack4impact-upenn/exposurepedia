@@ -20,6 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ExposureItemTable } from '../components/ExposureItemTable';
 import HierarchyDropdown from './HierarchyDropdown';
 import Filtering from './Filtering';
+import Filtering2 from './Filtering2';
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
@@ -126,7 +127,7 @@ function Exposurepedia() {
     <div>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <Filtering />
+        <Filtering2 />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <div
