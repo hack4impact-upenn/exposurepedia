@@ -76,7 +76,7 @@ export default function NavBar() {
     setValue(newValue);
   };
   // TODO: Change back to !data?.error
-  return data?.error ? (
+  return !data?.error ? (
     <AppBar
       position="fixed"
       sx={{
