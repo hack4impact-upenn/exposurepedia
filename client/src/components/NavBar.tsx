@@ -75,7 +75,8 @@ export default function NavBar() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  return !data?.error ? (
+  // TODO: Change back to !data?.error
+  return data?.error ? (
     <AppBar
       position="fixed"
       sx={{

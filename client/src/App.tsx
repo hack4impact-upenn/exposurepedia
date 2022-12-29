@@ -59,7 +59,8 @@ function App() {
                     />
                   </Route>
                   {/* Routes accessed only if user is authenticated */}
-                  <Route element={<ProtectedRoutesWrapper />}>
+                  {/* TODO: Change back to ProtectedRoutesWrapper */}
+                  <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
                     <Route
                       path="/submitresources"
