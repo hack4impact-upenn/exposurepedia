@@ -2,8 +2,9 @@ import React from 'react';
 import InvertedPrimaryButton from './buttons/InvertedPrimaryButton';
 
 interface HierarchyListItemProps {
-  name: string;
-  date: string;
+  id: string;
+  title: string;
+  updatedAt: string;
   index: number;
 }
 
@@ -54,8 +55,14 @@ const styles = {
 };
 
 function HierarchyListItem(props: HierarchyListItemProps) {
-  const { name, date, index } = props;
-  const total = 'Hierarchy '.concat(index.toString(), ': ', name, ' - ', date);
+  const { title, updatedAt, index, id } = props;
+  const total = 'Hierarchy '.concat(
+    index.toString(),
+    ': ',
+    title,
+    ' - ',
+    updatedAt,
+  );
 
   return (
     <div style={styles.container}>
