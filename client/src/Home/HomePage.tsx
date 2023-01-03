@@ -69,7 +69,7 @@ function HomePage() {
     }
   };
 
-  const message = `Welcome to the Boilerplate, ${user.firstName} ${user.lastName}!`;
+  const message = `Welcome to Exposurepedia, ${user.firstName} ${user.lastName}!`;
   return (
     <ScreenGrid>
       <Typography variant="h2">{message}</Typography>
