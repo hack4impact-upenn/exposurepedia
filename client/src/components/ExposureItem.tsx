@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   TextField,
+  Toolbar,
 } from '@mui/material';
 import {
   Cancel,
@@ -71,6 +72,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
 
   return (
     <div>
+      <Toolbar />
       {isApprove && (
         <div
           style={{
@@ -186,6 +188,8 @@ export default function ExposureItem({ item }: ExposureItemProps) {
           flexDirection: 'column',
           padding: '1rem',
           margin: '1rem',
+          border: '1px solid #e9e9e9',
+          borderRadius: '16px',
         }}
       >
         <Box
@@ -252,6 +256,8 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                     maxWidth: '200px',
                     borderColor: 'green',
                     color: 'green',
+                    textTransform: 'none',
+                    marginTop: '10px',
                   }}
                   onClick={() => saveChanges()}
                 >
@@ -260,7 +266,13 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                 </Button>
                 <Button
                   variant="outlined"
-                  sx={{ maxWidth: '200x', borderColor: 'gray', color: 'gray' }}
+                  sx={{
+                    maxWidth: '200x',
+                    borderColor: 'gray',
+                    color: 'gray',
+                    marginTop: '10px',
+                    textTransform: 'none',
+                  }}
                   onClick={() => cancelChanges()}
                 >
                   <span style={{ marginRight: '5px' }}>Cancel Changes</span>
@@ -270,7 +282,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             ) : (
               <Button
                 variant="outlined"
-                sx={{ maxWidth: '140px' }}
+                sx={{ maxWidth: '140px', marginTop: '10px' }}
                 onClick={() => setIsEdit(true)}
               >
                 <span style={{ marginRight: '5px' }}>Edit Item</span>

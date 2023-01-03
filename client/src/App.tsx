@@ -28,6 +28,7 @@ import Exposurepedia from './Hierarchy/Exposurepedia';
 import SubmitResourcePage from './SubmitResource/SubmitResourcePage';
 import ExposureItem from './components/ExposureItem';
 import NavBar from './components/NavBar';
+import ContactPage from './Contact/ContactPage';
 
 function App() {
   return (
@@ -39,14 +40,11 @@ function App() {
             <ThemeProvider theme={theme}>
               <CssBaseline>
                 <Routes>
+                  <Route path="/contact" element={<ContactPage />} />
                   {/* Routes accessed only if user is not authenticated */}
                   <Route element={<UnauthenticatedRoutesWrapper />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route
-                      path="/submit-resource"
-                      element={<SubmitResourcePage />}
-                    />
                     <Route
                       path="/verify-account/:token"
                       element={<VerifyAccountPage />}
@@ -61,8 +59,13 @@ function App() {
                     />
                   </Route>
                   {/* Routes accessed only if user is authenticated */}
+                  {/* TODO: Change back to ProtectedRoutesWrapper */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     <Route path="/home" element={<HomePage />} />
+                    <Route
+                      path="/submitresources"
+                      element={<SubmitResourcePage />}
+                    />
                     <Route path="/exposurepedia" element={<Exposurepedia />} />
                     <Route
                       path="/exposureitem"
@@ -99,7 +102,10 @@ function App() {
                   <Route
                     path="/"
                     element={
-                      <DynamicRedirect unAuthPath="/login" authPath="/home" />
+                      <DynamicRedirect
+                        unAuthPath="/login"
+                        authPath="/exposurepedia"
+                      />
                     }
                   />
 

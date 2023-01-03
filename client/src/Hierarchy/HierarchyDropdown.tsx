@@ -51,9 +51,10 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
       <p
         style={{
           fontSize: '1.0rem',
-          marginBottom: '10px',
-          marginLeft: '10px',
           textAlign: 'left',
+          width: '80%',
+          margin: '0px auto',
+          padding: '0px',
         }}
       >
         Check exposure items to add them to a hierarchy.
@@ -61,16 +62,19 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
       <div
         style={{
           display: 'flex',
+          flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: '0px',
+          width: '80%',
+          margin: '10px auto',
         }}
       >
-        <FormControl sx={{ m: 1, width: 800 }}>
-          <InputLabel id="demo-multiple-checkbox-label">
+        <FormControl sx={{ m: 1, width: 700 }}>
+          <InputLabel size="small" id="demo-multiple-checkbox-label">
             Select Hierarchies
           </InputLabel>
           <Select
+            size="small"
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
@@ -90,7 +94,7 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
           </Select>
         </FormControl>
         {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-        <PrimaryButton variant="contained" onClick={() => {}}>
+        <PrimaryButton variant="contained" size="small" sx={{ width: '30%' }}>
           Add ({count}) Items
         </PrimaryButton>
       </div>

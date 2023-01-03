@@ -82,4 +82,34 @@ const emailAccessDenial = async (email: string) => {
   await SGmail.send(mailSettings);
 };
 
-export { emailVerificationLink, emailResetPasswordLink, emailAccessDenial };
+/**
+ * Sends an email to us for contact page
+ * @param name The name of the user
+ * @param email The email of the user
+ * @param message The message the user wants to send to us
+ */
+const emailForContact = async (
+  name: string,
+  email: string,
+  message: string,
+) => {
+  const mailSettings: MailDataRequired = {
+    from: {
+      email: process.env.SENDGRID_EMAIL_ADDRESS || 'missing@mail.com',
+      name,
+    },
+    replyTo: email,
+    to: 'katherine.wang@hack4impact.org',
+    subject: `${name} contacted us!`,
+    html: `<p>${message}</p>`,
+  };
+  // Send the email and propogate the error up if one exists
+  await SGmail.send(mailSettings);
+};
+
+export {
+  emailVerificationLink,
+  emailResetPasswordLink,
+  emailAccessDenial,
+  emailForContact,
+};

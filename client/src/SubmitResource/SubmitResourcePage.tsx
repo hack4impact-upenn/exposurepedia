@@ -19,6 +19,7 @@ import {
   Checkbox,
   FormGroup,
   Autocomplete,
+  Toolbar,
 } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import FormCol from '../components/form/FormCol';
@@ -225,6 +226,7 @@ function SubmitResourcePage() {
         marginRight: '100px',
       }}
     >
+      <Toolbar />
       <h2 style={{ fontSize: '50px', fontWeight: 'bold' }}>
         Submit New Resource
       </h2>
