@@ -14,7 +14,7 @@ const styles = {
     borderColor: 'rgb(112, 112, 112)',
     borderRadius: '20px',
     display: 'flex',
-    width: '90%',
+    width: '100%',
     justifyContent: 'space-between',
     fontFamily: 'Roboto',
     marginBottom: '20px',
@@ -22,14 +22,15 @@ const styles = {
   },
   containerLeft: {
     display: 'flex',
-    alignItems: 'center',
+    'flex-direction': 'column',
+    alignItems: 'flex-start',
     justifyContent: 'space-around',
     marginRight: 40,
   },
   header: {
-    marginLeft: '20px',
     fontSize: '20px',
-    fontWeight: 'bold',
+    padding: '0',
+    margin: '0',
   },
   subheader: {
     fontSize: '29px',
@@ -51,16 +52,37 @@ const styles = {
   button: {
     padding: '5px 20px',
   },
+  date: {
+    color: 'gray',
+    fontSize: '16px',
+    padding: '0',
+    margin: '0',
+  },
+  index: {
+    fontSize: '20px',
+    padding: '0',
+    margin: '0',
+    marginRight: '8px',
+  },
+  title: {
+    display: 'flex',
+    'flex-direction': 'row',
+    alignItems: 'flex-start',
+    padding: '12px 20px',
+  },
 };
 
 function HierarchyListItem(props: HierarchyListItemProps) {
   const { name, date, index } = props;
-  const total = 'Hierarchy '.concat(index.toString(), ': ', name, ' - ', date);
 
   return (
     <div style={styles.container}>
-      <div style={styles.containerLeft}>
-        <p style={styles.header}>{total}</p>
+      <div style={styles.title}>
+        <p style={styles.index}>({index + 1})</p>
+        <div style={styles.containerLeft}>
+          <p style={styles.header}>{name}</p>
+          <p style={styles.date}>{date}</p>
+        </div>
       </div>
       <div style={styles.containerRight}>
         <InvertedPrimaryButton variant="outlined" style={styles.button}>
