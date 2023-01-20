@@ -8,6 +8,10 @@ import { Button, Grid, Typography } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import HierarchyListItem from '../components/HierarchyListItem';
 
+import { useData } from '../util/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
+
 const styles = {
   button: {
     padding: '8px 15px',
@@ -24,8 +28,20 @@ const hierarchyList = [
   { name: 'Fear of Being Misunderstood', date: '2021-01-01' },
   { name: 'Social Anxiety', date: '2021-01-01' },
 ];
+export interface HierarchyListItem {
+  id: string;
+  title: string;
+  updated_at: string;
+  index: number;
+}
 
 function HierarchyPage() {
+  const user = useAppSelector(selectUser);
+
+  const hierarchies = useData('hierarchy/635af65babcb6dabb12ed65e');
+
+  console.log(hierarchies);
+
   return (
     <Grid
       container
@@ -61,12 +77,12 @@ function HierarchyPage() {
           overflow="auto"
           paddingRight="12px"
         >
-          {hierarchyList.map((hierarchy) => (
+          {hierarchies?.data?.map((hierarchy: HierarchyListItem) => (
             <HierarchyListItem
-              key={hierarchy.name}
-              index={hierarchyList.indexOf(hierarchy)}
-              name={hierarchy.name}
-              date={hierarchy.date}
+              key={hierarchy.title}
+              index={hierarchies?.data.indexOf(hierarchy)}
+              name={hierarchy.title}
+              date={hierarchy.updated_at}
             />
           ))}
         </Grid>
