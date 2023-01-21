@@ -87,6 +87,18 @@ async function postData(url: string, data = {}) {
   const response = await resolve(axios.post(`${URLPREFIX}/${url}`, data));
   return response;
 }
+
+/**
+ * A function which makes a patch request to the server when given a url and an optional body and returns the response data after it is resolved by the {@link resolve} function.
+ * @param url - a string representing the url to make the request to. The format should be 'router/endpoint'
+ * @param data - an optional object containing the data in json format to send to the server. Default is an empty object
+ * @returns the response from the server after being resolved by the {@link resolve} function
+ */
+async function patchData(url: string, data = {}) {
+  const response = await resolve(axios.patch(`${URLPREFIX}/${url}`, data));
+  return response;
+}
+
 /**
  * A function which makes a put request to the server when given a url and an optional body and returns the response data after it is resolved by the {@link resolve} function.
  * @param url - a string representing the url to make the request to. The format should be 'router/endpoint'
@@ -109,4 +121,4 @@ async function deleteData(url: string, data = {}) {
   return response;
 }
 
-export { getData, putData, deleteData, postData, useData };
+export { getData, putData, patchData, deleteData, postData, useData };

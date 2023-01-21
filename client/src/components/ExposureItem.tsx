@@ -20,6 +20,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { useLocation } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
 import Popup from './Popup';
+import { useData } from '../util/api';
 
 interface ExposureItemProps {
   item: Item;
@@ -43,6 +44,10 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   const [curItem, setCurItem] = useState(item);
   const [savedItem, setSavedItem] = useState(item);
   const location = useLocation();
+  // console.log('location: ', location.state.key);
+  const usedItem = useData(`exposure/${location.state.key}`);
+  // setCurItem(usedItem?.data);
+  // console.log(usedItem);
   const { isApprove, isBroken } = location.state;
   console.log(isApprove);
   console.log(isBroken);
