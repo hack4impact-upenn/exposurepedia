@@ -6,9 +6,11 @@
  */
 import { Button, Grid, Typography } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
+import { useEffect, useState } from 'react';
+import AddHierarchyPopup from '../components/AddHierarchyPopup';
 import HierarchyListItem from '../components/HierarchyListItem';
 
-import { useData } from '../util/api';
+import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
@@ -37,10 +39,19 @@ export interface HierarchyListItem {
 
 function HierarchyPage() {
   const user = useAppSelector(selectUser);
+  const emp: any = [];
+  const [hierarchies, setHierarchies] = useState(emp);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const hierarchies = useData('hierarchy/635af65babcb6dabb12ed65e');
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData('hierarchy/635af65babcb6dabb12ed65e');
+      setHierarchies(res?.data);
+    };
 
-  console.log(hierarchies);
+    fetchData();
+  }, []);
 
   return (
     <Grid
@@ -77,12 +88,16 @@ function HierarchyPage() {
           overflow="auto"
           paddingRight="12px"
         >
-          {hierarchies?.data?.map((hierarchy: HierarchyListItem) => (
+          {hierarchies?.map((hierarchy: HierarchyListItem) => (
             <HierarchyListItem
               key={hierarchy.title}
-              index={hierarchies?.data.indexOf(hierarchy)}
+              index={hierarchies?.indexOf(hierarchy)}
               name={hierarchy.title}
-              date={hierarchy.updated_at}
+              date={new Date(hierarchy.updated_at).toLocaleDateString([], {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
             />
           ))}
         </Grid>
@@ -93,9 +108,25 @@ function HierarchyPage() {
           spacing={0}
           marginBottom="20px"
         >
-          <Button variant="contained" style={styles.button}>
+          <Button
+            variant="contained"
+            style={styles.button}
+            onClick={() => {
+              setIsPopupOpen(true);
+            }}
+          >
             Add New Hierarchy
           </Button>
+          {isPopupOpen && (
+            <AddHierarchyPopup
+              addToHierarchies={(h) => {
+                const temp = hierarchies;
+                temp.push(h);
+                setHierarchies(temp);
+              }}
+              setPopupState={(v: any) => setIsPopupOpen(v)}
+            />
+          )}
         </Grid>
       </Grid>
     </Grid>
