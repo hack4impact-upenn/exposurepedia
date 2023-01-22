@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
+import { updateItem } from './apis/ExposureApi';
 import Popup from './Popup';
 import { useData } from '../util/api';
 
@@ -54,6 +55,23 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   const saveChanges = () => {
     setIsEdit(false);
     setSavedItem(curItem);
+    const isAdultAppropriate = curItem.maturity.includes('Adult friendly');
+    const isChildAppropriate = curItem.maturity.includes('Child friendly');
+    const isLinkBroken = false; // update this
+    const id = location.state.key; // update this
+    updateItem(
+      id,
+      curItem.title,
+      curItem.disorder,
+      curItem.format,
+      curItem.interventionType,
+      isAdultAppropriate,
+      isChildAppropriate,
+      isLinkBroken,
+      curItem.keywords,
+      curItem.modifications,
+      curItem.link,
+    );
     console.log('saved!');
   };
 
@@ -234,7 +252,11 @@ export default function ExposureItem({ item }: ExposureItemProps) {
             {liked ? (
               <Favorite
                 style={{ color: 'CF0C0C' }}
-                onClick={() => setLiked((prevLiked) => !prevLiked)}
+                onClick={() => {
+                  // update number of likes here
+                  // updateItem()
+                  setLiked((prevLiked) => !prevLiked);
+                }}
               />
             ) : (
               <FavoriteBorder
