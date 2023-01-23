@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import {
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -12,6 +13,8 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
+  Toolbar,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles, createStyles } from '@mui/styles';
@@ -31,12 +34,16 @@ import { useNavigate } from 'react-router-dom';
  */
 interface TableProps {
   rows: TRow[];
+  setRows: (r: any) => void;
   columns: TColumn[];
 }
 
 interface RowProps {
   row: TRow;
   columns: TColumn[];
+  index: number;
+  updateRowItems: (a: TRow) => void;
+  updateItem: (r: TRow, oldI: number, index: number) => void;
 }
 
 /**
@@ -68,7 +75,7 @@ interface TRow {
  * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
-function Row({ row, columns }: RowProps) {
+function Row({ row, columns, index, updateItem, updateRowItems }: RowProps) {
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const useStyles = makeStyles(() => ({
@@ -79,28 +86,60 @@ function Row({ row, columns }: RowProps) {
     },
   }));
   const classes = useStyles();
-
-  console.log(row);
   return (
     <TableRow hover tabIndex={-1} key={`${row.key}TR`}>
-      {columns.map((column) => {
-        const value = row[column.id];
-        console.log(value);
-        if (value === null || value === undefined) {
-          return null;
-        }
-        return (
-          <TableCell
-            className={classes.tableRow}
-            key={column.id + row.key}
-            align={column.align || 'left'}
+      <TableCell
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '800px',
+          margin: '0px 5px',
+          alignItems: 'center',
+        }}
+      >
+        <span style={{ marginRight: '5%' }}>{index + 1}</span>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '90%',
+          }}
+        >
+          <span>{row.itemName}</span>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '14.2%',
+              justifyContent: 'space-between',
+            }}
           >
-            {value}
-          </TableCell>
-        );
-      })}
-      <TableCell style={{ width: '30px' }}>
-        <DeleteIcon />
+            <TextField
+              variant="standard"
+              sx={{ width: '50px' }}
+              size="small"
+              value={row.suds}
+              inputProps={{ min: 0, style: { textAlign: 'center' } }}
+              onChange={(event) => {
+                updateItem(
+                  {
+                    key: `${row.no}`,
+                    no: row.no,
+                    itemName: row.itemName,
+                    suds: event.target.value,
+                  },
+                  row.no,
+                  index,
+                );
+              }}
+            />
+            <IconButton onClick={() => updateRowItems(row)}>
+              <DeleteIcon sx={{ color: '#474747' }} />
+            </IconButton>
+          </div>
+        </div>
       </TableCell>
     </TableRow>
   );
@@ -118,8 +157,17 @@ const reorder = (list: TRow[], startIndex: number, endIndex: number) => {
  * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
-function ViewHierarchyTable({ rows, columns }: TableProps) {
-  const [rowItems, setRowItems] = useState(rows);
+function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
+  const updateRowItems = (row: TRow) => {
+    setRows(rows.filter((it) => it.key !== row.key));
+  };
+
+  const updateItem = (row: TRow, oldI: number, index: number) => {
+    let temp = rows;
+    temp = temp.filter((it) => it.no !== oldI);
+    temp.splice(index, 0, row);
+    setRows(temp);
+  };
 
   function onDragEnd(result: DropResult) {
     // dropped outside the list
@@ -128,41 +176,55 @@ function ViewHierarchyTable({ rows, columns }: TableProps) {
     }
 
     const reorderedItems: TRow[] = reorder(
-      rowItems,
+      rows,
       result.source.index,
       result.destination.index,
     );
 
-    setRowItems(reorderedItems);
+    setRows(reorderedItems);
   }
 
   return (
     <Paper
       sx={{
-        width: '80%',
+        width: '800px',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         margin: 'auto',
+        overflow: 'hidden',
       }}
     >
-      <TableContainer sx={{ flexGrow: 1, flexShrink: 1 }}>
+      <TableContainer sx={{ flexGrow: 1, flexShrink: 1, maxHeight: 400 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align || 'left'}
-                  style={{ minWidth: column.minWidth }}
+              <TableCell>
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
                 >
-                  {column.label}
-                </TableCell>
-              ))}
+                  <span style={{ marginRight: '5%' }}>No.</span>
+                  <div
+                    style={{
+                      width: '80%',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span>Item Name</span>
+                    <span>SUDS</span>
+                  </div>
+                </div>
+              </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody sx={{ width: '100%' }}>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
@@ -172,25 +234,34 @@ function ViewHierarchyTable({ rows, columns }: TableProps) {
                     style={{ width: '100%' }}
                     // style={getListStyle(snapshot.isDraggingOver)}
                   >
-                    {rowItems.map((row, index) => (
+                    {rows.map((row, index) => (
                       <Draggable
                         key={row.key}
                         draggableId={row.key}
                         index={index}
                       >
-                        {(p, s) => (
-                          <div
-                            ref={p.innerRef}
-                            {...p.draggableProps}
-                            {...p.dragHandleProps}
-                            // style={getItemStyle(
-                            //   snapshot.isDragging,
-                            //   provided.draggableProps.style,
-                            // )}
-                          >
-                            <Row row={row} key={row.key} columns={columns} />
-                          </div>
-                        )}
+                        {(p, s) => {
+                          return (
+                            <div
+                              ref={p.innerRef}
+                              {...p.draggableProps}
+                              {...p.dragHandleProps}
+                              // style={getItemStyle(
+                              //   snapshot.isDragging,
+                              //   provided.draggableProps.style,
+                              // )}
+                            >
+                              <Row
+                                updateRowItems={(r) => updateRowItems(r)}
+                                updateItem={updateItem}
+                                row={row}
+                                index={index}
+                                key={row.key}
+                                columns={columns}
+                              />
+                            </div>
+                          );
+                        }}
                       </Draggable>
                     ))}
                     {provided.placeholder}

@@ -4,20 +4,32 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import { Button } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
+import { useEffect, useState } from 'react';
+import AddHierarchyPopup from '../components/AddHierarchyPopup';
 import HierarchyListItem from '../components/HierarchyListItem';
 
-import { useData } from '../util/api';
+import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
 const styles = {
   button: {
     padding: '8px 15px',
+    'text-transform': 'none',
+    fontSize: '16px',
   },
 };
 
+const hierarchyList = [
+  { name: 'Obsessive Compulsive Disorder (OCD)', date: '2021-01-01' },
+  { name: 'Generalized Anxiety', date: '2021-01-01' },
+  { name: 'Social Anxiety', date: '2021-01-01' },
+  { name: 'Body Dismorphia', date: '2021-01-01' },
+  { name: 'Fear of Being Misunderstood', date: '2021-01-01' },
+  { name: 'Social Anxiety', date: '2021-01-01' },
+];
 export interface HierarchyListItem {
   id: string;
   title: string;
@@ -27,39 +39,97 @@ export interface HierarchyListItem {
 
 function HierarchyPage() {
   const user = useAppSelector(selectUser);
+  const emp: any = [];
+  const [hierarchies, setHierarchies] = useState(emp);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const hierarchies = useData('hierarchy/635af65babcb6dabb12ed65e');
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData('hierarchy/635af65babcb6dabb12ed65e');
+      setHierarchies(res?.data);
+    };
 
-  console.log(hierarchies);
+    fetchData();
+  }, []);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '60%',
-        margin: 'auto',
-      }}
+    <Grid
+      container
+      xs={12}
+      justifyContent="center"
+      alignItems="center"
+      flexDirection="column"
     >
-      <Toolbar />
-      <div style={{ width: '100%' }}>
-        <h1 style={{ fontSize: '42px', fontWeight: 'bold' }}>Hierarchies</h1>
-      </div>
-      {hierarchies?.data?.map((hierarchy_: HierarchyListItem) => (
-        <HierarchyListItem
-          key={hierarchy_.title}
-          index={hierarchies?.data.indexOf(hierarchy_)}
-          title={hierarchy_.title}
-          updatedAt={hierarchy_.updated_at}
-          id={hierarchy_.id}
-        />
-      ))}
-
-      <Button variant="contained" style={styles.button}>
-        Add New Hierarchy
-      </Button>
-    </div>
+      <Grid
+        item
+        container
+        direction="column"
+        rowSpacing={3}
+        xs={8}
+        sm={6}
+        fontSize="0.75em"
+      >
+        <Toolbar />
+        <Grid item container justifyContent="flex-start" spacing={0}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 'bold',
+            }}
+          >
+            Hierarchies
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          width="1"
+          maxHeight="70vh"
+          overflow="auto"
+          paddingRight="12px"
+        >
+          {hierarchies?.map((hierarchy: HierarchyListItem) => (
+            <HierarchyListItem
+              key={hierarchy.title}
+              index={hierarchies?.indexOf(hierarchy)}
+              name={hierarchy.title}
+              date={new Date(hierarchy.updated_at).toLocaleDateString([], {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            />
+          ))}
+        </Grid>
+        <Grid
+          item
+          container
+          justifyContent="center"
+          spacing={0}
+          marginBottom="20px"
+        >
+          <Button
+            variant="contained"
+            style={styles.button}
+            onClick={() => {
+              setIsPopupOpen(true);
+            }}
+          >
+            Add New Hierarchy
+          </Button>
+          {isPopupOpen && (
+            <AddHierarchyPopup
+              addToHierarchies={(h) => {
+                const temp = hierarchies;
+                temp.push(h);
+                setHierarchies(temp);
+              }}
+              setPopupState={(v: any) => setIsPopupOpen(v)}
+            />
+          )}
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }
 

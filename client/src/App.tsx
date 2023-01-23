@@ -57,11 +57,12 @@ function App() {
                       path="/reset-password/:token"
                       element={<ResetPasswordPage />}
                     />
+                    {/* <Route path="/home" element={<HomePage />} /> */}
                   </Route>
                   {/* Routes accessed only if user is authenticated */}
                   {/* TODO: Change back to ProtectedRoutesWrapper */}
                   <Route element={<ProtectedRoutesWrapper />}>
-                    <Route path="/home" element={<HomePage />} />
+                    {/* <Route path="/home" element={<HomePage />} /> */}
                     <Route
                       path="/submitresources"
                       element={<SubmitResourcePage />}
@@ -99,13 +100,11 @@ function App() {
                   </Route>
 
                   {/* Route which redirects to a different page depending on if the user is an authenticated or not by utilizing the DynamicRedirect component */}
+                  <Route path="/home" element={<HomePage />} />
                   <Route
                     path="/"
                     element={
-                      <DynamicRedirect
-                        unAuthPath="/login"
-                        authPath="/exposurepedia"
-                      />
+                      <DynamicRedirect unAuthPath="/home" authPath="/home" />
                     }
                   />
 
