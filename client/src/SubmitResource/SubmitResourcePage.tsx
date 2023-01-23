@@ -61,7 +61,7 @@ function SubmitResourcePage() {
     keywords: '',
     modifications: '',
     link: '',
-    formats: Object.fromEntries(interventionTypes.map((i) => [i, false])),
+    formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
     interventions: Object.fromEntries(interventionTypes.map((i) => [i, false])),
     maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
   };
@@ -77,7 +77,7 @@ function SubmitResourcePage() {
   const setFormatCheckboxValues = (option: string, value: string) => {
     setValueState((prevState) => ({
       ...prevState,
-      interventions: {
+      formats: {
         ...prevState.formats,
         [option]: !prevState.formats[option],
       },
@@ -239,9 +239,26 @@ function SubmitResourcePage() {
     'Car Accident': [],
   };
 
-  // const submitResource = () => {
-  //   submit(values.title, values.disorder, values.formats,
-  // }
+  const submitResource = () => {
+    const formats = Object.keys(values.formats).filter(
+      (format) => values.formats[format],
+    );
+    const interventions = Object.keys(values.interventions).filter(
+      (intervention) => values.interventions[intervention],
+    );
+
+    submit(
+      values.title,
+      [values.disorder],
+      formats,
+      interventions,
+      values.maturity.Child,
+      values.maturity.Adult,
+      [values.keywords],
+      values.modifications,
+      values.link,
+    );
+  };
 
   return (
     <div
@@ -436,7 +453,9 @@ function SubmitResourcePage() {
         </FormRow>
       </FormCol>
       {/* onSubmit={() => submitResource()} */}
-      <PrimaryButton style={styles.button}>Submit</PrimaryButton>
+      <PrimaryButton style={styles.button} onClick={() => submitResource()}>
+        Submit
+      </PrimaryButton>
       {/* </div> */}
     </div>
   );
