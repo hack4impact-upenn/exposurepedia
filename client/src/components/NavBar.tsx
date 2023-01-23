@@ -75,7 +75,6 @@ export default function NavBar() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  // TODO: Change back to !data?.error
   return !data?.error ? (
     <AppBar
       position="fixed"
@@ -111,10 +110,13 @@ export default function NavBar() {
   ) : (
     <Box
       sx={{
-        width: '99%',
+        width: '100%',
         display: 'flex',
         justifyContent: 'space-between',
-        margin: 'auto',
+        margin: '0px',
+        boxShadow: '2px 2px 2px rgba(0,0,0,0.3)',
+        padding: '5px 2px',
+        zIndex: 10,
       }}
     >
       <Tabs
@@ -129,7 +131,11 @@ export default function NavBar() {
         <NavTab label="Contact Us" href="/contact" />
       </Tabs>
       {location.pathname !== '/login' && (
-        <Button component={Link} to="/login">
+        <Button
+          sx={{ textTransform: 'none', fontSize: '16px' }}
+          component={Link}
+          to="/login"
+        >
           Login
         </Button>
       )}

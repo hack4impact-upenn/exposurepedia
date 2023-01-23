@@ -1044,9 +1044,9 @@
     regenerator-runtime "^0.13.11"
 
 "@babel/runtime@^7.15.4", "@babel/runtime@^7.20.6":
-  version "7.20.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.20.7.tgz#fcb41a5a70550e04a7b708037c7c32f7f356d8fd"
-  integrity sha512-UF0tvkUtxwAgZ5W/KrkHf0Rn0fdnLDU9ScxBrEVNUprE/MzirjK4MJUX1/BVDv00Sv8cljtukVK1aky++X1SjQ==
+  version "7.20.13"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.20.13.tgz#7055ab8a7cff2b8f6058bf6ae45ff84ad2aded4b"
+  integrity sha512-gt3PKXs0DBoL9xCvOIIZ2NEqAGZqHjAnmVbfQtB620V0uReIQutpel14KcneZuer7UioY8ALKZ7iocavvzTNFA==
   dependencies:
     regenerator-runtime "^0.13.11"
 
@@ -2687,6 +2687,13 @@
   version "13.1.3"
   resolved "https://registry.yarnpkg.com/@types/react-beautiful-dnd/-/react-beautiful-dnd-13.1.3.tgz#9812f6086c4b77ce08c83120788d92084a26db0f"
   integrity sha512-BNdmvONKtsrZq3AGrujECQrIn8cDT+fZsxBLXuX3YWY/nHfZinUFx4W88eS0rkcXzuLbXpKOsu/1WCMPMLEpPg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-csv@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@types/react-csv/-/react-csv-1.1.3.tgz#b93a33314d71e8e3c5c41b20d19a2912c6e642c8"
+  integrity sha512-dkEdyRvRpygSnNg4cyzYWSUjukIQ5lAtXJwc7BqyUfzww/Cv2dcAFGYd+sWTFpGiDNZMVPp6vVPLcAPvJID8Kg==
   dependencies:
     "@types/react" "*"
 
@@ -9570,6 +9577,11 @@ react-beautiful-dnd@^13.1.1:
     redux "^4.0.4"
     use-memo-one "^1.1.1"
 
+react-csv@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-2.2.2.tgz#5bbf0d72a846412221a14880f294da9d6def9bfb"
+  integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
+
 react-dev-utils@^12.0.1:
   version "12.0.1"
   resolved "https://registry.npmjs.org/react-dev-utils/-/react-dev-utils-12.0.1.tgz"
@@ -10637,10 +10649,10 @@ style-loader@^3.3.1:
   resolved "https://registry.npmjs.org/style-loader/-/style-loader-3.3.1.tgz"
   integrity sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==
 
-styled-components@^5.3.3, styled-components@^5.3.5:
-  version "5.3.6"
-  resolved "https://registry.npmjs.org/styled-components/-/styled-components-5.3.6.tgz"
-  integrity sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==
+"styled-components@^5.3.3", "styled-components@^5.3.5", "styled-components@>= 2":
+  "integrity" "sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg=="
+  "resolved" "https://registry.npmjs.org/styled-components/-/styled-components-5.3.6.tgz"
+  "version" "5.3.6"
   dependencies:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/traverse" "^7.4.5"

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { TextField, Grid, Typography, Alert, Snackbar } from '@mui/material';
+import {
+  TextField,
+  Grid,
+  Typography,
+  Alert,
+  Snackbar,
+  Toolbar,
+} from '@mui/material';
 import FormCol from '../components/form/FormCol';
 import {
   emailRegex,
@@ -15,7 +22,7 @@ import { contact } from './api';
  */
 function ContactPage() {
   const bottomTextValue =
-    'Note: If you have a resource you would like added to The Exposurepedia, please use the Submit Resources form, not this page! If you would like to provide feedback about the site or contact us for another reason, please do so below. Name and email address are not required, but we cannot respond unless you provide an email. If you would like to be contacted once the resources have been made public, note that below, and be sure to include your email.';
+    'Note: If you have a resource you would like added to The Exposurepedia, please use the Submit Resources form, not this page! If you would like to provide feedback about the site or contact us for another reason, please do so above. Name and email address are not required, but we cannot respond unless you provide an email. If you would like to be contacted once the resources have been made public, note that above, and be sure to include your email.';
 
   // Default values for state
   const defaultValues = {
@@ -134,9 +141,12 @@ function ContactPage() {
         sm={6}
         fontSize="0.75em"
       >
+        <Toolbar />
         <FormCol>
-          <Grid item container justifyContent="center" spacing={0}>
-            <Typography variant="h2">{title}</Typography>
+          <Grid item container justifyContent="flex-start" spacing={0}>
+            <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
+              {title}
+            </Typography>
           </Grid>
           <Grid item width="1">
             <TextField
@@ -169,17 +179,18 @@ function ContactPage() {
               fullWidth
               error={showError.message}
               helperText={errorMessage.message}
+              rows={5}
               size="small"
               type="text"
+              multiline
               required
               label="Message"
               value={values.message}
               onChange={(e) => setValue('message', e.target.value)}
             />
           </Grid>
-          <Grid item container justifyContent="center">
+          <Grid item container justifyContent="flex-end" sx={{ width: '100%' }}>
             <PrimaryButton
-              fullWidth
               type="submit"
               variant="contained"
               color="primary"

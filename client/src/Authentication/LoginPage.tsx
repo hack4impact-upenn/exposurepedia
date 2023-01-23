@@ -12,6 +12,16 @@ import AlertDialog from '../components/AlertDialog';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import ScreenGrid from '../components/ScreenGrid';
 
+const styles = {
+  container: {
+    height: '90vh',
+    display: 'flex',
+    'margin-top': '10vh',
+    'justify-content': 'center',
+    margin: 'center',
+  },
+};
+
 /**
  * A page allowing users to input their email and password to login. The default
  * starting page of the application
@@ -130,12 +140,12 @@ function LoginPage() {
   }
 
   return (
-    <ScreenGrid>
+    <div style={styles.container}>
       <FormGrid>
         <FormCol>
           <Grid item container justifyContent="center">
             <Typography variant="h2" textAlign="center">
-              Welcome to Boilerplate
+              Login
             </Typography>
           </Grid>
           <Grid item width="1">
@@ -195,7 +205,7 @@ function LoginPage() {
           onClose={handleAlertClose}
         />
       </Grid>
-    </ScreenGrid>
+    </div>
   );
 }
 

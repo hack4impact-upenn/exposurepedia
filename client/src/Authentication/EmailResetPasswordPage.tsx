@@ -9,6 +9,16 @@ import PrimaryButton from '../components/buttons/PrimaryButton';
 import ScreenGrid from '../components/ScreenGrid';
 import FormCol from '../components/form/FormCol';
 
+const styles = {
+  container: {
+    height: '90vh',
+    display: 'flex',
+    'margin-top': '10vh',
+    'justify-content': 'center',
+    margin: 'center',
+  },
+};
+
 /**
  * A page allowing users to input their email so a reset password link can be
  * sent to them
@@ -82,7 +92,7 @@ function EmailResetPasswordPage() {
 
   const title = "Let's get you back";
   return (
-    <ScreenGrid>
+    <div style={styles.container}>
       <FormGrid>
         <FormCol>
           <Grid item container justifyContent="center">
@@ -127,7 +137,7 @@ function EmailResetPasswordPage() {
           onClose={handleAlertClose}
         />
       </Grid>
-    </ScreenGrid>
+    </div>
   );
 }
 
