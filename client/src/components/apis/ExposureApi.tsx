@@ -33,8 +33,22 @@ async function updateItem(
     link,
   });
   if (res.error) return false;
+  console.log(res);
+  return true;
+}
+
+/**
+ * Approves the exposure item with the given id.
+ * @returns true if successful, false otherwise
+ */
+async function approveItem(exposureID: string) {
+  const res = await patchData(`exposure/${exposureID}`, {
+    isApproved: true,
+  });
+  if (res.error) return false;
+  console.log(res);
   return true;
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { updateItem };
+export { updateItem, approveItem };

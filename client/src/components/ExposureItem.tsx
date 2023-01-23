@@ -19,7 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
-import { updateItem } from './apis/ExposureApi';
+import { updateItem, approveItem } from './apis/ExposureApi';
 import Popup from './Popup';
 import { useData } from '../util/api';
 
@@ -46,7 +46,9 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   const [savedItem, setSavedItem] = useState(item);
   const location = useLocation();
   // console.log('location: ', location.state.key);
-  const usedItem = useData(`exposure/${location.state.key}`);
+  // const usedItem = useData(`exposure/${location.state.key}`)?.data;
+  // const usedItem = useData(`exposure/639016c1bab195ab7f580ab1`)?.data;
+  // console.log(usedItem);
   // setCurItem(usedItem?.data);
   // console.log(usedItem);
   const { isApprove, isBroken } = location.state;
@@ -60,7 +62,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
     const isLinkBroken = false; // update this
     const id = location.state.key; // update this
     updateItem(
-      id,
+      '63ce265336575b1ca30e0ac1',
       curItem.title,
       curItem.disorder,
       curItem.format,
@@ -73,6 +75,10 @@ export default function ExposureItem({ item }: ExposureItemProps) {
       curItem.link,
     );
     console.log('saved!');
+  };
+
+  const approve = () => {
+    approveItem('63ce265336575b1ca30e0ac1');
   };
 
   const cancelChanges = () => {
@@ -123,7 +129,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
                 borderRadius: '10px',
                 background: 'rgba(255,255,255,0.8)',
               }}
-              onClick={() => saveChanges()}
+              onClick={() => approve()}
             >
               Approve Resource
             </Button>
