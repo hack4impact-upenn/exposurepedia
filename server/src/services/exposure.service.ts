@@ -45,6 +45,15 @@ const getFilteredExposureItemsFromDB = async (
 ) => {
   const match: any = {};
 
+  let maxCount = 20;
+  if (
+    disorders.length === 0 &&
+    formats.length === 0 &&
+    interventionTypes.length === 0 &&
+    keywords.length === 0
+  ) {
+    maxCount = 500;
+  }
   if (disorders.length !== 0) {
     match.disorders = { $elemMatch: { name: { $in: disorders } } };
   }
@@ -129,7 +138,7 @@ const getFilteredExposureItemsFromDB = async (
           },
         ],
   )
-    .limit(20)
+    .limit(maxCount)
     .exec();
 };
 
@@ -140,6 +149,7 @@ const getFilteredExposureItemsFromDB = async (
  */
 const getExposureItemFromDB = async (id: string) => {
   const item = await ExposureItem.findById(id).exec();
+
   return item;
 };
 

@@ -97,6 +97,8 @@ function Exposurepedia() {
         isChildAppropriate,
         keywords,
       });
+      console.log('THIS IS THE RESPONSE OF THE DATA');
+      console.log(response);
       setRows(response.data);
     };
     fetchData();

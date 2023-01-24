@@ -69,23 +69,9 @@ function App() {
                     />
                     <Route path="/exposurepedia" element={<Exposurepedia />} />
                     <Route
-                      path="/exposureitem"
-                      element={
-                        <ExposureItem
-                          item={{
-                            title:
-                              'Leave electrical appliances plugged in/lights on (e.g., coffee maker)',
-                            disorder: ['OCD', 'Checking', 'Causing Harm'],
-                            format: ['Idea'],
-                            interventionType: ['In-vivo'],
-                            maturity: ['Adult friendly'],
-                            keywords: ['disaster', 'fire', 'home'],
-                            modifications:
-                              'Increase amount of time; Leave room/house',
-                            link: '',
-                          }}
-                        />
-                      }
+                      path="/exposureitem/:id"
+                      element={<ExposureItem />}
+                      key={window.location.pathname}
                     />
                     <Route path="/hierarchies" element={<HierarchiesPage />} />
                     <Route

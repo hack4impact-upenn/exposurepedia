@@ -88,7 +88,8 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
     setChecked(event.target.checked);
   };
   const handleNavigate = () => {
-    navigate('/exposureitem', {
+    // eslint-disable-next-line no-underscore-dangle
+    navigate(`/exposureitem/${row._id}`, {
       state: {
         key: row.key,
         title: row.name,

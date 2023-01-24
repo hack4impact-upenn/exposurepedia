@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Chip,
@@ -17,11 +17,11 @@ import {
 } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
 import { updateItem, approveItem } from './apis/ExposureApi';
 import Popup from './Popup';
-import { useData } from '../util/api';
+import { getData, useData } from '../util/api';
 
 interface ExposureItemProps {
   item: Item;
@@ -38,14 +38,34 @@ interface Item {
   link: string;
 }
 
-export default function ExposureItem({ item }: ExposureItemProps) {
+export default function ExposureItem() {
   const [isEdit, setIsEdit] = useState(false);
   const [liked, setLiked] = useState(false);
   const [popupState, setPopupState] = useState('');
-  const [curItem, setCurItem] = useState(item);
-  const [savedItem, setSavedItem] = useState(item);
+  const emp: string[] = [];
+  const [curItem, setCurItem] = useState({
+    title: '',
+    disorder: emp,
+    format: emp,
+    interventionType: emp,
+    maturity: emp,
+    keywords: emp,
+    modifications: '',
+    link: '',
+  });
+  const [savedItem, setSavedItem] = useState({
+    title: '',
+    disorder: emp,
+    format: emp,
+    interventionType: emp,
+    maturity: emp,
+    keywords: emp,
+    modifications: '',
+    link: '',
+  });
+  const { id } = useParams();
   const location = useLocation();
-  console.log(location.state);
+
   // console.log('location: ', location.state.key);
   // const usedItem = useData(`exposure/${location.state.key}`)?.data;
   // const usedItem = useData(`exposure/639016c1bab195ab7f580ab1`)?.data;
@@ -53,17 +73,27 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   // setCurItem(usedItem?.data);
   // console.log(usedItem);
   const { isApprove, isBroken } = location.state;
-  console.log(isApprove);
-  console.log(isBroken);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData(`exposure/${id}`);
+      console.log('RESULTSSSS');
+      console.log(res);
+      setCurItem(res?.data);
+      setSavedItem(res?.data);
+    };
+
+    fetchData();
+  });
+
   const saveChanges = () => {
     setIsEdit(false);
     setSavedItem(curItem);
     const isAdultAppropriate = curItem.maturity.includes('Adult friendly');
     const isChildAppropriate = curItem.maturity.includes('Child friendly');
     const isLinkBroken = false; // update this
-    const id = location.state.key; // update this
     updateItem(
-      '63ce265336575b1ca30e0ac1',
+      id || '',
       curItem.title,
       curItem.disorder,
       curItem.format,
@@ -79,7 +109,7 @@ export default function ExposureItem({ item }: ExposureItemProps) {
   };
 
   const approve = () => {
-    approveItem('63ce265336575b1ca30e0ac1');
+    approveItem(id || '');
   };
 
   const cancelChanges = () => {
