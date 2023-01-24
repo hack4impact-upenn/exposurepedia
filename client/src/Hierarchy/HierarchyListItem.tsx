@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import InvertedPrimaryButton from './buttons/InvertedPrimaryButton';
+import InvertedPrimaryButton from '../components/buttons/InvertedPrimaryButton';
 
 interface HierarchyListItemProps {
   id: string;

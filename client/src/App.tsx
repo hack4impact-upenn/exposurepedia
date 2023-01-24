@@ -24,9 +24,9 @@ import HierarchiesPage from './Hierarchy/HierarchiesPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import ApproveResourcesPage from './AdminControls/ApproveResourcesPage';
 import FixLinksPage from './AdminControls/FixLinksPage';
-import Exposurepedia from './Hierarchy/Exposurepedia';
+import Exposurepedia from './Exposurepedia/ExposurepediaPage';
 import SubmitResourcePage from './SubmitResource/SubmitResourcePage';
-import ExposureItem from './components/ExposureItem';
+import ExposureItem from './ExposureItem/ExposureItemPage';
 import NavBar from './components/NavBar';
 import ContactPage from './Contact/ContactPage';
 

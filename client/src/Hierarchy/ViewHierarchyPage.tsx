@@ -21,7 +21,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { ViewHierarchyTable } from '../components/ViewHierarchyTable';
+import { ViewHierarchyTable } from './ViewHierarchyTable';
 
 interface TRow {
   key: string;

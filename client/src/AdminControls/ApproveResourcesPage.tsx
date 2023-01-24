@@ -1,6 +1,6 @@
 import { Toolbar } from '@mui/material';
 import React from 'react';
-import { ExposureItemTable } from '../components/ExposureItemTable';
+import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
 
 const ApproveResourcesPage = function () {
   const rows = [

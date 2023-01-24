@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
-import { ExposureItemTable } from '../components/ExposureItemTable';
-import HierarchyDropdown from './HierarchyDropdown';
+import { ExposureItemTable } from './ExposureItemTable';
+import HierarchyDropdown from '../Hierarchy/HierarchyDropdown';
 import Filtering2 from './Filtering2';
 import { getData, postData } from '../util/api';
 import filterOptionsData from './filterdata';
@@ -96,6 +96,8 @@ function Exposurepedia() {
         isAdultAppropriate,
         isChildAppropriate,
         keywords,
+        isLinkBroken: false,
+        isApproved: true,
       });
       setRows(response.data);
     };
