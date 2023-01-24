@@ -10,12 +10,15 @@ import {
   deleteExposureItemByID,
   postExposureItemInDB,
   getAllExposureItems,
+  getFilteredExposureItems,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
 const router = express.Router();
 
 router.get('/', isAuthenticated, getAllExposureItems);
+
+router.post('/filter', isAuthenticated, getFilteredExposureItems);
 
 /**
  * A GET route to get exposure item with the specified id.

@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import data from './filterdata';
 import SearchComponent from './SearchComponent';
 
-function Filtering2() {
+function Filtering2({ filterOptions, setFilterOptions }: any) {
   const emptyArr: string[] = [];
   const emptyObj: { [key: string]: string[] } = {
     Disorder: emptyArr,
@@ -30,7 +30,6 @@ function Filtering2() {
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);
   const [tags, setTags] = useState(emptyObj);
-  const [filterOptions, setFilterOptions] = useState(data);
   const [change, setChange] = useState(false);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState(emptyArr);
