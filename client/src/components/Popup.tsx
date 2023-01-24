@@ -14,10 +14,12 @@ import React, { useState } from 'react';
 import PrimaryButton from './buttons/PrimaryButton';
 
 interface Item {
-  title: string;
-  disorder: string[];
-  format: string[];
-  interventionType: string[];
+  name: string;
+  disorders: string[];
+  formats: string[];
+  interventionTypes: string[];
+  isChildAppropriate: boolean;
+  isAdultAppropriate: boolean;
   maturity: string[];
   keywords: string[];
   modifications: string;
@@ -49,6 +51,7 @@ const disorders: string[] = [
   'Dyspraxia',
   'Dysphasia',
   'Dysphagia',
+  'Fish',
 ];
 
 function Popup({ category, setPopupState, setCurItem }: PopupProps) {

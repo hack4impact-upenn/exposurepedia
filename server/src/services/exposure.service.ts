@@ -186,7 +186,7 @@ const getExposureItemFromDB = async (id: string) => {
     },
     {
       $lookup: {
-        from: 'interventionTypes',
+        from: 'intervention types',
         localField: 'interventionTypes',
         foreignField: '_id',
         as: 'interventionTypes',

@@ -19,47 +19,58 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
+import { format } from 'path';
 import { updateItem, approveItem } from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
 import { getData, useData } from '../util/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
 
 interface ExposureItemProps {
   item: Item;
 }
 
 interface Item {
-  title: string;
-  disorder: string[];
-  format: string[];
-  interventionType: string[];
-  maturity: string[];
+  name: string;
+  disorders: string[];
+  formats: string[];
+  interventionTypes: string[];
+  isChildAppropriate: boolean;
+  isAdultAppropriate: boolean;
   keywords: string[];
   modifications: string;
+  maturity: string[];
   link: string;
 }
 
 export default function ExposureItem() {
   const [isEdit, setIsEdit] = useState(false);
   const [liked, setLiked] = useState(false);
+  const authData = useData('auth/authstatus');
+  const self = useAppSelector(selectUser);
   const [popupState, setPopupState] = useState('');
   const emp: string[] = [];
   const [curItem, setCurItem] = useState({
-    title: '',
-    disorder: emp,
-    format: emp,
-    interventionType: emp,
-    maturity: emp,
+    name: '',
+    disorders: emp,
+    formats: emp,
+    interventionTypes: emp,
+    isChildAppropriate: false,
+    isAdultAppropriate: false,
     keywords: emp,
+    maturity: emp,
     modifications: '',
     link: '',
   });
   const [savedItem, setSavedItem] = useState({
-    title: '',
-    disorder: emp,
-    format: emp,
-    interventionType: emp,
-    maturity: emp,
+    name: '',
+    disorders: emp,
+    formats: emp,
+    interventionTypes: emp,
+    isChildAppropriate: false,
+    isAdultAppropriate: false,
     keywords: emp,
+    maturity: emp,
     modifications: '',
     link: '',
   });
@@ -77,25 +88,53 @@ export default function ExposureItem() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
+      const maturity = [];
+      const disorders = res?.data[0].disorders.map((it: any) => it.name);
+      const formats = res?.data[0].formats.map((it: any) => it.name);
+      const interventionTypes = res?.data[0].interventionTypes.map(
+        (it: any) => it.name,
+      );
+      const keywords = res?.data[0].keywords.map((it: any) => it.name);
+      console.log('EHIOFSD');
       console.log(res);
-      setCurItem(res?.data);
-      setSavedItem(res?.data);
+      if (res?.data[0].isAdultAppropriate) {
+        maturity.push({ name: 'Adult' });
+      }
+      if (res?.data[0].isChildAppropriate) {
+        maturity.push({ name: 'Child' });
+      }
+      setCurItem({
+        ...res?.data[0],
+        disorders,
+        formats,
+        interventionTypes,
+        keywords,
+        maturity,
+      });
+      setSavedItem({
+        ...res?.data[0],
+        disorders,
+        formats,
+        interventionTypes,
+        keywords,
+        maturity,
+      });
     };
     fetchData();
-  });
+  }, [id]);
 
   const saveChanges = () => {
     setIsEdit(false);
     setSavedItem(curItem);
-    const isAdultAppropriate = curItem.maturity.includes('Adult friendly');
-    const isChildAppropriate = curItem.maturity.includes('Child friendly');
+    const { isAdultAppropriate } = curItem;
+    const { isChildAppropriate } = curItem;
     const isLinkBroken = false; // update this
     updateItem(
       id || '',
-      curItem.title,
-      curItem.disorder,
-      curItem.format,
-      curItem.interventionType,
+      curItem.name,
+      curItem.disorders,
+      curItem.formats,
+      curItem.interventionTypes,
       isAdultAppropriate,
       isChildAppropriate,
       isLinkBroken,
@@ -121,10 +160,12 @@ export default function ExposureItem() {
     setCurItem((prevItem) => {
       const usedKey = key as keyof Item;
       const newsavedItem: Item = JSON.parse(JSON.stringify(prevItem));
-      const changedArray: string[] = prevItem[usedKey] as string[];
+      const changedArray: any[] = prevItem[usedKey] as any[];
       return {
         ...newsavedItem,
-        [usedKey]: changedArray.filter((changedItem) => changedItem !== data),
+        [usedKey]: changedArray.filter(
+          (changedItem) => changedItem.name !== data && changedItem !== data,
+        ),
       };
     });
   };
@@ -276,13 +317,13 @@ export default function ExposureItem() {
                   onChange={(e) => {
                     setCurItem((prevItem) => ({
                       ...prevItem,
-                      title: e.target.value,
+                      name: e.target.value,
                     }));
                   }}
-                  defaultValue={curItem.title}
+                  defaultValue={curItem.name}
                 />
               ) : (
-                <strong style={{ width: '600px' }}>{curItem.title}</strong>
+                <strong style={{ width: '600px' }}>{curItem.name}</strong>
               )}
             </Typography>
             {liked ? (
@@ -311,65 +352,74 @@ export default function ExposureItem() {
             }}
           >
             <Typography>Last updated October 1st 2022</Typography>
-            {isEdit ? (
-              <>
+            {self.admin &&
+              (isEdit ? (
+                <>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      maxWidth: '200px',
+                      borderColor: 'green',
+                      color: 'green',
+                      textTransform: 'none',
+                      marginTop: '10px',
+                    }}
+                    onClick={() => saveChanges()}
+                  >
+                    <span style={{ marginRight: '5px' }}>Save Changes</span>
+                    <CheckIcon />
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      maxWidth: '200x',
+                      borderColor: 'gray',
+                      color: 'gray',
+                      marginTop: '10px',
+                      textTransform: 'none',
+                    }}
+                    onClick={() => cancelChanges()}
+                  >
+                    <span style={{ marginRight: '5px' }}>Cancel Changes</span>
+                    <CheckIcon />
+                  </Button>
+                </>
+              ) : (
                 <Button
                   variant="outlined"
-                  sx={{
-                    maxWidth: '200px',
-                    borderColor: 'green',
-                    color: 'green',
-                    textTransform: 'none',
-                    marginTop: '10px',
-                  }}
-                  onClick={() => saveChanges()}
+                  sx={{ maxWidth: '140px', marginTop: '10px' }}
+                  onClick={() => setIsEdit(true)}
                 >
-                  <span style={{ marginRight: '5px' }}>Save Changes</span>
-                  <CheckIcon />
+                  <span style={{ marginRight: '5px' }}>Edit Item</span>
+                  <EditIcon />
                 </Button>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    maxWidth: '200x',
-                    borderColor: 'gray',
-                    color: 'gray',
-                    marginTop: '10px',
-                    textTransform: 'none',
-                  }}
-                  onClick={() => cancelChanges()}
-                >
-                  <span style={{ marginRight: '5px' }}>Cancel Changes</span>
-                  <CheckIcon />
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="outlined"
-                sx={{ maxWidth: '140px', marginTop: '10px' }}
-                onClick={() => setIsEdit(true)}
-              >
-                <span style={{ marginRight: '5px' }}>Edit Item</span>
-                <EditIcon />
-              </Button>
-            )}
+              ))}
           </Box>
         </Box>
 
-        {['disorder', 'format', 'interventionType', 'maturity', 'keywords'].map(
-          (key) => {
-            return (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  my: '0.25rem',
-                }}
-              >
-                <Typography>
-                  <strong>{key[0].toUpperCase() + key.substring(1)}:</strong>{' '}
-                </Typography>
-                {Object(curItem)[key].map((data: string) => (
+        {[
+          'disorders',
+          'formats',
+          'interventionTypes',
+          'maturity',
+          'keywords',
+        ].map((key) => {
+          return (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                my: '0.25rem',
+              }}
+            >
+              <Typography>
+                <strong>
+                  {key.charAt(0).toUpperCase() + key.substring(1)}:
+                </strong>{' '}
+              </Typography>
+              {Object(curItem)[key] &&
+                Object(curItem)[key].map((data: any) => (
                   <Chip
                     sx={{
                       mx: '0.25rem',
@@ -381,9 +431,9 @@ export default function ExposureItem() {
                         color: 'rgba(237,237,237,0.9)',
                       },
                     }}
-                    label={data}
+                    label={data.name || data}
                     onDelete={() => {
-                      handleDelete(key, data);
+                      handleDelete(key, data.name || data);
                     }}
                     deleteIcon={
                       isEdit ? (
@@ -394,24 +444,23 @@ export default function ExposureItem() {
                     }
                   />
                 ))}
-                {isEdit && (
-                  <AddCircle
-                    style={{ color: '009054' }}
-                    onClick={() => setPopupState(key)}
-                  />
-                )}
-                {/* {popupState === key && <Popup category={key} />} */}
-                {popupState === key && (
-                  <Popup
-                    category={key}
-                    setPopupState={setPopupState}
-                    setCurItem={setCurItem}
-                  />
-                )}
-              </Box>
-            );
-          },
-        )}
+              {isEdit && (
+                <AddCircle
+                  style={{ color: '009054' }}
+                  onClick={() => setPopupState(key)}
+                />
+              )}
+              {/* {popupState === key && <Popup category={key} />} */}
+              {popupState === key && (
+                <Popup
+                  category={key}
+                  setPopupState={setPopupState}
+                  setCurItem={setCurItem}
+                />
+              )}
+            </Box>
+          );
+        })}
         <Box
           sx={{
             display: 'flex',
@@ -456,7 +505,7 @@ export default function ExposureItem() {
                 <Link href={curItem.link}>{curItem.link}</Link>
               </Typography>
             </Box>
-            {curItem.link.includes('youtube') && (
+            {curItem.link && curItem.link.includes('youtube') && (
               <iframe
                 width="640"
                 height="480"
