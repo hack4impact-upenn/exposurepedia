@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import {
   Button,
   TextField,
@@ -10,7 +11,8 @@ import {
   Box,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getData } from '../util/api';
 import PrimaryButton from './buttons/PrimaryButton';
 
 interface Item {
@@ -32,30 +34,32 @@ interface PopupProps {
   setCurItem: React.Dispatch<React.SetStateAction<Item>>;
 }
 
-const disorders: string[] = [
-  'Body Dysmorphia',
-  'Bulimia',
-  'Anorexia',
-  'BDD',
-  'Depression',
-  'Anxiety',
-  'OCD',
-  'PTSD',
-  'Schizophrenia',
-  'Bipolar',
-  'ADHD',
-  'Autism',
-  'Dyslexia',
-  'Dyscalculia',
-  'Dysgraphia',
-  'Dyspraxia',
-  'Dysphasia',
-  'Dysphagia',
-  'Fish',
-];
-
 function Popup({ category, setPopupState, setCurItem }: PopupProps) {
   const [val, setVal] = useState('');
+  const [values, setValues] = useState({
+    disorders: [],
+    formats: [],
+    interventionTypes: [],
+    maturity: ['Child', 'Adult'],
+    keywords: [],
+  });
+  useEffect(() => {
+    const fetch = async () => {
+      const disorders = (await getData('exposure/disorders')).data;
+      const formats = (await getData('exposure/formats')).data;
+      const interventionTypes = (await getData('exposure/interventionTypes'))
+        .data;
+      const keywords = (await getData('exposure/keywords')).data;
+      setValues({
+        disorders,
+        formats,
+        interventionTypes,
+        maturity: ['Child', 'Adult'],
+        keywords,
+      });
+    };
+    fetch();
+  });
   return (
     // eslint-disable-next-line @typescript-eslint/no-empty-function, react/jsx-boolean-value
     <Dialog
@@ -87,7 +91,19 @@ function Popup({ category, setPopupState, setCurItem }: PopupProps) {
             <Autocomplete
               id="combo-box-demo"
               onChange={(event, value) => setVal(value || '')}
-              options={disorders}
+              options={
+                category === 'disorders'
+                  ? values.disorders
+                  : category === 'formats'
+                  ? values.formats
+                  : category === 'interventionTypes'
+                  ? values.interventionTypes
+                  : category === 'maturity'
+                  ? values.maturity
+                  : category === 'keywords'
+                  ? values.keywords
+                  : []
+              }
               sx={{ width: 300 }}
               renderInput={(params) => (
                 <TextField
