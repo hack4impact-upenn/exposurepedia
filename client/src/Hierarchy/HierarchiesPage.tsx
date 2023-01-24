@@ -9,7 +9,6 @@ import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
 import AddHierarchyPopup from '../components/AddHierarchyPopup';
 import HierarchyListItem from '../components/HierarchyListItem';
-
 import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
@@ -39,6 +38,7 @@ export interface HierarchyListItem {
 
 function HierarchyPage() {
   const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
   const emp: any = [];
   const [hierarchies, setHierarchies] = useState(emp);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -46,12 +46,12 @@ function HierarchyPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getData('hierarchy/635af65babcb6dabb12ed65e');
+      const res = await getData(`hierarchy/${email}`);
       setHierarchies(res?.data);
     };
 
     fetchData();
-  }, []);
+  }, [email]);
 
   return (
     <Grid

@@ -12,6 +12,7 @@ import {
   deleteHierarchy,
   getHierarchyById,
 } from '../services/hierarchy.service';
+import { getUserByEmail } from '../services/user.service';
 import StatusCode from '../util/statusCode';
 
 /**
@@ -23,7 +24,10 @@ const getUserHierarchies = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { user_id } = req.params;
+  const { user_email } = req.params;
+  const user = await getUserByEmail(user_email);
+  const user_id = user?.id;
+
   if (!user_id) {
     next(ApiError.missingFields(['user_id']));
     return;
@@ -61,19 +65,18 @@ const createHierarchyHandler = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { user_id, title, description } = req.body;
+  const { email, title, description } = req.body;
+  const user = await getUserByEmail(email);
+  const user_id = user?.id;
 
   if (!user_id || !title || !description) {
     next(ApiError.missingFields(['user_id', 'title', 'description']));
     return;
   }
 
+  const userId = user_id;
   try {
-    await createHierarchy(
-      req.body.user_id,
-      req.body.title,
-      req.body.description,
-    );
+    await createHierarchy(userId, req.body.title, req.body.description);
     res.sendStatus(StatusCode.CREATED);
   } catch (err) {
     next(ApiError.internal('Unable to create hierarchy'));
