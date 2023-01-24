@@ -1,4 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/react-in-jsx-scope,@typescript-eslint/ban-types */
 
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import { ExposureItemTable } from '../components/ExposureItemTable';
 import HierarchyDropdown from './HierarchyDropdown';
 import Filtering2 from './Filtering2';
-import { getData } from '../util/api';
+import { getData, postData } from '../util/api';
+import filterOptionsData from './filterdata';
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
@@ -28,6 +29,7 @@ interface Item {
 function Exposurepedia() {
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
+  const [filterOptions, setFilterOptions] = useState(filterOptionsData);
 
   const hierarchies = [
     'Hierarchy 0',
@@ -50,19 +52,65 @@ function Exposurepedia() {
     { id: 'createdAt', label: 'Date', minWidth: 100 },
   ];
 
+  const sfo = (o: any) => {
+    setFilterOptions({
+      ...o,
+    });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getData('exposure');
+      const f = (arr: any) => {
+        const emp: Object[] = [];
+        const flattenedObj = Object.assign(
+          {},
+          ...(function flatten(o: any): Object[] {
+            return emp.concat(
+              ...Object.keys(o).map((k) => {
+                if (typeof o[k] === 'boolean' && o[k]) {
+                  return { [k]: 'temp' };
+                }
+                return [...flatten(o[k])];
+              }),
+            );
+          })(arr),
+        );
+        return Object.keys(flattenedObj);
+      };
+
+      const disorders = f(filterOptions.Disorder);
+
+      const formats = f(filterOptions.Format);
+
+      const interventionTypes = f(filterOptions['Intervention Type']);
+
+      const isAdultAppropriate = filterOptions.Maturity.Adults;
+      const isChildAppropriate = filterOptions.Maturity.Children;
+
+      const keywords = f(filterOptions.Keyword);
+
+      const response = await postData('exposure/filter', {
+        disorders,
+        formats,
+        interventionTypes,
+        isAdultAppropriate,
+        isChildAppropriate,
+        keywords,
+      });
       setRows(response.data);
     };
     fetchData();
-  }, []);
+  }, [
+    filterOptions,
+    filterOptions.Maturity.Adults,
+    filterOptions.Maturity.Children,
+  ]);
 
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <Filtering2 />
+        <Filtering2 filterOptions={filterOptions} setFilterOptions={sfo} />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <div

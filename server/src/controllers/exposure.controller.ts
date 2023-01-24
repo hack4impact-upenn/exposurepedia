@@ -10,6 +10,7 @@ import {
   deleteExposureItemFromDB,
   createExposureItemInDB,
   getAllExposureItemsFromDB,
+  getFilteredExposureItemsFromDB,
 } from '../services/exposure.service';
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
@@ -32,6 +33,59 @@ const getAllExposureItems = async (
     .catch(() => {
       next(ApiError.internal('Unable to retrieve exposure items'));
     });
+};
+
+/**
+ * Gets exposure items by given filter. Upon success, returns the items with 200 OK status code.
+ */
+const getFilteredExposureItems = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const {
+    disorders,
+    formats,
+    interventionTypes,
+    isAdultAppropriate,
+    isChildAppropriate,
+    keywords,
+  } = req.body;
+
+  if (
+    disorders == null ||
+    formats == null ||
+    interventionTypes == null ||
+    isAdultAppropriate == null ||
+    isChildAppropriate == null ||
+    keywords == null
+  ) {
+    next(
+      ApiError.missingFields([
+        'disorders',
+        'formats',
+        'interventionTypes',
+        'isAdultAppropriate',
+        'isChildAppropriate',
+        'keywords',
+      ]),
+    );
+    return;
+  }
+
+  try {
+    const exposureItems = await getFilteredExposureItemsFromDB(
+      disorders,
+      formats,
+      interventionTypes,
+      isAdultAppropriate,
+      isChildAppropriate,
+      keywords,
+    );
+    res.status(StatusCode.OK).json(exposureItems);
+  } catch (err) {
+    next(ApiError.internal('Unable to retrieve exposure items'));
+  }
 };
 
 /**
@@ -204,6 +258,7 @@ const deleteExposureItemByID = async (
 export {
   getAllExposureItems,
   getExposureItemByID,
+  getFilteredExposureItems,
   patchExposureItemByID,
   deleteExposureItemByID,
   postExposureItemInDB,
