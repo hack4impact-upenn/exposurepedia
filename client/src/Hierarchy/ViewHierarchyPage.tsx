@@ -9,8 +9,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import { CSVDownload, CSVLink } from 'react-csv';
-import { Mode } from '@mui/icons-material';
+import { CSVLink } from 'react-csv';
 import {
   Button,
   FormControl,
@@ -20,14 +19,10 @@ import {
   Toolbar,
   IconButton,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { ViewHierarchyTable } from './ViewHierarchyTable';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateHierarchy } from './api';
-import { ViewHierarchyTable } from '../components/ViewHierarchyTable';
 import { getData } from '../util/api';
-import { useAppSelector } from '../util/redux/hooks';
-import { selectUser } from '../util/redux/userSlice';
 
 interface TRow {
   key: string;
@@ -39,7 +34,6 @@ interface TRow {
 
 const ViewHierarchyPage = function () {
   const navigate = useNavigate();
-<<<<<<< HEAD
   const [rows, setRows] = useState([
     {
       key: '1',
@@ -60,7 +54,6 @@ const ViewHierarchyPage = function () {
       suds: '',
     },
   ]);
-=======
   const location = useLocation();
   const [rows, setRows] = useState<
     { key: string; no: number; itemName: string; suds: string }[]
@@ -96,7 +89,6 @@ const ViewHierarchyPage = function () {
 
     fetchData();
   }, [email, location.state.id]);
->>>>>>> 02f7cb32a18a36d2656dc7d1946edcde8ef0ab88
   const [textValue, setTextValue] = useState('');
   const update = () => {
     if (textValue) {
