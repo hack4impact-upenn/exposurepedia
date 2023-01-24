@@ -1,45 +1,159 @@
 /**
- * Specifies the middleware and controller functions to call for each route
- * relating to admin users.
+ * All the functions for interacting with exposure data in the MongoDB database
  */
-import express from 'express';
-import { isAdmin } from '../controllers/admin.middleware';
-import {
-  getExposureItemByID,
-  patchExposureItemByID,
-  deleteExposureItemByID,
-  postExposureItemInDB,
-  getAllExposureItems,
-} from '../controllers/exposure.controller';
-import { isAuthenticated } from '../controllers/auth.middleware';
-
-const router = express.Router();
-
-router.get('/', isAuthenticated, getAllExposureItems);
+import { Disorder } from '../models/disorder.model';
+import { ExposureItem } from '../models/exposureItem.model';
+import { Format } from '../models/format.model';
+import { InterventionType } from '../models/interventionType.model';
+import { Keyword } from '../models/keyword.model';
 
 /**
- * A GET route to get exposure item with the specified id.
+ * Get all exposure items from the DB
+ * @returns All exposure items in the DB
  */
-router.get('/:exposure_id', isAuthenticated, getExposureItemByID);
+const getAllExposureItemsFromDB = async () => {
+  return ExposureItem.aggregate([
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'disorders',
+        foreignField: '_id',
+        as: 'disorders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'formats',
+        localField: 'formats',
+        foreignField: '_id',
+        as: 'formats',
+      },
+    },
+  ]).exec();
+};
 
 /**
- * A POST route to create exposure items.
+ * Gets filtered exposure items from DB
  */
-router.post('/', isAuthenticated, postExposureItemInDB);
+const getFilteredExposureItemsFromDB = async (
+  disorders: string[],
+  formats: string[],
+  interventionTypes: string[],
+  isAdultAppropriate: boolean,
+  isChildAppropriate: boolean,
+  keywords: string[],
+) => {
+  return ExposureItem.aggregate([
+    {
+      $match: {
+        disorders: { $elemMatch: { name: { $in: disorders } } },
+        formats: { $elemMatch: { name: { $in: formats } } },
+        interventionTypes: { $elemMatch: { name: { $in: interventionTypes } } },
+        isAdultAppropriate,
+        isChildAppropriate,
+        keywords: { $elemMatch: { name: { $in: keywords } } },
+      },
+    },
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'disorders',
+        foreignField: '_id',
+        as: 'disorders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'formats',
+        localField: 'formats',
+        foreignField: '_id',
+        as: 'formats',
+      },
+    },
+  ])
+    .limit(50)
+    .exec();
+};
 
 /**
- * A PATCH route to edit the exposure item with the specified id.
+ * Get exposure item from DB given id string.
+ * @param id The id of the exposure item
+ * @returns The item in the DB with the specified id
  */
-router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
+const getExposureItemFromDB = async (id: string) => {
+  const item = await ExposureItem.findById(id).exec();
+  return item;
+};
 
 /**
- * A DELETE route to delete the exposure item with the specified id.
+ * Creates the exposure item from the DB with the specified id
+ * @param exposureItem The new exposure item
+ * @returns the new item
  */
-router.delete(
-  '/:exposure_id',
-  isAuthenticated,
-  isAdmin,
-  deleteExposureItemByID,
-);
+const createExposureItemInDB = async (
+  name: string,
+  disorders: string[],
+  formats: string[],
+  interventionTypes: string[],
+  isAdultAppropriate: boolean,
+  isChildAppropriate: boolean,
+  keywords: string[],
+  modifications: string,
+  link: string,
+) => {
+  // updateOne does not return documents, so must update/create and then find
+  keywords.forEach(async (keyword) => {
+    await Keyword.updateOne(
+      { name: keyword },
+      { name: keyword },
+      { upsert: true },
+    ).exec();
+  });
 
-export default router;
+  const newDisorders = await Disorder.find({
+    name: { $in: disorders },
+  }).exec();
+  const newFormats = await Format.find({
+    name: { $in: formats },
+  }).exec();
+  const newInterventionTypes = await InterventionType.find({
+    name: { $in: interventionTypes },
+  }).exec();
+  const newKeywords = await Keyword.find({
+    name: { $in: keywords },
+  }).exec();
+
+  const newExposureItem = new ExposureItem({
+    name,
+    disorders: newDisorders,
+    formats: newFormats,
+    interventionTypes: newInterventionTypes,
+    isAdultAppropriate,
+    isChildAppropriate,
+    keywords: newKeywords,
+    modifications,
+    link,
+    isLinkBroken: false,
+    isApproved: false,
+  });
+  const item = await newExposureItem.save();
+  return item;
+};
+
+/**
+ * Deletes the exposure item from the DB with the specified id
+ * @param id The id of the exposure item to delete
+ * @returns The deleted exposure item
+ */
+const deleteExposureItemFromDB = async (id: string) => {
+  const item = await ExposureItem.findByIdAndDelete(id).exec();
+  return item;
+};
+
+export {
+  getAllExposureItemsFromDB,
+  getExposureItemFromDB,
+  getFilteredExposureItemsFromDB,
+  deleteExposureItemFromDB,
+  createExposureItemInDB,
+};

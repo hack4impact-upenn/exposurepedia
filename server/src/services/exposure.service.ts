@@ -33,6 +33,49 @@ const getAllExposureItemsFromDB = async () => {
 };
 
 /**
+ * Gets filtered exposure items from DB
+ */
+const getFilteredExposureItemsFromDB = async (
+  disorders: string[],
+  formats: string[],
+  interventionTypes: string[],
+  isAdultAppropriate: boolean,
+  isChildAppropriate: boolean,
+  keywords: string[],
+) => {
+  return ExposureItem.aggregate([
+    {
+      $match: {
+        disorders: { $elemMatch: { name: { $in: disorders } } },
+        formats: { $elemMatch: { name: { $in: formats } } },
+        interventionTypes: { $elemMatch: { name: { $in: interventionTypes } } },
+        isAdultAppropriate,
+        isChildAppropriate,
+        keywords: { $elemMatch: { name: { $in: keywords } } },
+      },
+    },
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'disorders',
+        foreignField: '_id',
+        as: 'disorders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'formats',
+        localField: 'formats',
+        foreignField: '_id',
+        as: 'formats',
+      },
+    },
+  ])
+    .limit(50)
+    .exec();
+};
+
+/**
  * Get exposure item from DB given id string.
  * @param id The id of the exposure item
  * @returns The item in the DB with the specified id
@@ -110,6 +153,7 @@ const deleteExposureItemFromDB = async (id: string) => {
 export {
   getAllExposureItemsFromDB,
   getExposureItemFromDB,
+  getFilteredExposureItemsFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
 };
