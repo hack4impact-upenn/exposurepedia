@@ -53,12 +53,12 @@ function Exposurepedia() {
   ];
 
   const sfo = (o: any) => {
-    console.log('hi');
-    setFilterOptions(o);
+    setFilterOptions({
+      ...o,
+    });
   };
 
   useEffect(() => {
-    console.log('based');
     const fetchData = async () => {
       const f = (arr: any) => {
         const emp: Object[] = [];
