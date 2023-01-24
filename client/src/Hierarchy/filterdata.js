@@ -85,8 +85,11 @@ const filterOptionsData = {
   },
   Format: {
     Video: false,
-    Photo: false,
+    Picture: false,
     Idea: false,
+    Script: false,
+    Reading: false,
+    Audio: false,
   },
   'Intervention Type': {
     'In Vivo': false,

@@ -4,7 +4,7 @@
  * A page only accessible to authenticated users that displays all the information
  * about a hierarchy.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
@@ -20,11 +20,8 @@ import {
   Toolbar,
   IconButton,
 } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ViewHierarchyTable } from '../components/ViewHierarchyTable';
-import { getData } from '../util/api';
-import { useAppSelector } from '../util/redux/hooks';
-import { selectUser } from '../util/redux/userSlice';
 
 interface TRow {
   key: string;
@@ -35,31 +32,27 @@ interface TRow {
 }
 
 const ViewHierarchyPage = function () {
-  const user = useAppSelector(selectUser);
-  const email = user?.email?.toLowerCase();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [rows, setRows] = useState<
-    { key: string; no: number; itemName: string; suds: string }[]
-  >([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getData(`hierarchy/${email}/${location.state.id}`);
-      const items = [];
-      res?.data?.exposure_ids?.forEach(async (id: string) => {
-        const item = await getData(`exposure/${id}`);
-        items.push({
-          key: item.data.id,
-          no: item.data.no,
-          itemName: item.name,
-          suds: item.suds,
-        });
-      });
-      setRows(items);
-    };
-
-    fetchData();
-  }, [email, location.state.id]);
+  const [rows, setRows] = useState([
+    {
+      key: '1',
+      no: 1,
+      itemName: 'Write your own obituary',
+      suds: '',
+    },
+    {
+      key: '2',
+      no: 2,
+      itemName: 'Young boy gets blood drawn',
+      suds: '',
+    },
+    {
+      key: '3',
+      no: 3,
+      itemName: 'Young girl gets a painfree shot',
+      suds: '',
+    },
+  ]);
   const [textValue, setTextValue] = useState('');
   const update = () => {
     if (textValue) {

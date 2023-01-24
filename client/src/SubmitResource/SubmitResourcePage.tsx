@@ -55,9 +55,11 @@ function SubmitResourcePage() {
   ];
   const maturityTypes = ['Child', 'Adult'];
 
+  const emp: string[] = [];
+
   const defaultValues = {
     title: '',
-    disorder: '',
+    disorder: emp,
     keywords: '',
     modifications: '',
     link: '',
@@ -67,7 +69,8 @@ function SubmitResourcePage() {
   };
   const [values, setValueState] = useState(defaultValues);
 
-  const setValue = (field: string, value: string) => {
+  const setValue = (field: string, value: any) => {
+    const temp = values.disorder;
     setValueState((prevState) => ({
       ...prevState,
       ...{ [field]: value },
@@ -249,7 +252,7 @@ function SubmitResourcePage() {
 
     submit(
       values.title,
-      [values.disorder],
+      values.disorder,
       formats,
       interventions,
       values.maturity.Child,
@@ -308,6 +311,7 @@ function SubmitResourcePage() {
               onChange={(e) => setValue('disorder', e.target.value)}
             /> */}
             <Autocomplete
+              multiple
               open={disordersOpen}
               id="combo-box-demo"
               options={disorders}
@@ -322,17 +326,21 @@ function SubmitResourcePage() {
               onChange={(event, value) => {
                 event.preventDefault();
                 event.stopPropagation();
-                if (value) {
+                if (values.disorder.includes(value[value.length - 1])) {
+                  const temp = values.disorder;
+                  temp.pop();
+                  setValue('disorder', value);
+                } else if (value) {
                   if (currLayer === 0) {
                     setValue('disorder', value);
-                    setDisorderState(masterDisorderObject[value]);
+                    setDisorderState(
+                      masterDisorderObject[value[value.length - 1]],
+                    );
                     setCurrLayer(1);
-                    console.log('new disorders: ', disorders);
                   } else if (currLayer === 1) {
                     setValue('disorder', value);
-                    setDisorderState(disordersLayer2[value]);
+                    setDisorderState(disordersLayer2[value[value.length - 1]]);
                     setCurrLayer(2);
-                    console.log('new disorders: ', disorders);
                   } else {
                     setValue('disorder', value);
                     setDisordersOpen(!disordersOpen);
