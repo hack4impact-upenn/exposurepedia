@@ -76,11 +76,11 @@ export default function ExposureItem() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getData(`exposure/${id}`);
+      // const res = await getData(`exposure/${id}`);
       console.log('RESULTSSSS');
-      console.log(res);
-      setCurItem(res?.data);
-      setSavedItem(res?.data);
+      // console.log(res);
+      // setCurItem(res?.data);
+      // setSavedItem(res?.data);
     };
 
     fetchData();
