@@ -14,10 +14,12 @@ const main = async () => {
   const app = createExpressApp(dbConnection.createSessionStore());
 
   // Instantiate a server to listen on a specified port
-  app.listen(app.get('port'), () => {
-    console.log(`Listening on port ${app.get('port')} 🚀`);
-    console.log('  Press Control-C to stop\n');
-  });
+  // app.listen(app.get('port'), () => {
+  //   console.log(`Listening on port ${app.get('port')} 🚀`);
+  //   console.log('  Press Control-C to stop\n');
+  // });
+
+  app.listen(process.env.PORT || 4000);
 };
 
 // Run the server
