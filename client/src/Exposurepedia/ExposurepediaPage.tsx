@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { ExposureItemTable } from './ExposureItemTable';
 import HierarchyDropdown from '../Hierarchy/HierarchyDropdown';
 import Filtering2 from './Filtering2';
-import { getData, postData } from '../util/api';
+import { postData } from '../util/api';
 import filterOptionsData from './filterdata';
 
 /**

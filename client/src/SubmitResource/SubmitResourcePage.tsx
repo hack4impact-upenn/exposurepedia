@@ -36,7 +36,7 @@ const styles = {
 
 function SubmitResourcePage() {
   const interventionTypes = [
-    'In vivo',
+    'In Vivo',
     'Imaginal',
     'Interoceptive',
     'Psychoeducation',

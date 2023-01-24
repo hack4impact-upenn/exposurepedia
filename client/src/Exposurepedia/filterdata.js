@@ -93,6 +93,12 @@ const filterOptionsData = {
   },
   'Intervention Type': {
     'In Vivo': false,
+    Imaginal: false,
+    Interoceptive: false,
+    Psychoeducation: false,
+    'Stimulus Control': false,
+    'Psychiatric Hospital': false,
+    'Habit Reversal Training': false,
   },
   Maturity: {
     Children: false,

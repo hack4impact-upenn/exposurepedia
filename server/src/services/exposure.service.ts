@@ -112,7 +112,7 @@ const getFilteredExposureItemsFromDB = async (
           },
           {
             $lookup: {
-              from: 'interventionTypes',
+              from: 'intervention types',
               localField: 'interventionTypes',
               foreignField: '_id',
               as: 'interventionTypes',
@@ -268,10 +268,20 @@ const deleteExposureItemFromDB = async (id: string) => {
   return item;
 };
 
+/**
+ * Gets filtered keywords
+ */
+const getFilteredKeywordsFromDB = async (query: string) => {
+  return Keyword.aggregate([
+    { $match: { name: new RegExp(query, 'i') } },
+  ]).exec();
+};
+
 export {
   getAllExposureItemsFromDB,
   getExposureItemFromDB,
   getFilteredExposureItemsFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
+  getFilteredKeywordsFromDB,
 };
