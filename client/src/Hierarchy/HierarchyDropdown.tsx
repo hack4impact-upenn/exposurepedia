@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import { Toolbar } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import { updateHierarchy } from './api';
 
@@ -47,8 +48,10 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
         flexDirection: 'column',
         justifyContent: 'left',
         textAlign: 'left',
+        marginTop: '20px',
       }}
     >
+      <Toolbar />
       <p
         style={{
           fontSize: '1.0rem',
