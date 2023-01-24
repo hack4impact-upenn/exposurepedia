@@ -46,7 +46,9 @@ const getHierarchy = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { hierarchy_id, user_id } = req.params;
+  const { hierarchy_id, user_email } = req.params;
+  const user = await getUserByEmail(user_email);
+  const user_id = user?.id;
   if (!hierarchy_id || !user_id) {
     next(ApiError.missingFields(['hierarchy_id', 'user_id']));
     return;

@@ -21,14 +21,6 @@ const styles = {
   },
 };
 
-const hierarchyList = [
-  { name: 'Obsessive Compulsive Disorder (OCD)', date: '2021-01-01' },
-  { name: 'Generalized Anxiety', date: '2021-01-01' },
-  { name: 'Social Anxiety', date: '2021-01-01' },
-  { name: 'Body Dismorphia', date: '2021-01-01' },
-  { name: 'Fear of Being Misunderstood', date: '2021-01-01' },
-  { name: 'Social Anxiety', date: '2021-01-01' },
-];
 export interface HierarchyListItem {
   id: string;
   title: string;
@@ -47,6 +39,7 @@ function HierarchyPage() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}`);
+      console.log(res);
       setHierarchies(res?.data);
     };
 
@@ -90,6 +83,7 @@ function HierarchyPage() {
         >
           {hierarchies?.map((hierarchy: HierarchyListItem) => (
             <HierarchyListItem
+              id={hierarchy.id}
               key={hierarchy.title}
               index={hierarchies?.indexOf(hierarchy)}
               name={hierarchy.title}

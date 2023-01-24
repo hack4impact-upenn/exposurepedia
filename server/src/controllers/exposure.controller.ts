@@ -27,7 +27,7 @@ const getExposureItemByID = async (
   const id = req.params.exposure_id;
   getExposureItemFromDB(id)
     .then((item) => {
-      res.sendStatus(StatusCode.OK).send(item);
+      res.status(StatusCode.OK).send(item);
     })
     .catch(() => {
       next(ApiError.internal('Unable to retrieve exposure item'));

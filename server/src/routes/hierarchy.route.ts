@@ -26,7 +26,7 @@ router.get('/:user_email', getUserHierarchies);
  * Expects user_id and hierarchy_id
  * Returns a hierarchy with fields: id, user_id, title, exposure_ids, updated_at
  */
-router.get('/:user_id/:hierarchy_id', getHierarchy);
+router.get('/:user_email/:hierarchy_id', getHierarchy);
 
 /**
  * A POST route to create a hierarchy with the fields specified from the request body.
