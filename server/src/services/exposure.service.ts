@@ -9,6 +9,34 @@ import { InterventionType } from '../models/interventionType.model';
 import { Keyword } from '../models/keyword.model';
 
 /**
+ * Get all disorder items from DB
+ */
+const getAllDisorderItemsFromDB = async () => {
+  return Disorder.distinct('name').exec();
+};
+
+/**
+ * Get all disorder items from DB
+ */
+const getAllFormatItemsFromDB = async () => {
+  return Format.distinct('name').exec();
+};
+
+/**
+ * Get all disorder items from DB
+ */
+const getAllInterventionTypeItemsFromDB = async () => {
+  return InterventionType.distinct('name').exec();
+};
+
+/**
+ * Get all disorder items from DB
+ */
+const getAllKeywordItemsFromDB = async () => {
+  return Keyword.distinct('name').exec();
+};
+
+/**
  * Get all exposure items from the DB
  * @returns All exposure items in the DB
  */
@@ -280,6 +308,10 @@ const getFilteredKeywordsFromDB = async (query: string) => {
 export {
   getAllExposureItemsFromDB,
   getExposureItemFromDB,
+  getAllDisorderItemsFromDB,
+  getAllFormatItemsFromDB,
+  getAllInterventionTypeItemsFromDB,
+  getAllKeywordItemsFromDB,
   getFilteredExposureItemsFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
