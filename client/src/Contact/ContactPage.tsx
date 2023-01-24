@@ -22,7 +22,7 @@ import { contact } from './api';
  */
 function ContactPage() {
   const bottomTextValue =
-    'Note: If you have a resource you would like added to The Exposurepedia, please use the Submit Resources form, not this page! If you would like to provide feedback about the site or contact us for another reason, please do so above. Name and email address are not required, but we cannot respond unless you provide an email. If you would like to be contacted once the resources have been made public, note that above, and be sure to include your email.';
+    'Note: If you have a resource you would like added to The Exposurepedia, please use the Submit Resources form, not this page! If you would like to provide feedback about the site or contact us for another reason, please do so above. If you would like to be contacted once the resources have been made public, note that above, and be sure to include your email.';
 
   // Default values for state
   const defaultValues = {

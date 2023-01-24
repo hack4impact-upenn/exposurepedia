@@ -85,6 +85,7 @@ function RegisterPage() {
     percentCaseload: false,
     difficulty: false,
     alert: false,
+    signed: false,
   };
   const defaultErrorMessages = {
     firstName: '',
@@ -101,11 +102,13 @@ function RegisterPage() {
     percentCaseload: '',
     difficulty: '',
     alert: '',
+    signed: '',
   };
   type ValueType = keyof typeof values;
 
   // State values and hooks
   const [values, setValueState] = useState(defaultValues);
+  const [signed, setSigned] = useState(false);
   const [showError, setShowErrorState] = useState(defaultShowErrors);
   const [errorMessage, setErrorMessageState] = useState(defaultErrorMessages);
   const [alertTitle, setAlertTitle] = useState('Error');
@@ -228,6 +231,11 @@ function RegisterPage() {
     if (values.settings.Other && !values.settingOther) {
       setErrorMessage('settingOther', InputErrorMessage.MISSING_INPUT);
       setShowError('settingOther', true);
+      isValid = false;
+    }
+    if (!signed) {
+      setErrorMessage('signed', InputErrorMessage.MISSING_INPUT);
+      setShowError('signed', true);
       isValid = false;
     }
 
@@ -565,6 +573,23 @@ function RegisterPage() {
                     (7 - Very difficult)
                   </Typography>
                 </Grid>
+              </Grid>
+              <br />
+              <Grid item width="1">
+                <FormControl error={showError.signed}>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <FormLabel>
+                      I affirm that I am a licensed psychologist, a mental
+                      health professional or a trainee in a mental health
+                      discipline.
+                    </FormLabel>
+                    <Checkbox
+                      checked={signed}
+                      onChange={() => setSigned(!signed)}
+                    />
+                  </div>
+                  <FormHelperText>{errorMessage.signed}</FormHelperText>
+                </FormControl>
               </Grid>
             </FormControl>
           </Grid>
