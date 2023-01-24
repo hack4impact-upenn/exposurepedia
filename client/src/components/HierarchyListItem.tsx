@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import InvertedPrimaryButton from './buttons/InvertedPrimaryButton';
 
 interface HierarchyListItemProps {
+  id: string;
   name: string;
   date: string;
   index: number;
@@ -74,8 +75,16 @@ const styles = {
 };
 
 function HierarchyListItem(props: HierarchyListItemProps) {
-  const { name, date, index } = props;
+  const { id, name, date, index } = props;
   const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate('/viewhierarchy', {
+      state: {
+        id,
+      },
+    });
+  };
 
   return (
     <div style={styles.container}>
@@ -90,7 +99,7 @@ function HierarchyListItem(props: HierarchyListItemProps) {
         <InvertedPrimaryButton
           variant="outlined"
           style={styles.button}
-          onClick={() => navigate('/viewhierarchy')}
+          onClick={() => handleNavigate()}
         >
           Open
         </InvertedPrimaryButton>

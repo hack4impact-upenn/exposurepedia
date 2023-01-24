@@ -24,6 +24,7 @@ import {
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import FormCol from '../components/form/FormCol';
 import FormRow from '../components/form/FormRow';
+import submit from './api';
 
 const styles = {
   button: {
@@ -43,6 +44,15 @@ function SubmitResourcePage() {
     'Psychiatric Hospital',
     'Habit Reversal Training',
   ];
+  const formatTypes = [
+    'Idea',
+    'Audio',
+    'Picture',
+    'Virtual Reality',
+    'Reading',
+    'Joke',
+    'Script',
+  ];
   const maturityTypes = ['Child', 'Adult'];
 
   const defaultValues = {
@@ -51,7 +61,7 @@ function SubmitResourcePage() {
     keywords: '',
     modifications: '',
     link: '',
-    format: '',
+    formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
     interventions: Object.fromEntries(interventionTypes.map((i) => [i, false])),
     maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
   };
@@ -61,6 +71,16 @@ function SubmitResourcePage() {
     setValueState((prevState) => ({
       ...prevState,
       ...{ [field]: value },
+    }));
+  };
+
+  const setFormatCheckboxValues = (option: string, value: string) => {
+    setValueState((prevState) => ({
+      ...prevState,
+      formats: {
+        ...prevState.formats,
+        [option]: !prevState.formats[option],
+      },
     }));
   };
 
@@ -219,6 +239,27 @@ function SubmitResourcePage() {
     'Car Accident': [],
   };
 
+  const submitResource = () => {
+    const formats = Object.keys(values.formats).filter(
+      (format) => values.formats[format],
+    );
+    const interventions = Object.keys(values.interventions).filter(
+      (intervention) => values.interventions[intervention],
+    );
+
+    submit(
+      values.title,
+      [values.disorder],
+      formats,
+      interventions,
+      values.maturity.Child,
+      values.maturity.Adult,
+      [values.keywords],
+      values.modifications,
+      values.link,
+    );
+  };
+
   return (
     <div
       style={{
@@ -309,50 +350,23 @@ function SubmitResourcePage() {
         <FormRow>
           <Grid item width="0.5">
             <FormControl sx={{ 'padding-left': 20 }}>
-              Format
-              <RadioGroup
-                aria-labelledby="format"
-                defaultValue="idea"
-                name="radio-buttons-group"
-                value={values.format || ''}
-                onChange={(e) => setValue('format', e.target.value)}
-              >
-                <FormControlLabel
-                  value="idea"
-                  control={<Radio />}
-                  label="Idea"
-                />
-                <FormControlLabel
-                  value="audio"
-                  control={<Radio />}
-                  label="Audio"
-                />
-                <FormControlLabel
-                  value="picture"
-                  control={<Radio />}
-                  label="Picture"
-                />
-                <FormControlLabel
-                  value="vr"
-                  control={<Radio />}
-                  label="Virtual Reality"
-                />
-                <FormControlLabel
-                  value="reading"
-                  control={<Radio />}
-                  label="Reading"
-                />
-                <FormControlLabel
-                  value="joke"
-                  control={<Radio />}
-                  label="Joke"
-                />
-                <FormControlLabel
-                  value="script"
-                  control={<Radio />}
-                  label="Script"
-                />
-              </RadioGroup>
+              Formats
+              <FormGroup>
+                {formatTypes.map((option) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={values.formats[option]}
+                        onChange={(e) =>
+                          setFormatCheckboxValues(option, e.target.value)
+                        }
+                        name={option}
+                      />
+                    }
+                    label={option}
+                  />
+                ))}
+              </FormGroup>
             </FormControl>
           </Grid>
           <Grid item width="0.5">
@@ -438,8 +452,10 @@ function SubmitResourcePage() {
           </Grid>
         </FormRow>
       </FormCol>
-
-      <PrimaryButton style={styles.button}>Submit</PrimaryButton>
+      {/* onSubmit={() => submitResource()} */}
+      <PrimaryButton style={styles.button} onClick={() => submitResource()}>
+        Submit
+      </PrimaryButton>
       {/* </div> */}
     </div>
   );

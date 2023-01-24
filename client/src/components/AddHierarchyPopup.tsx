@@ -8,6 +8,9 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import PrimaryButton from './buttons/PrimaryButton';
+import { addHierarchy } from '../Hierarchy/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
 
 interface PopupProps {
   setPopupState: React.Dispatch<React.SetStateAction<string>>;
@@ -17,6 +20,9 @@ interface PopupProps {
 function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
   const [value, setValue] = useState('');
   const [valueDescr, setValueDescr] = useState('');
+
+  const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
 
   return (
     <Dialog open onClose={() => setPopupState('')} maxWidth="sm" fullWidth>
@@ -73,6 +79,10 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
             onClick={() => {
               if (value && valueDescr) {
                 addToHierarchies({ title: value, updated_at: Date.now() });
+                if (email) {
+                  addHierarchy(email, value, valueDescr);
+                  console.log('add hierarchy');
+                }
                 setPopupState('');
               }
             }}

@@ -19,14 +19,14 @@ const router = express.Router();
  * Expects the following fields in the URL:
  * user_id (number) - The id of the user
  */
-router.get('/:user_id', getUserHierarchies);
+router.get('/:user_email', getUserHierarchies);
 
 /**
  * A GET route to populate the View Hierarchy page for the hierarchy with the specified hierarchy_id
  * Expects user_id and hierarchy_id
  * Returns a hierarchy with fields: id, user_id, title, exposure_ids, updated_at
  */
-router.get('/:user_id/:hierarchy_id', getHierarchy);
+router.get('/:user_email/:hierarchy_id', getHierarchy);
 
 /**
  * A POST route to create a hierarchy with the fields specified from the request body.

@@ -9,7 +9,6 @@ import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
 import AddHierarchyPopup from '../components/AddHierarchyPopup';
 import HierarchyListItem from '../components/HierarchyListItem';
-
 import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
@@ -22,14 +21,6 @@ const styles = {
   },
 };
 
-const hierarchyList = [
-  { name: 'Obsessive Compulsive Disorder (OCD)', date: '2021-01-01' },
-  { name: 'Generalized Anxiety', date: '2021-01-01' },
-  { name: 'Social Anxiety', date: '2021-01-01' },
-  { name: 'Body Dismorphia', date: '2021-01-01' },
-  { name: 'Fear of Being Misunderstood', date: '2021-01-01' },
-  { name: 'Social Anxiety', date: '2021-01-01' },
-];
 export interface HierarchyListItem {
   id: string;
   title: string;
@@ -39,6 +30,7 @@ export interface HierarchyListItem {
 
 function HierarchyPage() {
   const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
   const emp: any = [];
   const [hierarchies, setHierarchies] = useState(emp);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -46,12 +38,13 @@ function HierarchyPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getData('hierarchy/635af65babcb6dabb12ed65e');
+      const res = await getData(`hierarchy/${email}`);
+      console.log(res);
       setHierarchies(res?.data);
     };
 
     fetchData();
-  }, []);
+  }, [email]);
 
   return (
     <Grid
@@ -90,6 +83,7 @@ function HierarchyPage() {
         >
           {hierarchies?.map((hierarchy: HierarchyListItem) => (
             <HierarchyListItem
+              id={hierarchy.id}
               key={hierarchy.title}
               index={hierarchies?.indexOf(hierarchy)}
               name={hierarchy.title}
