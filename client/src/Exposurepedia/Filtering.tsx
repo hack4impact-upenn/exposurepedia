@@ -263,10 +263,10 @@ function Filtering() {
       for (let i = 1; i < temp.length; i += 1) {
         tempVal = tempVal[temp[i]];
       }
-      console.log('hii');
-      console.log(temp);
-      console.log(tempVal);
-      console.log(tempK);
+      // console.log('hii');
+      // console.log(temp);
+      // console.log(tempVal);
+      // console.log(tempK);
       if (typeof tempVal[tempK] === 'boolean' && tempK.indexOf(search) !== -1) {
         list.push(tempK);
       }
@@ -274,13 +274,13 @@ function Filtering() {
       // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const k in tempVal) {
         const newItem: [string[], string] = [[...temp, tempK], k];
-        console.log('new item');
-        console.log(newItem);
+        // console.log('new item');
+        // console.log(newItem);
         queue.push(newItem);
       }
     }
-    console.log('list');
-    console.log(list);
+    // console.log('list');
+    // console.log(list);
   };
 
   const selectChild = (key: string) => {
@@ -305,7 +305,7 @@ function Filtering() {
       setCurrent(key);
       setFilterHistory([...filterHistory, key]);
     } else {
-      console.log('hi');
+      // console.log('hi');
     }
   };
 
@@ -314,13 +314,13 @@ function Filtering() {
     for (let i = 0; i < filterHistory.length; i += 1) {
       val = val[filterHistory[i]];
     }
-    console.log('val');
-    console.log(val);
+    // console.log('val');
+    // console.log(val);
     return val;
   };
 
   const getChecked = (text: string): boolean => {
-    console.log('hi');
+    // console.log('hi');
     if (checkChildrenTrue(text)) {
       return true;
     }

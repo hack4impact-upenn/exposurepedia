@@ -11,6 +11,7 @@ import {
   postExposureItemInDB,
   getAllExposureItems,
   getFilteredExposureItems,
+  getFilteredKeywords,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
@@ -34,6 +35,8 @@ router.post('/', isAuthenticated, postExposureItemInDB);
  * A PATCH route to edit the exposure item with the specified id.
  */
 router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
+
+router.post('/keyword', isAuthenticated, getFilteredKeywords);
 
 /**
  * A DELETE route to delete the exposure item with the specified id.
