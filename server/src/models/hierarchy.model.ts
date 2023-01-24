@@ -13,7 +13,7 @@ const HierarchySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  exposureItems: [{ type: Schema.Types.ObjectId, ref: 'ExposureItem' }],
+  exposureItems: [{ type: Schema.Types.String, ref: 'ExposureItem' }],
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   dateUpdated: {
     type: Date,
@@ -25,7 +25,7 @@ interface IHierarchy extends mongoose.Document {
   _id: string;
   title: string;
   description: string;
-  exposureItems: string[];
+  exposureItems: [string, string, string][];
   user: string;
   dateUpdated: Date;
 }

@@ -90,17 +90,27 @@ const updateHierarchyHandler = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { user_id, title, description, exposure_ids } = req.body;
-  const { hierarchy_id } = req.params;
+  const { title, description, exposureTriplets } = req.body;
+  const { user_email, hierarchy_id } = req.params;
 
-  if (!user_id || !hierarchy_id || !title || !description || !exposure_ids) {
+  console.log(exposureTriplets);
+
+  const user = await getUserByEmail(user_email);
+  const user_id = user?.id;
+  if (
+    !user_id ||
+    !hierarchy_id ||
+    !title ||
+    !description ||
+    !exposureTriplets
+  ) {
     next(
       ApiError.missingFields([
         'user_id',
         'hierarchy_id',
         'title',
         'description',
-        'exposure_ids',
+        'exposure_triplets',
       ]),
     );
     return;
@@ -112,7 +122,7 @@ const updateHierarchyHandler = async (
       hierarchy_id,
       title,
       description,
-      exposure_ids,
+      exposureTriplets,
     );
     res.sendStatus(StatusCode.OK);
   } catch (err) {
