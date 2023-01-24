@@ -112,7 +112,7 @@ const getFilteredExposureItemsFromDB = async (
           },
           {
             $lookup: {
-              from: 'interventionTypes',
+              from: 'intervention types',
               localField: 'interventionTypes',
               foreignField: '_id',
               as: 'interventionTypes',
