@@ -4,7 +4,6 @@
 import { ArrowBack, ChevronRight } from '@mui/icons-material';
 import {
   Box,
-  Button,
   Checkbox,
   Chip,
   Drawer,
@@ -19,7 +18,7 @@ import React, { useState } from 'react';
 import data from './filterdata';
 import SearchComponent from './SearchComponent';
 
-function Filtering2() {
+function Filtering2({ filterOptions, setFilterOptions }: any) {
   const emptyArr: string[] = [];
   const emptyObj: { [key: string]: string[] } = {
     Disorder: emptyArr,
@@ -31,7 +30,6 @@ function Filtering2() {
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);
   const [tags, setTags] = useState(emptyObj);
-  const [filterOptions, setFilterOptions] = useState(data);
   const [change, setChange] = useState(false);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState(emptyArr);
@@ -198,7 +196,6 @@ function Filtering2() {
         2) check a box, everything below it is unadded so we just add it
         3) check a box, some stuff below is checked so we need to unadd those
         4) check a box, everything in that layer is now added so we need to go to the parent and add that
-
         1) uncheck a box, nothing changes
         2) uncheck a box, everything in that layer is checked so we need to add all of them and unadd the parent
         3) uncheck a box, everthing below gets unadded as well
