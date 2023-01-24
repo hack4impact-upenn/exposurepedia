@@ -19,8 +19,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
-import { format } from 'path';
-import { updateItem, approveItem } from '../components/apis/ExposureApi';
+import {
+  updateItem,
+  approveItem,
+  rejectItem,
+} from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
 import { getData, useData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
@@ -95,7 +98,6 @@ export default function ExposureItem() {
         (it: any) => it.name,
       );
       const keywords = res?.data[0].keywords.map((it: any) => it.name);
-      console.log('EHIOFSD');
       console.log(res);
       if (res?.data[0].isAdultAppropriate) {
         maturity.push({ name: 'Adult' });
@@ -147,7 +149,10 @@ export default function ExposureItem() {
 
   const approve = () => {
     approveItem(id || '');
-    console.log('Exposure item approved');
+  };
+
+  const reject = () => {
+    rejectItem(id || '');
   };
 
   const cancelChanges = () => {
@@ -216,7 +221,7 @@ export default function ExposureItem() {
                 borderRadius: '10px',
                 background: 'rgba(255,255,255,0.8)',
               }}
-              onClick={() => saveChanges()}
+              onClick={() => reject()}
             >
               Reject Resource
             </Button>

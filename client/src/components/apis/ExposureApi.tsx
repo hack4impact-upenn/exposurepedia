@@ -1,7 +1,7 @@
 /**
  * A file containing the api call to submit an exposure item.
  */
-import { useData, postData, patchData } from '../../util/api';
+import { useData, postData, patchData, deleteData } from '../../util/api';
 
 /**
  * Update the exposure item with the given id.
@@ -46,9 +46,16 @@ async function approveItem(exposureID: string) {
     isApproved: true,
   });
   if (res.error) return false;
-  console.log(res);
   return true;
 }
 
+/**
+ * Rejects and deletes the exposure item with the given id.
+ * @returns true if successful, false otherwise
+ */
+async function rejectItem(exposureID: string) {
+  const res = await deleteData(`exposure/${exposureID}`);
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export { updateItem, approveItem };
+export { updateItem, approveItem, rejectItem };
