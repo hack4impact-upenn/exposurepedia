@@ -92,7 +92,6 @@ const ViewHierarchyPage = function () {
           row.no.toString(),
           row.suds,
         ]);
-        console.log('to add: ', toAdd);
         updateHierarchy(email, hierarchyId, hierarchyTitle, description, toAdd);
       }
       setTextValue('');
@@ -134,10 +133,7 @@ const ViewHierarchyPage = function () {
               }}
             />
           </IconButton>
-          <h1 style={{ padding: '0px 20px 0px 20px' }}>
-            {' '}
-            Hierarchy 1: XYZ Disorder{' '}
-          </h1>
+          <h1 style={{ padding: '0px 20px 0px 20px' }}> {hierarchyTitle} </h1>
           <ModeRoundedIcon
             sx={{
               color: 'black',
@@ -160,7 +156,7 @@ const ViewHierarchyPage = function () {
           >
             <CSVLink
               data={getCSVData()}
-              filename="hierarchy 1.csv"
+              filename={`${hierarchyTitle}.csv`}
               style={{ textDecoration: 'none', color: '#397FBF' }}
             >
               <div
@@ -208,7 +204,7 @@ const ViewHierarchyPage = function () {
       >
         <FormControl sx={{ m: 1, width: '120ch' }}>
           <InputLabel htmlFor="outlined-adornment-amount">
-            Add Custom Item
+            Add Custom Exposure
           </InputLabel>
           <OutlinedInput
             id="outlined-adornment-amount"
@@ -217,7 +213,7 @@ const ViewHierarchyPage = function () {
                 <AddCircleOutlineRoundedIcon />
               </InputAdornment>
             }
-            label="Add Custom Item"
+            label="Add Custom Exposure"
             value={textValue}
             onChange={(event) => setTextValue(event.target.value)}
             onKeyDown={(e) => {
