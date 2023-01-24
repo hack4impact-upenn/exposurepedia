@@ -13,7 +13,7 @@ import {
 import React, { useState } from 'react';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SearchComponent from './SearchComponent';
+import SearchComponent from '../Exposurepedia/SearchComponent';
 
 interface filterOption {
   [key: string]: filterOption | boolean;

@@ -19,8 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
-import { updateItem, approveItem } from './apis/ExposureApi';
-import Popup from './Popup';
+import { updateItem, approveItem } from '../components/apis/ExposureApi';
+import Popup from '../components/Popup';
 import { getData, useData } from '../util/api';
 
 interface ExposureItemProps {

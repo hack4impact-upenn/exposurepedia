@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExposureItemTable } from '../components/ExposureItemTable';
+import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
 
 const FixLinksPage = function () {
   const rows = [
