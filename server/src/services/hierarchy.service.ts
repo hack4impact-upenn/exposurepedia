@@ -22,6 +22,7 @@ const getHierarchyById = async (hierarchyId: string, userId: string) => {
     id: hierarchy._id,
     title: hierarchy.title,
     user_id: hierarchy.user,
+    description: hierarchy.description,
     exposure_ids: hierarchy.exposureItems,
     updated_at: hierarchy.dateUpdated,
   };
@@ -46,8 +47,13 @@ const updateHierarchy = async (
   hierarchyId: string,
   title: string,
   description: string,
-  exposureIds: string[],
+  exposureIds: [string, string, string][],
 ) => {
+  console.log('hierarchyId: ', hierarchyId);
+  console.log('userId: ', userId);
+  console.log('title: ', title);
+  console.log('description: ', description);
+  console.log('exposureIds: ', exposureIds);
   const hierarchy = await Hierarchy.findOne({
     _id: hierarchyId,
     user: userId,
@@ -57,7 +63,13 @@ const updateHierarchy = async (
   }
   hierarchy.title = title;
   hierarchy.description = description;
-  hierarchy.exposureItems = exposureIds;
+  // hierarchy.set('exposureItems', exposureIds);
+  console.log('hierarchy (before update): ', hierarchy);
+  await Hierarchy.updateOne(
+    { _id: hierarchyId },
+    { $set: { exposureItems: ['tjuj'] } },
+  ).exec();
+  console.log('hierarchy (updated): ', hierarchy);
   await hierarchy.save();
 };
 

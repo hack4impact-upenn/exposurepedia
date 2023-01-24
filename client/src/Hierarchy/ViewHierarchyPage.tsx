@@ -21,6 +21,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { updateHierarchy } from './api';
 import { ViewHierarchyTable } from '../components/ViewHierarchyTable';
 import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
@@ -42,19 +43,32 @@ const ViewHierarchyPage = function () {
   const [rows, setRows] = useState<
     { key: string; no: number; itemName: string; suds: string }[]
   >([]);
+  const [description, setDescription] = useState('');
+  const [hierarchyTitle, setHierarchyTitle] = useState('');
+  const [hierarchyId, setHierarchyId] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}/${location.state.id}`);
-      const items = [];
-      res?.data?.exposure_ids?.forEach(async (id: string) => {
-        const item = await getData(`exposure/${id}`);
+      console.log(res);
+      setDescription(res?.data?.description);
+      setHierarchyTitle(res?.data?.title);
+      setHierarchyId(res?.data?.id);
+      const items: {
+        key: string;
+        no: number;
+        itemName: string;
+        suds: string;
+      }[] = [];
+      res?.data?.exposure_ids?.forEach((item: [string, string, string]) => {
+        const [title, no, suds] = item;
         items.push({
-          key: item.data.id,
-          no: item.data.no,
-          itemName: item.name,
-          suds: item.suds,
+          key: `${no}`,
+          no: Number(no),
+          itemName: title,
+          suds,
         });
       });
+      console.log(items);
       setRows(items);
     };
 
@@ -63,7 +77,7 @@ const ViewHierarchyPage = function () {
   const [textValue, setTextValue] = useState('');
   const update = () => {
     if (textValue) {
-      setRows([
+      const newRows = [
         ...rows,
         {
           key: `${rows.length + 1}`,
@@ -71,7 +85,17 @@ const ViewHierarchyPage = function () {
           itemName: textValue,
           suds: '',
         },
-      ]);
+      ];
+      setRows(newRows);
+      if (email) {
+        const toAdd: [string, string, string][] = newRows.map((row) => [
+          row.itemName,
+          row.no.toString(),
+          row.suds,
+        ]);
+        console.log('to add: ', toAdd);
+        updateHierarchy(email, hierarchyId, hierarchyTitle, description, toAdd);
+      }
       setTextValue('');
     }
   };
@@ -169,9 +193,7 @@ const ViewHierarchyPage = function () {
           </Button>
         </div>
       </div>
-      <p style={{ padding: '0px 0px 30px 45px' }}>
-        Taran is a sophomore in college. This is a comment.
-      </p>
+      <p style={{ padding: '0px 0px 30px 45px' }}>{description}</p>
       <ViewHierarchyTable
         rows={rows}
         setRows={(r: any) => setRows(r)}
