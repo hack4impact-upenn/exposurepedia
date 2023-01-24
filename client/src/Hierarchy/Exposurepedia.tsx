@@ -45,7 +45,7 @@ function Exposurepedia() {
   const columns = [
     { id: 'checkbox', label: '', minWidth: 15 },
     { id: 'name', label: 'Title', minWidth: 170 },
-    { id: 'format', label: 'Format', minWidth: 100 },
+    { id: 'formats', label: 'Format', minWidth: 100 },
     { id: 'likes', label: 'Likes', minWidth: 100 },
     { id: 'createdAt', label: 'Date', minWidth: 100 },
   ];

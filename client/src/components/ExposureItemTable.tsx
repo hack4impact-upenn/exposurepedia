@@ -118,8 +118,8 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
           value = Math.round(Math.random() * 100);
         } else if (column.id === 'createdAt') {
           value = new Date(value).toLocaleDateString();
-        } else if (column.id === 'format') {
-          value = ['Video', 'Image', 'Audio'][Math.floor(Math.random() * 3)];
+        } else if (column.id === 'formats') {
+          value = value.map((format: any) => format.name).join(', ');
         }
         if (value === null || value === undefined) {
           return null;

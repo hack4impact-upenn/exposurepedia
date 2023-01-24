@@ -12,7 +12,24 @@ import { Keyword } from '../models/keyword.model';
  * @returns All exposure items in the DB
  */
 const getAllExposureItemsFromDB = async () => {
-  return ExposureItem.find().exec();
+  return ExposureItem.aggregate([
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'disorders',
+        foreignField: '_id',
+        as: 'disorders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'formats',
+        localField: 'formats',
+        foreignField: '_id',
+        as: 'formats',
+      },
+    },
+  ]).exec();
 };
 
 /**
