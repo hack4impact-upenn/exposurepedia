@@ -8,6 +8,10 @@ import {
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
+  getAllDisorders,
+  getAllKeywords,
+  getAllInterventionTypes,
+  getAllFormats,
   postExposureItemInDB,
   getAllExposureItems,
   getFilteredExposureItems,
@@ -18,6 +22,11 @@ import { isAuthenticated } from '../controllers/auth.middleware';
 const router = express.Router();
 
 router.get('/', isAuthenticated, getAllExposureItems);
+
+router.get('/disorders', isAuthenticated, getAllDisorders);
+router.get('/keywords', isAuthenticated, getAllKeywords);
+router.get('/interventionTypes', isAuthenticated, getAllInterventionTypes);
+router.get('/formats', isAuthenticated, getAllFormats);
 
 router.post('/filter', isAuthenticated, getFilteredExposureItems);
 

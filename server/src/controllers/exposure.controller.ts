@@ -10,6 +10,10 @@ import {
   deleteExposureItemFromDB,
   createExposureItemInDB,
   getAllExposureItemsFromDB,
+  getAllDisorderItemsFromDB,
+  getAllFormatItemsFromDB,
+  getAllInterventionTypeItemsFromDB,
+  getAllKeywordItemsFromDB,
   getFilteredExposureItemsFromDB,
   getFilteredKeywordsFromDB,
 } from '../services/exposure.service';
@@ -18,6 +22,65 @@ import { ExposureItem } from '../models/exposureItem.model';
 import { Format } from '../models/format.model';
 import { InterventionType } from '../models/interventionType.model';
 import { Keyword } from '../models/keyword.model';
+
+/**
+ * Gets all disorders.
+ */
+const getAllDisorders = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  getAllDisorderItemsFromDB()
+    .then((items) => {
+      res.status(StatusCode.OK).send(items);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to retrieve disorder items'));
+    });
+};
+
+const getAllKeywords = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  getAllKeywordItemsFromDB()
+    .then((items) => {
+      res.status(StatusCode.OK).send(items);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to retrieve keyword items'));
+    });
+};
+
+const getAllInterventionTypes = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  getAllInterventionTypeItemsFromDB()
+    .then((items) => {
+      res.status(StatusCode.OK).send(items);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to retrieve intervention type items'));
+    });
+};
+
+const getAllFormats = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  getAllFormatItemsFromDB()
+    .then((items) => {
+      res.status(StatusCode.OK).send(items);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to retrieve format items'));
+    });
+};
 
 /**
  * Gets all exposure items. Upon success, returns the items with 200 OK status code.
@@ -286,6 +349,10 @@ const getFilteredKeywords = async (
 export {
   getAllExposureItems,
   getExposureItemByID,
+  getAllDisorders,
+  getAllKeywords,
+  getAllInterventionTypes,
+  getAllFormats,
   getFilteredExposureItems,
   patchExposureItemByID,
   deleteExposureItemByID,
