@@ -93,7 +93,7 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
       state: {
         key: row.key,
         title: row.name,
-        format: row.format,
+        format: row.formats,
         likes: row.likes,
         createdAt: row.createdAt,
         isApprove,
@@ -197,6 +197,7 @@ function ExposureItemTable({
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
+                console.log('ROW IS HERE!!!!!');
                 return (
                   <Row
                     row={row}

@@ -1,74 +1,34 @@
 import { Toolbar } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
+import { postData } from '../util/api';
 
 const ApproveResourcesPage = function () {
-  const rows = [
-    {
-      key: '1',
-      title: 'Write your own obituary',
-      format: 'Idea',
-      likes: 45,
-      date: '2021-10-10',
-    },
-    {
-      key: '2',
-      title: 'Young boy gets blood drawn',
-      format: 'Reading',
-      likes: 2,
-      date: '2022-10-2',
-    },
-    {
-      key: '3',
-      title: 'Young girl gets a painfree shot',
-      format: 'Video',
-      likes: 100,
-      date: '2021-11-04',
-    },
-    {
-      key: '4',
-      title:
-        'Leave electrical appliances plugged in/lights on (e.g., coffee maker) ',
-      format: 'Idea',
-      likes: 51,
-      date: '2021-11-24',
-    },
-    {
-      key: '5',
-      title: 'The Office: Michael accidentally hits Meredith with his car',
-      format: 'Video',
-      likes: 10,
-      date: '2021-11-24',
-    },
-    {
-      key: '6',
-      title: 'Write your own obituary',
-      format: 'Reading',
-      likes: 74,
-      date: '2021-12-01',
-    },
-    {
-      key: '7',
-      title: 'Write something inaccurate on social media',
-      format: 'Idea',
-      likes: 2,
-      date: '2021-12-03',
-    },
-    {
-      key: '8',
-      title:
-        'Write an insult about therapist and reflect on how that might make you...',
-      format: 'Idea',
-      likes: 0,
-      date: '2021-12-14',
-    },
-  ];
+  const [rows, setRows] = useState([]);
 
   const columns = [
-    { id: 'title', label: 'Title', minWidth: 170 },
-    { id: 'format', label: 'Format', minWidth: 100 },
-    { id: 'date', label: 'Date', minWidth: 100 },
+    { id: 'name', label: 'Title', minWidth: 170 },
+    { id: 'formats', label: 'Format', minWidth: 100 },
+    { id: 'createdAt', label: 'Date', minWidth: 100 },
   ];
+
+  useEffect(() => {
+    const fetch = async () => {
+      const response = await postData('exposure/filter', {
+        disorders: [],
+        formats: [],
+        interventionTypes: [],
+        isAdultAppropriate: true,
+        isChildAppropriate: false,
+        keywords: [],
+        isLinkBroken: false,
+        isApproved: true,
+        getApproved: false,
+      });
+      setRows(response.data);
+    };
+    fetch();
+  }, []);
 
   return (
     <div style={{ width: '90%', margin: 'auto' }}>
