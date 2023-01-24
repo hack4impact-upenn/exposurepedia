@@ -89,7 +89,7 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
             {hierarchies.map((hierarchy) => (
               <MenuItem key={hierarchy.id} value={hierarchy.title}>
                 <Checkbox
-                  checked={selectedHierarchies.indexOf(hierarchy.id) > -1}
+                  checked={selectedHierarchies.indexOf(hierarchy.title) > -1}
                 />
                 <ListItemText primary={hierarchy.title} />
               </MenuItem>
