@@ -1,6 +1,7 @@
 /**
  * All the functions for interacting with exposure data in the MongoDB database
  */
+import mongoose from 'mongoose';
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
 import { Format } from '../models/format.model';
@@ -42,6 +43,8 @@ const getFilteredExposureItemsFromDB = async (
   isAdultAppropriate: boolean,
   isChildAppropriate: boolean,
   keywords: string[],
+  isLinkBroken: boolean,
+  isApproved: boolean,
 ) => {
   const match: any = {};
 
@@ -78,6 +81,14 @@ const getFilteredExposureItemsFromDB = async (
 
   if (keywords.length !== 0) {
     match.keywords = { $elemMatch: { name: { $in: keywords } } };
+  }
+
+  if (isLinkBroken) {
+    match.isLinkBroken = true;
+  }
+
+  if (isApproved) {
+    match.isApproved = true;
   }
 
   return ExposureItem.aggregate(
@@ -148,9 +159,48 @@ const getFilteredExposureItemsFromDB = async (
  * @returns The item in the DB with the specified id
  */
 const getExposureItemFromDB = async (id: string) => {
-  const item = await ExposureItem.findById(id).exec();
+  // const item = await ExposureItem.findById(id).exec();
+  // return item;
 
-  return item;
+  return ExposureItem.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'disorders',
+        foreignField: '_id',
+        as: 'disorders',
+      },
+    },
+    {
+      $lookup: {
+        from: 'formats',
+        localField: 'formats',
+        foreignField: '_id',
+        as: 'formats',
+      },
+    },
+    {
+      $lookup: {
+        from: 'interventionTypes',
+        localField: 'interventionTypes',
+        foreignField: '_id',
+        as: 'interventionTypes',
+      },
+    },
+    {
+      $lookup: {
+        from: 'keywords',
+        localField: 'keywords',
+        foreignField: '_id',
+        as: 'keywords',
+      },
+    },
+  ]).exec();
 };
 
 /**

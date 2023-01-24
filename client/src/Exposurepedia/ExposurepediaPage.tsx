@@ -96,6 +96,8 @@ function Exposurepedia() {
         isAdultAppropriate,
         isChildAppropriate,
         keywords,
+        isLinkBroken: false,
+        isApproved: true,
       });
       setRows(response.data);
     };

@@ -76,13 +76,11 @@ export default function ExposureItem() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // const res = await getData(`exposure/${id}`);
-      console.log('RESULTSSSS');
-      // console.log(res);
-      // setCurItem(res?.data);
-      // setSavedItem(res?.data);
+      const res = await getData(`exposure/${id}`);
+      console.log(res);
+      setCurItem(res?.data);
+      setSavedItem(res?.data);
     };
-
     fetchData();
   });
 
@@ -105,17 +103,18 @@ export default function ExposureItem() {
       curItem.modifications,
       curItem.link,
     );
-    console.log('saved!');
+    console.log('Exposure item changes saved');
   };
 
   const approve = () => {
     approveItem(id || '');
+    console.log('Exposure item approved');
   };
 
   const cancelChanges = () => {
     setIsEdit(false);
     setCurItem(savedItem);
-    console.log('cancelled!');
+    console.log('Exposure item changes cancelled');
   };
 
   const handleDelete = (key: string, data: string) => {
@@ -290,7 +289,7 @@ export default function ExposureItem() {
               <Favorite
                 style={{ color: 'CF0C0C' }}
                 onClick={() => {
-                  // update number of likes here
+                  // TODO: update number of likes here
                   // updateItem()
                   setLiked((prevLiked) => !prevLiked);
                 }}

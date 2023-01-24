@@ -50,6 +50,8 @@ const getFilteredExposureItems = async (
     isAdultAppropriate,
     isChildAppropriate,
     keywords,
+    isLinkBroken,
+    isApproved,
   } = req.body;
 
   if (
@@ -58,7 +60,9 @@ const getFilteredExposureItems = async (
     interventionTypes == null ||
     isAdultAppropriate == null ||
     isChildAppropriate == null ||
-    keywords == null
+    keywords == null ||
+    isLinkBroken == null ||
+    isApproved == null
   ) {
     next(
       ApiError.missingFields([
@@ -68,6 +72,8 @@ const getFilteredExposureItems = async (
         'isAdultAppropriate',
         'isChildAppropriate',
         'keywords',
+        'isLinkBroken',
+        'isApproved',
       ]),
     );
     return;
@@ -81,6 +87,8 @@ const getFilteredExposureItems = async (
       isAdultAppropriate,
       isChildAppropriate,
       keywords,
+      isLinkBroken,
+      isApproved,
     );
     res.status(StatusCode.OK).json(exposureItems);
   } catch (err) {
