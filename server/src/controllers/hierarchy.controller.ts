@@ -90,14 +90,20 @@ const updateHierarchyHandler = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { title, description, exposures } = req.body;
+  const { title, description, exposureTriplets } = req.body;
   const { user_email, hierarchy_id } = req.params;
 
-  console.log(exposures);
+  console.log(exposureTriplets);
 
   const user = await getUserByEmail(user_email);
   const user_id = user?.id;
-  if (!user_id || !hierarchy_id || !title || !description || !exposures) {
+  if (
+    !user_id ||
+    !hierarchy_id ||
+    !title ||
+    !description ||
+    !exposureTriplets
+  ) {
     next(
       ApiError.missingFields([
         'user_id',
@@ -111,7 +117,13 @@ const updateHierarchyHandler = async (
   }
 
   try {
-    await updateHierarchy(user_id, hierarchy_id, title, description, exposures);
+    await updateHierarchy(
+      user_id,
+      hierarchy_id,
+      title,
+      description,
+      exposureTriplets,
+    );
     res.sendStatus(StatusCode.OK);
   } catch (err) {
     next(ApiError.internal('Unable to update hierarchy'));

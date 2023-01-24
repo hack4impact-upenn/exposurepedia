@@ -6,7 +6,6 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import { Toolbar } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 
 const ITEM_HEIGHT = 48;
@@ -47,10 +46,8 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
         flexDirection: 'column',
         justifyContent: 'left',
         textAlign: 'left',
-        marginTop: '25px',
       }}
     >
-      <Toolbar />
       <p
         style={{
           fontSize: '1.0rem',
@@ -88,10 +85,12 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
             renderValue={(selected) => selected.join(', ')}
             MenuProps={MenuProps}
           >
-            {hierarchies.map((name) => (
-              <MenuItem key={name} value={name}>
-                <Checkbox checked={selectedHierarchies.indexOf(name) > -1} />
-                <ListItemText primary={name} />
+            {hierarchies.map((hierarchy) => (
+              <MenuItem key={hierarchy[0]} value={hierarchy[0]}>
+                <Checkbox
+                  checked={selectedHierarchies.indexOf(hierarchy[0]) > -1}
+                />
+                <ListItemText primary={hierarchy[0]} />
               </MenuItem>
             ))}
           </Select>
