@@ -22,7 +22,8 @@ const getHierarchyById = async (hierarchyId: string, userId: string) => {
     id: hierarchy._id,
     title: hierarchy.title,
     user_id: hierarchy.user,
-    exposure_ids: hierarchy.exposureItems,
+    description: hierarchy.description,
+    exposures: hierarchy.exposures,
     updated_at: hierarchy.dateUpdated,
   };
 };
@@ -46,7 +47,7 @@ const updateHierarchy = async (
   hierarchyId: string,
   title: string,
   description: string,
-  exposureIds: string[],
+  exposures: [string, string, string][],
 ) => {
   const hierarchy = await Hierarchy.findOne({
     _id: hierarchyId,
@@ -55,10 +56,19 @@ const updateHierarchy = async (
   if (!hierarchy) {
     throw new Error('Unable to find hierarchy');
   }
-  hierarchy.title = title;
-  hierarchy.description = description;
-  hierarchy.exposureItems = exposureIds;
-  await hierarchy.save();
+
+  if (title !== undefined) {
+    hierarchy.title = title;
+  }
+  if (description !== undefined) {
+    hierarchy.description = description;
+  }
+
+  await Hierarchy.updateOne(
+    { _id: hierarchyId },
+    { $set: { exposures } },
+  ).exec();
+  // await hierarchy.save();
 };
 
 const deleteHierarchy = async (hierarchyId: string) => {

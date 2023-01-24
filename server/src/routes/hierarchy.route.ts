@@ -40,7 +40,7 @@ router.post('/', createHierarchyHandler);
  * Expects user_id, hierarchy_id (query params) and user_id, title, description, exposure_ids (body params)
  * Returns success/failure message
  */
-router.patch('/:user_id/:hierarchy_id', updateHierarchyHandler);
+router.patch('/:user_email/:hierarchy_id', updateHierarchyHandler);
 
 /**
  * A DELETE route to delete a hierarchy and all rows in in_hierarchy table that have the same hierarchy_id

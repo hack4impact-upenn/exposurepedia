@@ -4,13 +4,12 @@
  * A page only accessible to authenticated users that displays all the information
  * about a hierarchy.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import { CSVDownload, CSVLink } from 'react-csv';
-import { Mode } from '@mui/icons-material';
+import { CSVLink } from 'react-csv';
 import {
   Button,
   FormControl,
@@ -20,8 +19,12 @@ import {
   Toolbar,
   IconButton,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ViewHierarchyTable } from './ViewHierarchyTable';
+import { updateHierarchy } from './api';
+import { getData } from '../util/api';
+import { selectUser } from '../util/redux/userSlice';
+import { useAppSelector } from '../util/redux/hooks';
 
 interface TRow {
   key: string;
@@ -33,30 +36,47 @@ interface TRow {
 
 const ViewHierarchyPage = function () {
   const navigate = useNavigate();
-  const [rows, setRows] = useState([
-    {
-      key: '1',
-      no: 1,
-      itemName: 'Write your own obituary',
-      suds: '',
-    },
-    {
-      key: '2',
-      no: 2,
-      itemName: 'Young boy gets blood drawn',
-      suds: '',
-    },
-    {
-      key: '3',
-      no: 3,
-      itemName: 'Young girl gets a painfree shot',
-      suds: '',
-    },
-  ]);
+  const location = useLocation();
+  const [rows, setRows] = useState<
+    { key: string; no: number; itemName: string; suds: string }[]
+  >([]);
+  const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
+  const [description, setDescription] = useState('');
+  const [hierarchyTitle, setHierarchyTitle] = useState('');
+  const [hierarchyId, setHierarchyId] = useState('');
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData(`hierarchy/${email}/${location.state.id}`);
+      console.log(res);
+      setDescription(res?.data?.description);
+      setHierarchyTitle(res?.data?.title);
+      setHierarchyId(res?.data?.id);
+      const items: {
+        key: string;
+        no: number;
+        itemName: string;
+        suds: string;
+      }[] = [];
+      res?.data?.exposure_ids?.forEach((item: [string, string, string]) => {
+        const [title, no, suds] = item;
+        items.push({
+          key: `${no}`,
+          no: Number(no),
+          itemName: title,
+          suds,
+        });
+      });
+      console.log(items);
+      setRows(items);
+    };
+
+    fetchData();
+  }, [email, location.state.id]);
   const [textValue, setTextValue] = useState('');
   const update = () => {
     if (textValue) {
-      setRows([
+      const newRows = [
         ...rows,
         {
           key: `${rows.length + 1}`,
@@ -64,7 +84,16 @@ const ViewHierarchyPage = function () {
           itemName: textValue,
           suds: '',
         },
-      ]);
+      ];
+      setRows(newRows);
+      if (email) {
+        const toAdd: [string, string, string][] = newRows.map((row) => [
+          row.itemName,
+          row.no.toString(),
+          row.suds,
+        ]);
+        updateHierarchy(email, hierarchyId, hierarchyTitle, description, toAdd);
+      }
       setTextValue('');
     }
   };
@@ -104,10 +133,7 @@ const ViewHierarchyPage = function () {
               }}
             />
           </IconButton>
-          <h1 style={{ padding: '0px 20px 0px 20px' }}>
-            {' '}
-            Hierarchy 1: XYZ Disorder{' '}
-          </h1>
+          <h1 style={{ padding: '0px 20px 0px 20px' }}> {hierarchyTitle} </h1>
           <ModeRoundedIcon
             sx={{
               color: 'black',
@@ -130,7 +156,7 @@ const ViewHierarchyPage = function () {
           >
             <CSVLink
               data={getCSVData()}
-              filename="hierarchy 1.csv"
+              filename={`${hierarchyTitle}.csv`}
               style={{ textDecoration: 'none', color: '#397FBF' }}
             >
               <div
@@ -162,9 +188,7 @@ const ViewHierarchyPage = function () {
           </Button>
         </div>
       </div>
-      <p style={{ padding: '0px 0px 30px 45px' }}>
-        Taran is a sophomore in college. This is a comment.
-      </p>
+      <p style={{ padding: '0px 0px 30px 45px' }}>{description}</p>
       <ViewHierarchyTable
         rows={rows}
         setRows={(r: any) => setRows(r)}
@@ -180,7 +204,7 @@ const ViewHierarchyPage = function () {
       >
         <FormControl sx={{ m: 1, width: '120ch' }}>
           <InputLabel htmlFor="outlined-adornment-amount">
-            Add Custom Item
+            Add Custom Exposure
           </InputLabel>
           <OutlinedInput
             id="outlined-adornment-amount"
@@ -189,7 +213,7 @@ const ViewHierarchyPage = function () {
                 <AddCircleOutlineRoundedIcon />
               </InputAdornment>
             }
-            label="Add Custom Item"
+            label="Add Custom Exposure"
             value={textValue}
             onChange={(event) => setTextValue(event.target.value)}
             onKeyDown={(e) => {
