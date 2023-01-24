@@ -8,6 +8,14 @@ import { InterventionType } from '../models/interventionType.model';
 import { Keyword } from '../models/keyword.model';
 
 /**
+ * Get all exposure items from the DB
+ * @returns All exposure items in the DB
+ */
+const getAllExposureItemsFromDB = async () => {
+  return ExposureItem.find().exec();
+};
+
+/**
  * Get exposure item from DB given id string.
  * @param id The id of the exposure item
  * @returns The item in the DB with the specified id
@@ -83,6 +91,7 @@ const deleteExposureItemFromDB = async (id: string) => {
 };
 
 export {
+  getAllExposureItemsFromDB,
   getExposureItemFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,

@@ -91,10 +91,10 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
     navigate('/exposureitem', {
       state: {
         key: row.key,
-        title: row.title,
+        title: row.name,
         format: row.format,
         likes: row.likes,
-        date: row.date,
+        createdAt: row.createdAt,
         isApprove,
         isBroken,
       },
@@ -113,7 +113,14 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
         </TableCell>
       )}
       {columns.map((column) => {
-        const value = row[column.id];
+        let value = row[column.id];
+        if (column.id === 'likes') {
+          value = Math.round(Math.random() * 100);
+        } else if (column.id === 'createdAt') {
+          value = new Date(value).toLocaleDateString();
+        } else if (column.id === 'format') {
+          value = ['Video', 'Image', 'Audio'][Math.floor(Math.random() * 3)];
+        }
         if (value === null || value === undefined) {
           return null;
         }

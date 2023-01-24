@@ -9,12 +9,30 @@ import {
   getExposureItemFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
+  getAllExposureItemsFromDB,
 } from '../services/exposure.service';
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
 import { Format } from '../models/format.model';
 import { InterventionType } from '../models/interventionType.model';
 import { Keyword } from '../models/keyword.model';
+
+/**
+ * Gets all exposure items. Upon success, returns the items with 200 OK status code.
+ */
+const getAllExposureItems = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  getAllExposureItemsFromDB()
+    .then((items) => {
+      res.status(StatusCode.OK).send(items.slice(10));
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to retrieve exposure items'));
+    });
+};
 
 /**
  * Gets exposure item by id. Upon success, returns the item with 200 OK status code.
@@ -27,7 +45,7 @@ const getExposureItemByID = async (
   const id = req.params.exposure_id;
   getExposureItemFromDB(id)
     .then((item) => {
-      res.sendStatus(StatusCode.OK).send(item);
+      res.status(StatusCode.OK).send(item);
     })
     .catch(() => {
       next(ApiError.internal('Unable to retrieve exposure item'));
@@ -184,6 +202,7 @@ const deleteExposureItemByID = async (
 };
 
 export {
+  getAllExposureItems,
   getExposureItemByID,
   patchExposureItemByID,
   deleteExposureItemByID,
