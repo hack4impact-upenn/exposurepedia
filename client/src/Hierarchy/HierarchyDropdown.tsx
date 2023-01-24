@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import PrimaryButton from '../components/buttons/PrimaryButton';
+import { updateHierarchy } from './api';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,7 +21,7 @@ const MenuProps = {
 };
 
 interface HierarchyDropdownProps {
-  hierarchies: string[];
+  hierarchies: any[];
   count: number;
 }
 
@@ -86,17 +87,24 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
             MenuProps={MenuProps}
           >
             {hierarchies.map((hierarchy) => (
-              <MenuItem key={hierarchy[0]} value={hierarchy[0]}>
+              <MenuItem key={hierarchy.id} value={hierarchy.title}>
                 <Checkbox
-                  checked={selectedHierarchies.indexOf(hierarchy[0]) > -1}
+                  checked={selectedHierarchies.indexOf(hierarchy.id) > -1}
                 />
-                <ListItemText primary={hierarchy[0]} />
+                <ListItemText primary={hierarchy.title} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
         {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-        <PrimaryButton variant="contained" size="small" sx={{ width: '30%' }}>
+        <PrimaryButton
+          variant="contained"
+          size="small"
+          sx={{ width: '30%' }}
+          onClick={() => {
+            console.log('TODO!!!!');
+          }}
+        >
           Add ({count}) Items
         </PrimaryButton>
       </div>

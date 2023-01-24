@@ -7,8 +7,10 @@ import { useEffect, useState } from 'react';
 import { ExposureItemTable } from './ExposureItemTable';
 import HierarchyDropdown from '../Hierarchy/HierarchyDropdown';
 import Filtering2 from './Filtering2';
-import { postData } from '../util/api';
+import { getData, postData } from '../util/api';
 import filterOptionsData from './filterdata';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
@@ -30,19 +32,17 @@ function Exposurepedia() {
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
   const [filterOptions, setFilterOptions] = useState(filterOptionsData);
-
-  const hierarchies = [
-    'Hierarchy 0',
-    'Hierarchy 1',
-    'Hierarchy 2',
-    'Hierarchy 3',
-    'Hierarchy 4',
-    'Hierarchy 5',
-    'Hierarchy 6',
-    'Hierarchy 7',
-    'Hierarchy 8',
-    'Hierarchy 9',
-  ];
+  const [hierarchies, setHierarchies] = useState([]);
+  const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData(`hierarchy/${email}`);
+      console.log('res : ', res);
+      setHierarchies(res?.data);
+    };
+    fetchData();
+  }, [email]);
 
   const columns = [
     { id: 'checkbox', label: '', minWidth: 15 },
