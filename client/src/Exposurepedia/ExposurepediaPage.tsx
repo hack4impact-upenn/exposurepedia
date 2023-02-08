@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
-import { ExposureItemTable } from './ExposureItemTable';
-import HierarchyDropdown from '../Hierarchy/HierarchyDropdown';
+import { ExposureItemTable, TRow } from './ExposureItemTable';
+import HierarchyDropdown from './HierarchyDropdown';
 import Filtering2 from './Filtering2';
 import { getData, postData } from '../util/api';
 import filterOptionsData from './filterdata';
@@ -17,20 +17,10 @@ import { selectUser } from '../util/redux/userSlice';
  * in a table and allows users to expand and delete hierarchies.
  */
 
-interface Item {
-  title: string;
-  disorder: string[];
-  format: string[];
-  interventionType: string[];
-  maturity: string[];
-  keywords: string[];
-  modifications: string;
-  link: string;
-}
-
 function Exposurepedia() {
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState<TRow[]>(rows);
   const [filterOptions, setFilterOptions] = useState(filterOptionsData);
   const [hierarchies, setHierarchies] = useState([]);
   const user = useAppSelector(selectUser);
@@ -38,7 +28,6 @@ function Exposurepedia() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}`);
-      console.log('res : ', res);
       setHierarchies(res?.data);
     };
     fetchData();
@@ -125,13 +114,21 @@ function Exposurepedia() {
               height: '100vh',
             }}
           >
-            <HierarchyDropdown hierarchies={hierarchies} count={count} />
+            <HierarchyDropdown
+              hierarchies={hierarchies}
+              count={count}
+              setCount={setCount}
+              exposureItems={selectedRows}
+              setSelectedRows={setSelectedRows}
+            />
             <ExposureItemTable
               rows={rows}
               columns={columns}
               isApprove={false}
               isBroken={false}
               setCount={setCount}
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
             />
           </div>
         </Box>

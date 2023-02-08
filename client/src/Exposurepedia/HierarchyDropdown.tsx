@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,6 +8,10 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { Toolbar } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
+import { getHierarchy, updateHierarchy } from '../Hierarchy/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
+import { TRow } from './ExposureItemTable';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -23,12 +27,21 @@ const MenuProps = {
 interface HierarchyDropdownProps {
   hierarchies: any[];
   count: number;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  exposureItems: any[];
+  setSelectedRows: React.Dispatch<React.SetStateAction<TRow[]>>;
 }
 
-function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
-  const [selectedHierarchies, setSelectedHierarchies] = React.useState<
-    string[]
-  >([]);
+function HierarchyDropdown({
+  hierarchies,
+  count,
+  setCount,
+  exposureItems,
+  setSelectedRows,
+}: HierarchyDropdownProps) {
+  const [selectedHierarchies, setSelectedHierarchies] = useState<string[]>([]);
+  const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase() || '';
 
   function handleChange(event: SelectChangeEvent<typeof selectedHierarchies>) {
     const {
@@ -38,6 +51,36 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
+  }
+
+  function addExposuresToHierarchies() {
+    // get the ids of the selected hierarchies
+    // eslint-disable-next-line prefer-const
+    let selectedHierarchyIds: string[] = [];
+    hierarchies.forEach((h) => {
+      selectedHierarchies.forEach((sh) => {
+        if (h.title === sh) {
+          selectedHierarchyIds.push(h.id);
+        }
+      });
+    });
+
+    // append exposure items to selected hierarchies
+    selectedHierarchyIds.forEach(async (id) => {
+      const res = await getHierarchy(email, id);
+      const numCurrExposures = res.exposures.length;
+      const toAdd: [string, string, string][] = exposureItems.map((e) => [
+        e.name,
+        (numCurrExposures + exposureItems.indexOf(e)).toString(),
+        '',
+      ]);
+      updateHierarchy(email, id, '', '', res.exposures.concat(toAdd));
+    });
+
+    // reset all selections
+    setSelectedHierarchies([]);
+    setCount(0);
+    setSelectedRows([]);
   }
 
   return (
@@ -91,7 +134,7 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
             {hierarchies.map((hierarchy) => (
               <MenuItem key={hierarchy.id} value={hierarchy.title}>
                 <Checkbox
-                  checked={selectedHierarchies.indexOf(hierarchy.title) > -1}
+                  checked={selectedHierarchies?.indexOf(hierarchy.title) > -1}
                 />
                 <ListItemText primary={hierarchy.title} />
               </MenuItem>
@@ -103,9 +146,7 @@ function HierarchyDropdown({ hierarchies, count }: HierarchyDropdownProps) {
           variant="contained"
           size="small"
           sx={{ width: '30%' }}
-          onClick={() => {
-            console.log('TODO!!!!');
-          }}
+          onClick={() => addExposuresToHierarchies()}
         >
           Add ({count}) Items
         </PrimaryButton>

@@ -5,6 +5,8 @@ const getHierarchiesByUser = async (userId: string) => {
   return hierarchies.map((hierarchy) => ({
     id: hierarchy._id,
     title: hierarchy.title,
+    description: hierarchy.description,
+    exposures: hierarchy.exposures,
     updated_at: hierarchy.dateUpdated,
   }));
 };

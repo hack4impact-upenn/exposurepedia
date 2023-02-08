@@ -1,7 +1,17 @@
 /**
  * A file containing the api call to submit an exposure item.
  */
-import { postData, patchData, deleteData } from '../util/api';
+import { getData, postData, patchData, deleteData } from '../util/api';
+
+/**
+ * Retrieves a hierarchy from the database
+ * @param email the email of the user
+ * @param hierarchy_id the id of the hierarchy
+ */
+async function getHierarchy(email: string, hierarchyId: string) {
+  const res = await getData(`hierarchy/${email}/${hierarchyId}`);
+  return res?.data;
+}
 
 /**
  * Adds a hierarchy to the database.
@@ -56,4 +66,4 @@ async function deleteHierarchy(email: string, id: string) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { addHierarchy, updateHierarchy, deleteHierarchy };
+export { getHierarchy, addHierarchy, updateHierarchy, deleteHierarchy };

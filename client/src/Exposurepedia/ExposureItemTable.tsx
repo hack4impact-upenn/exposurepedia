@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Paper,
   Table,
@@ -9,9 +9,8 @@ import {
   TablePagination,
   TableRow,
   Checkbox,
-  Toolbar,
 } from '@mui/material';
-import { makeStyles, createStyles } from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -25,6 +24,8 @@ interface TableProps {
   isApprove: boolean;
   isBroken: boolean;
   setCount?: React.Dispatch<React.SetStateAction<number>>;
+  selectedRows?: TRow[];
+  setSelectedRows?: React.Dispatch<React.SetStateAction<TRow[]>>;
 }
 
 interface RowProps {
@@ -33,6 +34,8 @@ interface RowProps {
   isApprove: boolean;
   isBroken: boolean;
   setCount?: React.Dispatch<React.SetStateAction<number>>;
+  selectedRows?: TRow[];
+  setSelectedRows?: React.Dispatch<React.SetStateAction<TRow[]>>;
 }
 
 /**
@@ -65,7 +68,15 @@ interface TRow {
  * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
-function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
+function Row({
+  row,
+  columns,
+  isApprove,
+  isBroken,
+  setCount,
+  selectedRows,
+  setSelectedRows,
+}: RowProps) {
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const useStyles = makeStyles(() => ({
@@ -77,16 +88,26 @@ function Row({ row, columns, isApprove, isBroken, setCount }: RowProps) {
   }));
   const classes = useStyles();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (setCount) {
-      if (checked) {
-        setCount((count) => count - 1);
-      } else {
-        setCount((count) => count + 1);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!selectedRows?.includes(row)) {
+        setChecked(false);
       }
+    };
+    fetchData();
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (checked && setCount && setSelectedRows) {
+      setCount((count) => count - 1);
+      setSelectedRows((sr) => sr.filter((e) => e !== row));
+    } else if (setCount && setSelectedRows) {
+      setCount((count) => count + 1);
+      setSelectedRows((sr) => sr.concat([row]));
     }
     setChecked(event.target.checked);
   };
+
   const handleNavigate = () => {
     // eslint-disable-next-line no-underscore-dangle
     navigate(`/exposureitem/${row._id}`, {
@@ -152,6 +173,8 @@ function ExposureItemTable({
   isApprove,
   isBroken,
   setCount,
+  selectedRows,
+  setSelectedRows,
 }: TableProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -197,7 +220,6 @@ function ExposureItemTable({
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
-                console.log('ROW IS HERE!!!!!');
                 return (
                   <Row
                     row={row}
@@ -206,6 +228,8 @@ function ExposureItemTable({
                     isApprove={isApprove}
                     isBroken={isBroken}
                     setCount={setCount}
+                    selectedRows={selectedRows}
+                    setSelectedRows={setSelectedRows}
                   />
                 );
               })}
