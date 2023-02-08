@@ -24,7 +24,7 @@ const getLikes = async (
   const { exposure_id } = req.params;
   if (!exposure_id) {
     next(ApiError.missingFields(['exposure_id']));
-    return;
+    return 0;
   }
 
   getLikesByExposureItem(exposure_id)

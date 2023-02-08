@@ -6,7 +6,7 @@ const getLikesByExposureItem = async (exposure_id: string) => {
   const likeCount = await Likes.countDocuments({
     exposure_id: new mongoose.Types.ObjectId(exposure_id),
   }).exec();
-  return likeCount;
+  return likeCount || 0;
 };
 
 const createLike = async (exposure_id: string, user_id: string) => {

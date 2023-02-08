@@ -137,7 +137,7 @@ function Row({
       {columns.map((column) => {
         let value = row[column.id];
         if (column.id === 'likes') {
-          value = Math.round(Math.random() * 100);
+          value = value.length;
         } else if (column.id === 'createdAt') {
           value = new Date(value).toLocaleDateString();
         } else if (column.id === 'formats') {

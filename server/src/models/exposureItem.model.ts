@@ -61,6 +61,7 @@ interface IExposureItem extends mongoose.Document {
   link: string;
   isLinkBroken: boolean;
   isApproved: boolean;
+  likes: number;
 }
 
 const ExposureItem = mongoose.model<IExposureItem>(
