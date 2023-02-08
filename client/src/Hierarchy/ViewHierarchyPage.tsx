@@ -21,18 +21,10 @@ import {
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ViewHierarchyTable } from './ViewHierarchyTable';
-import { updateHierarchy } from './api';
+import { updateHierarchy, deleteHierarchy } from './api';
 import { getData } from '../util/api';
 import { selectUser } from '../util/redux/userSlice';
 import { useAppSelector } from '../util/redux/hooks';
-
-interface TRow {
-  key: string;
-  no: number;
-  itemName: string;
-  suds: string;
-  [key: string]: any;
-}
 
 const ViewHierarchyPage = function () {
   const navigate = useNavigate();
@@ -41,24 +33,25 @@ const ViewHierarchyPage = function () {
     { key: string; no: number; itemName: string; suds: string }[]
   >([]);
   const user = useAppSelector(selectUser);
-  const email = user?.email?.toLowerCase();
+  const email = user?.email?.toLowerCase() || '';
   const [description, setDescription] = useState('');
   const [hierarchyTitle, setHierarchyTitle] = useState('');
   const [hierarchyId, setHierarchyId] = useState('');
+  const [textValue, setTextValue] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}/${location.state.id}`);
-      console.log(res);
-      setDescription(res?.data?.description);
-      setHierarchyTitle(res?.data?.title);
-      setHierarchyId(res?.data?.id);
+      setDescription(res.data.description);
+      setHierarchyTitle(res.data.title);
+      setHierarchyId(res.data.id);
       const items: {
         key: string;
         no: number;
         itemName: string;
         suds: string;
       }[] = [];
-      res?.data?.exposure_ids?.forEach((item: [string, string, string]) => {
+      res.data.exposures.forEach((item: [string, string, string]) => {
         const [title, no, suds] = item;
         items.push({
           key: `${no}`,
@@ -67,13 +60,11 @@ const ViewHierarchyPage = function () {
           suds,
         });
       });
-      console.log(items);
       setRows(items);
     };
-
     fetchData();
   }, [email, location.state.id]);
-  const [textValue, setTextValue] = useState('');
+
   const update = () => {
     if (textValue) {
       const newRows = [
@@ -98,18 +89,17 @@ const ViewHierarchyPage = function () {
     }
   };
 
+  const handleDelete = async () => {
+    await deleteHierarchy(email, hierarchyId);
+    navigate('/hierarchies');
+  };
+
   const getCSVData = (): string[][] => {
     const arr = [];
     arr.push(['no', 'title', 'suds']);
     rows.forEach((row) => arr.push([row.no, row.itemName, row.suds]));
     return arr;
   };
-
-  const columns = [
-    { id: 'no', label: 'No.', minWidth: 100 },
-    { id: 'itemName', label: 'Item Name', minWidth: 170 },
-    { id: 'suds', label: 'SUDS', minWidth: 100 },
-  ];
 
   return (
     <div style={{ width: '90%', margin: 'auto' }}>
@@ -183,6 +173,7 @@ const ViewHierarchyPage = function () {
               borderRadius: '10px',
               background: 'rgba(255,255,255,0.8)',
             }}
+            onClick={() => handleDelete()}
           >
             Delete
           </Button>
@@ -192,7 +183,8 @@ const ViewHierarchyPage = function () {
       <ViewHierarchyTable
         rows={rows}
         setRows={(r: any) => setRows(r)}
-        columns={columns}
+        email={email}
+        hierarchyId={hierarchyId}
       />
       <div
         style={{

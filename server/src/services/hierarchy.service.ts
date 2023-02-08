@@ -71,8 +71,11 @@ const updateHierarchy = async (
   // await hierarchy.save();
 };
 
-const deleteHierarchy = async (hierarchyId: string) => {
-  const hierarchy = await Hierarchy.findOne({ _id: hierarchyId }).exec();
+const deleteHierarchy = async (userId: string, hierarchyId: string) => {
+  const hierarchy = await Hierarchy.findOne({
+    _id: hierarchyId,
+    user: userId,
+  }).exec();
   if (!hierarchy) {
     throw new Error('Unable to find hierarchy');
   }
