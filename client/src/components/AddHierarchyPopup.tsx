@@ -1,12 +1,12 @@
 import {
   Box,
   Dialog,
-  DialogActions,
   DialogContent,
   TextField,
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PrimaryButton from './buttons/PrimaryButton';
 import { addHierarchy } from '../Hierarchy/api';
 import { useAppSelector } from '../util/redux/hooks';
@@ -20,9 +20,22 @@ interface PopupProps {
 function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
   const [value, setValue] = useState('');
   const [valueDescr, setValueDescr] = useState('');
-
+  const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
+
+  async function createHierarchy() {
+    if (value && valueDescr && email) {
+      addToHierarchies({ title: value, updated_at: Date.now() });
+      const res = await addHierarchy(email, value, valueDescr);
+      setPopupState('');
+      navigate('/viewhierarchy', {
+        state: {
+          id: res,
+        },
+      });
+    }
+  }
 
   return (
     <Dialog open onClose={() => setPopupState('')} maxWidth="sm" fullWidth>
@@ -76,16 +89,7 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
             type="submit"
             variant="contained"
             color="primary"
-            onClick={() => {
-              if (value && valueDescr) {
-                addToHierarchies({ title: value, updated_at: Date.now() });
-                if (email) {
-                  addHierarchy(email, value, valueDescr);
-                  console.log('add hierarchy');
-                }
-                setPopupState('');
-              }
-            }}
+            onClick={() => createHierarchy()}
           >
             Add
           </PrimaryButton>

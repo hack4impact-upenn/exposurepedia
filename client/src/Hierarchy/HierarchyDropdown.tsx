@@ -8,7 +8,6 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { Toolbar } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
-import { updateHierarchy } from './api';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

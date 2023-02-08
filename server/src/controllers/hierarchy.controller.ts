@@ -76,13 +76,13 @@ const createHierarchyHandler = async (
     return;
   }
 
-  const userId = user_id;
-  try {
-    await createHierarchy(userId, req.body.title, req.body.description);
-    res.sendStatus(StatusCode.CREATED);
-  } catch (err) {
-    next(ApiError.internal('Unable to create hierarchy'));
-  }
+  createHierarchy(user_id, req.body.title, req.body.description)
+    .then((hierarchyId) => {
+      res.status(StatusCode.OK).json(hierarchyId);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to create hierarchy'));
+    });
 };
 
 const updateHierarchyHandler = async (

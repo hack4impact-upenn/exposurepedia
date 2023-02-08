@@ -5,7 +5,6 @@ import { postData, patchData, deleteData } from '../util/api';
 
 /**
  * Adds a hierarchy to the database.
- * @returns true if successful, false otherwise
  * @param email the email of the user
  * @param title the title of the hierarchy
  * @param description the description of the hierarchy
@@ -16,8 +15,7 @@ async function addHierarchy(email: string, title: string, description: string) {
     title,
     description,
   });
-  if (res.error) return false;
-  return true;
+  return res?.data;
 }
 
 /**

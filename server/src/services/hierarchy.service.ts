@@ -40,6 +40,7 @@ const createHierarchy = async (
     dateUpdated: new Date(),
   });
   await hierarchy.save();
+  return hierarchy._id;
 };
 
 const updateHierarchy = async (
