@@ -96,8 +96,8 @@ const ViewHierarchyPage = function () {
 
   const getCSVData = (): string[][] => {
     const arr = [];
-    arr.push(['no', 'title', 'suds']);
-    rows.forEach((row) => arr.push([row.no, row.itemName, row.suds]));
+    arr.push(['title', 'suds']);
+    rows.forEach((row) => arr.push([row.itemName, row.suds]));
     return arr;
   };
 
