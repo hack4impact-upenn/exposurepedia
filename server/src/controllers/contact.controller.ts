@@ -20,7 +20,6 @@ const contactUsEmail = async (
     return;
   }
   const lowercaseEmail = email.toLowerCase();
-  console.log(lowercaseEmail);
 
   // Send the email and return an appropriate response
   emailForContact(name, lowercaseEmail, message)
@@ -29,8 +28,7 @@ const contactUsEmail = async (
         message: `Email sent.`,
       }),
     )
-    .catch((err) => {
-      console.log(err.body.errors);
+    .catch(() => {
       next(ApiError.internal('Failed to send email.'));
     });
 };

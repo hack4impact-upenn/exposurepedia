@@ -156,6 +156,14 @@ const getFilteredExposureItemsFromDB = async (
           {
             $match: match,
           },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: '_id',
+              foreignField: 'exposure_id',
+              as: 'likes',
+            },
+          },
         ]
       : [
           {
@@ -172,6 +180,14 @@ const getFilteredExposureItemsFromDB = async (
               localField: 'formats',
               foreignField: '_id',
               as: 'formats',
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: '_id',
+              foreignField: 'exposure_id',
+              as: 'likes',
             },
           },
         ],

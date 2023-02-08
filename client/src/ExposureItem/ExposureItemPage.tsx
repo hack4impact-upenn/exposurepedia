@@ -25,7 +25,7 @@ import {
   rejectItem,
 } from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
-import { getData, useData } from '../util/api';
+import { deleteData, getData, postData, useData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
@@ -49,8 +49,9 @@ interface Item {
 export default function ExposureItem() {
   const [isEdit, setIsEdit] = useState(false);
   const [liked, setLiked] = useState(false);
-  const authData = useData('auth/authstatus');
-  const self = useAppSelector(selectUser);
+  const [numLikes, updateNumLikes] = useState(0);
+  const user = useAppSelector(selectUser);
+  const email = user?.email?.toLowerCase();
   const [popupState, setPopupState] = useState('');
   const emp: string[] = [];
   const [curItem, setCurItem] = useState({
@@ -79,13 +80,6 @@ export default function ExposureItem() {
   });
   const { id } = useParams();
   const location = useLocation();
-
-  // console.log('location: ', location.state.key);
-  // const usedItem = useData(`exposure/${location.state.key}`)?.data;
-  // const usedItem = useData(`exposure/639016c1bab195ab7f580ab1`)?.data;
-  // console.log(usedItem);
-  // setCurItem(usedItem?.data);
-  // console.log(usedItem);
   const { isApprove, isBroken } = location.state;
 
   useEffect(() => {
@@ -98,7 +92,6 @@ export default function ExposureItem() {
         (it: any) => it.name,
       );
       const keywords = res?.data[0].keywords.map((it: any) => it.name);
-      console.log(res);
       if (res?.data[0].isAdultAppropriate) {
         maturity.push({ name: 'Adult' });
       }
@@ -121,9 +114,20 @@ export default function ExposureItem() {
         keywords,
         maturity,
       });
+
+      // get likes
+      const numLikesRes = await getData(`exposurelikes/${id}`);
+      updateNumLikes(numLikesRes.data);
+
+      const likeRes = await postData(`exposurelikes/${id}/${email}`);
+      if (likeRes.data.message === 'Unable to post like') {
+        setLiked(true);
+      } else {
+        await deleteData(`exposurelikes/${id}/${email}`);
+      }
     };
     fetchData();
-  }, [id]);
+  }, [email, id]);
 
   const saveChanges = () => {
     setIsEdit(false);
@@ -144,7 +148,6 @@ export default function ExposureItem() {
       curItem.modifications,
       curItem.link,
     );
-    console.log('Exposure item changes saved');
   };
 
   const approve = () => {
@@ -158,7 +161,6 @@ export default function ExposureItem() {
   const cancelChanges = () => {
     setIsEdit(false);
     setCurItem(savedItem);
-    console.log('Exposure item changes cancelled');
   };
 
   const handleDelete = (key: string, data: string) => {
@@ -334,20 +336,25 @@ export default function ExposureItem() {
             {liked ? (
               <Favorite
                 style={{ color: 'CF0C0C' }}
-                onClick={() => {
-                  // TODO: update number of likes here
-                  // updateItem()
-                  setLiked((prevLiked) => !prevLiked);
+                onClick={async () => {
+                  await deleteData(`exposurelikes/${id}/${email}`);
+                  setLiked(false);
+                  const numLikesRes = await getData(`exposurelikes/${id}`);
+                  updateNumLikes(numLikesRes.data);
                 }}
               />
             ) : (
               <FavoriteBorder
                 style={{ color: 'CF0C0C' }}
-                onClick={() => setLiked((prevLiked) => !prevLiked)}
+                onClick={async () => {
+                  await postData(`exposurelikes/${id}/${email}`);
+                  setLiked(true);
+                  const numLikesRes = await getData(`exposurelikes/${id}`);
+                  updateNumLikes(numLikesRes.data);
+                }}
               />
             )}
-
-            <Typography color="GrayText">0</Typography>
+            <Typography color="GrayText">{numLikes}</Typography>
           </Box>
           <Box
             sx={{
@@ -357,7 +364,7 @@ export default function ExposureItem() {
             }}
           >
             <Typography>Last updated October 1st 2022</Typography>
-            {self.admin &&
+            {user.admin &&
               (isEdit ? (
                 <>
                   <Button

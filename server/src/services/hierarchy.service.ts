@@ -5,6 +5,8 @@ const getHierarchiesByUser = async (userId: string) => {
   return hierarchies.map((hierarchy) => ({
     id: hierarchy._id,
     title: hierarchy.title,
+    description: hierarchy.description,
+    exposures: hierarchy.exposures,
     updated_at: hierarchy.dateUpdated,
   }));
 };
@@ -40,6 +42,7 @@ const createHierarchy = async (
     dateUpdated: new Date(),
   });
   await hierarchy.save();
+  return hierarchy._id;
 };
 
 const updateHierarchy = async (
@@ -71,8 +74,11 @@ const updateHierarchy = async (
   // await hierarchy.save();
 };
 
-const deleteHierarchy = async (hierarchyId: string) => {
-  const hierarchy = await Hierarchy.findOne({ _id: hierarchyId }).exec();
+const deleteHierarchy = async (userId: string, hierarchyId: string) => {
+  const hierarchy = await Hierarchy.findOne({
+    _id: hierarchyId,
+    user: userId,
+  }).exec();
   if (!hierarchy) {
     throw new Error('Unable to find hierarchy');
   }

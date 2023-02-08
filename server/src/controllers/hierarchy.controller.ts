@@ -76,13 +76,13 @@ const createHierarchyHandler = async (
     return;
   }
 
-  const userId = user_id;
-  try {
-    await createHierarchy(userId, req.body.title, req.body.description);
-    res.sendStatus(StatusCode.CREATED);
-  } catch (err) {
-    next(ApiError.internal('Unable to create hierarchy'));
-  }
+  createHierarchy(user_id, req.body.title, req.body.description)
+    .then((hierarchyId) => {
+      res.status(StatusCode.OK).json(hierarchyId);
+    })
+    .catch(() => {
+      next(ApiError.internal('Unable to create hierarchy'));
+    });
 };
 
 const updateHierarchyHandler = async (
@@ -90,29 +90,13 @@ const updateHierarchyHandler = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { title, description, exposureTriplets } = req.body;
   const { user_email, hierarchy_id } = req.params;
-
-  console.log(exposureTriplets);
+  const { title, description, exposureTriplets } = req.body;
 
   const user = await getUserByEmail(user_email);
   const user_id = user?.id;
-  if (
-    !user_id ||
-    !hierarchy_id ||
-    !title ||
-    !description ||
-    !exposureTriplets
-  ) {
-    next(
-      ApiError.missingFields([
-        'user_id',
-        'hierarchy_id',
-        'title',
-        'description',
-        'exposures',
-      ]),
-    );
+  if (!user_id || !hierarchy_id) {
+    next(ApiError.missingFields(['user_id', 'hierarchy_id']));
     return;
   }
 
@@ -135,14 +119,17 @@ const deleteHierarchyHandler = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { hierarchy_id } = req.params;
+  const { user_email, hierarchy_id } = req.params;
   if (!hierarchy_id) {
     next(ApiError.missingFields(['hierarchy_id']));
     return;
   }
 
+  const user = await getUserByEmail(user_email);
+  const user_id = user?.id;
+
   try {
-    await deleteHierarchy(hierarchy_id);
+    await deleteHierarchy(user_id, hierarchy_id);
     res.sendStatus(StatusCode.OK);
   } catch (err) {
     next(ApiError.internal('Unable to delete hierarchy'));

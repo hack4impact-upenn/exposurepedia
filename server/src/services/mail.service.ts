@@ -4,9 +4,9 @@
 import 'dotenv/config';
 import SGmail, { MailDataRequired } from '@sendgrid/mail';
 
-const appName = 'Boilerplate'; // Replace with a relevant project name
-const senderName = 'Hack4Impact UPenn'; // Replace with a relevant project sender
-const baseUrl = 'http://localhost:3000'; // TODO: figure out better place to put this
+const appName = 'Exposurepedia'; // Replace with a relevant project name
+const senderName = 'Exposurepedia Admin'; // Replace with a relevant project sender
+const baseUrl = 'https://test-exposurepedia.herokuapp.com'; // TODO: figure out better place to put this
 
 // eslint-disable-next-line no-useless-concat
 SGmail.setApiKey(`${process.env.SENDGRID_API_KEY}`);
@@ -99,7 +99,7 @@ const emailForContact = async (
       name,
     },
     replyTo: email,
-    to: 'katherine.wang@hack4impact.org',
+    to: process.env.SENDGRID_EMAIL_ADDRESS,
     subject: `${name} contacted us!`,
     html: `<p>${message}</p>`,
   };

@@ -34,15 +34,12 @@ function HierarchyPage() {
   const emp: any = [];
   const [hierarchies, setHierarchies] = useState(emp);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}`);
-      console.log(res);
       setHierarchies(res?.data);
     };
-
     fetchData();
   }, [email]);
 

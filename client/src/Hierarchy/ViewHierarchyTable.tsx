@@ -15,29 +15,28 @@ import {
   TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { makeStyles } from '@mui/styles';
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from 'react-beautiful-dnd';
-import { useNavigate } from 'react-router-dom';
+import { updateHierarchy } from './api';
 
 /**
- * interface for the props of the {@link PaginationTable} component
+ * interface for the props of the {@link ViewHierarchyTable} component
  * @param columns An {@link Array} of type TColumn
  * @param rows An {@link Array} of type TRow
  */
 interface TableProps {
   rows: TRow[];
   setRows: (r: any) => void;
-  columns: TColumn[];
+  email: string;
+  hierarchyId: string;
 }
 
 interface RowProps {
   row: TRow;
-  columns: TColumn[];
   index: number;
   updateRowItems: (a: TRow) => void;
   updateItem: (r: TRow, oldI: number, index: number) => void;
@@ -62,27 +61,15 @@ interface TRow {
   no: number;
   itemName: string;
   suds: string;
-  [key: string]: any;
 }
 
 /**
  * Our pagination table is set up by passing in a row component for each row.
  * This is the row component for a table of users.
- * @param columns - an array of TColumn objects that define the columns of the table.
  * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
-function Row({ row, columns, index, updateItem, updateRowItems }: RowProps) {
-  const [checked, setChecked] = useState(false);
-  const navigate = useNavigate();
-  const useStyles = makeStyles(() => ({
-    tableRow: {
-      '&:hover': {
-        cursor: 'pointer',
-      },
-    },
-  }));
-  const classes = useStyles();
+function Row({ row, index, updateItem, updateRowItems }: RowProps) {
   return (
     <TableRow hover tabIndex={-1} key={`${row.key}TR`}>
       <TableCell
@@ -146,24 +133,37 @@ const reorder = (list: TRow[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
-
   return result;
 };
 
 /**
- * @param columns - an array of TColumn objects that define the columns of the table. Each column has a display name (the prop is label) and an id prop used to link with the rows array.
  * @param rows - an array of TRow objects that define the rows of the table. They each have props which map column ids to values for that row.
  */
-function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
+function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
   const updateRowItems = (row: TRow) => {
-    setRows(rows.filter((it) => it.key !== row.key));
+    // deleting row
+    const tempRows = rows.filter((it) => it.key !== row.key);
+    setRows(tempRows);
+    const toEdit: [string, string, string][] = tempRows.map((r) => [
+      r.itemName,
+      r.no.toString(),
+      r.suds,
+    ]);
+    updateHierarchy(email, hierarchyId, '', '', toEdit);
   };
 
   const updateItem = (row: TRow, oldI: number, index: number) => {
+    // changing suds
     let temp = rows;
     temp = temp.filter((it) => it.no !== oldI);
     temp.splice(index, 0, row);
     setRows(temp);
+    const toEdit: [string, string, string][] = temp.map((r) => [
+      r.itemName,
+      r.no.toString(),
+      r.suds,
+    ]);
+    updateHierarchy(email, hierarchyId, '', '', toEdit);
   };
 
   function onDragEnd(result: DropResult) {
@@ -172,13 +172,19 @@ function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
       return;
     }
 
+    // reordering the rows
     const reorderedItems: TRow[] = reorder(
       rows,
       result.source.index,
       result.destination.index,
     );
-
     setRows(reorderedItems);
+    const toEdit: [string, string, string][] = reorderedItems.map((r) => [
+      r.itemName,
+      r.no.toString(),
+      r.suds,
+    ]);
+    updateHierarchy(email, hierarchyId, '', '', toEdit);
   }
 
   return (
@@ -229,7 +235,6 @@ function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     style={{ width: '100%' }}
-                    // style={getListStyle(snapshot.isDraggingOver)}
                   >
                     {rows.map((row, index) => (
                       <Draggable
@@ -243,10 +248,6 @@ function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
                               ref={p.innerRef}
                               {...p.draggableProps}
                               {...p.dragHandleProps}
-                              // style={getItemStyle(
-                              //   snapshot.isDragging,
-                              //   provided.draggableProps.style,
-                              // )}
                             >
                               <Row
                                 updateRowItems={(r) => updateRowItems(r)}
@@ -254,7 +255,6 @@ function ViewHierarchyTable({ rows, columns, setRows }: TableProps) {
                                 row={row}
                                 index={index}
                                 key={row.key}
-                                columns={columns}
                               />
                             </div>
                           );

@@ -47,6 +47,6 @@ router.patch('/:user_email/:hierarchy_id', updateHierarchyHandler);
  * Expects hierarchy_id
  * Returns success/failure message
  */
-router.delete('/:hierarchy_id', deleteHierarchyHandler);
+router.delete('/:user_email/:hierarchy_id', deleteHierarchyHandler);
 
 export default router;
