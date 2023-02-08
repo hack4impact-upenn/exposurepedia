@@ -5,20 +5,14 @@
 import mongoose, { Schema } from 'mongoose';
 
 const LikesSchema = new mongoose.Schema({
-  user: {
-    type: { type: Schema.Types.ObjectId, ref: 'User' },
-    required: true,
-  },
-  exposureItem: {
-    type: { type: Schema.Types.ObjectId, ref: 'ExposureItem' },
-    required: true,
-  },
+  user_id: { type: Schema.Types.ObjectId, ref: 'User' },
+  exposure_id: { type: Schema.Types.ObjectId, ref: 'ExposureItem' },
 });
 
 interface ILikes extends mongoose.Document {
   _id: string;
-  user: string;
-  exposureItem: string;
+  user_id: string;
+  exposure_id: string;
 }
 
 const Likes = mongoose.model<ILikes>('Likes', LikesSchema);

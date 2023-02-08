@@ -10,6 +10,7 @@ import { Router } from 'express';
 import adminRouter from './admin.route';
 import authRouter from './auth.route';
 import exposureRouter from './exposure.route';
+import exposureLikesRouter from './exposureLikes.route';
 import hierarchyRouter from './hierarchy.route';
 import contactRouter from './contact.route';
 
@@ -27,10 +28,13 @@ const prefixToRouterMap: { prefix: string; router: Router }[] = [
     router: exposureRouter,
   },
   {
+    prefix: '/api/exposurelikes',
+    router: exposureLikesRouter,
+  },
+  {
     prefix: '/api/hierarchy',
     router: hierarchyRouter,
   },
-
   {
     prefix: '/api/contact',
     router: contactRouter,
