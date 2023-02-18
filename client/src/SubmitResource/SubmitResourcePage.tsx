@@ -174,6 +174,7 @@ function SubmitResourcePage() {
         <FormRow>
           <Grid item width="1">
             <Autocomplete
+              freeSolo
               multiple
               // open={disordersOpen}
               disableCloseOnSelect
