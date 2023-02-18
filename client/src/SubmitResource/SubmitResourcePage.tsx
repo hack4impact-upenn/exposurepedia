@@ -1,31 +1,27 @@
 /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/jsx-props-no-spreading */
 
 /**
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Link,
-  TextField,
-  Grid,
-  Typography,
-  FormLabel,
-  FormControl,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormHelperText,
-  Checkbox,
-  FormGroup,
   Autocomplete,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  TextField,
   Toolbar,
 } from '@mui/material';
+import { ArrowRight } from '@material-ui/icons';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import FormCol from '../components/form/FormCol';
 import FormRow from '../components/form/FormRow';
 import submit from './api';
-import masterDisorderObject, { DisorderTree } from './disorders';
+import masterDisorderObject from './disorders';
 
 const styles = {
   button: {
@@ -141,6 +137,15 @@ function SubmitResourcePage() {
     );
   };
 
+  const shiftCategory = (event: any, newOption: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const newPath = [...currPath, newOption];
+    if (resolveDisorder(newPath).length !== 0) {
+      setCurrPath(newPath);
+    }
+  };
+
   return (
     <div
       style={{
@@ -175,29 +180,92 @@ function SubmitResourcePage() {
               id="combo-box-demo"
               options={disorders}
               sx={{ width: '100%' }}
-              onFocus={(e) => {
+              onOpen={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setDisordersOpen(!disordersOpen);
                 setCurrPath([]);
               }}
-              onChange={(event, value, reason) => {
-                event.preventDefault();
-                event.stopPropagation();
-                let newPath: string[] = [];
-                if (reason === 'selectOption') {
-                  const newOption: string = value[value.length - 1];
-                  newPath = [...currPath, newOption];
-                } else if (reason === 'removeOption') {
-                  newPath = currPath.slice(0, -1);
-                }
-                if (resolveDisorder(newPath).length === 0) {
-                  newPath = [];
-                }
-                setCurrPath(newPath);
-              }}
+              renderOption={(props, option, { selected }) =>
+                resolveDisorder([...currPath, option]).length !== 0 ? (
+                  <li
+                    style={{
+                      alignItems: 'center',
+                      display: 'flex',
+                    }}
+                  >
+                    <li
+                      {...props}
+                      style={{
+                        maxWidth: 'fit-content',
+                        padding: 0,
+                        display: 'inline-block',
+                      }}
+                    >
+                      <Checkbox checked={selected} />
+                    </li>
+                    <button
+                      type="button"
+                      style={{
+                        display: 'inline-block',
+                        margin: 0,
+                        background: 'none',
+                        color: 'inherit',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        cursor: 'pointer',
+                        outline: 'inherit',
+                      }}
+                      onClick={(e) => shiftCategory(e, option)}
+                    >
+                      {option}
+                      <ArrowRight
+                        style={{
+                          width: 20,
+                          height: 20,
+                          paddingTop: 5,
+                        }}
+                      />
+                    </button>
+                  </li>
+                ) : (
+                  <li
+                    style={{
+                      alignItems: 'center',
+                      display: 'flex',
+                    }}
+                  >
+                    <li
+                      {...props}
+                      style={{
+                        maxWidth: 'fit-content',
+                        padding: 0,
+                        display: 'inline-block',
+                      }}
+                    >
+                      <Checkbox checked={selected} />
+                    </li>
+                    <button
+                      type="button"
+                      style={{
+                        display: 'inline-block',
+                        margin: 0,
+                        background: 'none',
+                        color: 'inherit',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        cursor: 'pointer',
+                        outline: 'inherit',
+                      }}
+                    >
+                      {option}
+                    </button>
+                  </li>
+                )
+              }
               renderInput={(params) => (
-                // eslint-disable-next-line react/jsx-props-no-spreading
                 <TextField {...params} label="Disorders" />
               )}
             />
