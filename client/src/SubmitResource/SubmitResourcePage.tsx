@@ -4,7 +4,7 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Link,
   TextField,
@@ -33,6 +33,10 @@ const styles = {
     marginTop: '10px',
   },
 };
+
+interface DisorderTree {
+  [key: string]: DisorderTree;
+}
 
 function SubmitResourcePage() {
   const interventionTypes = [
@@ -120,127 +124,106 @@ function SubmitResourcePage() {
     'Social Anxiety',
     'Trichotillomania/Excoriation',
   ];
-  const [disorders, setDisorderState] = useState<string[]>(defaultDisorders);
 
-  const [disordersOpen, setDisordersOpen] = useState(false);
-
-  const [currLayer, setCurrLayer] = useState(0);
-
-  const masterDisorderObject: any = {
+  const masterDisorderObject: DisorderTree = {
     'Body Dysmorphia': {},
     'Generalized Anxiety': {},
-    'Health Anxiety/Medical Phobia': [
-      'Blood/Injection/Injury',
-      'Dental Phobia',
-    ],
-    Hoarding: [],
-    'Obsessive Compulsive Disorder (OCD)': [
-      'Aggressive/Violent',
-      'Checking',
-      'Contamination',
-      'Existential',
-      'Fear of Acting on Unwanted Impulses',
-      'Fear of Being Cancelled',
-      'Fear of Being Misunderstood',
-      'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs',
-      'Fear of Developing Other Types of OCD',
-      'Fear of Forgetting',
-      'Fear of Getting in Trouble',
-      'Fear of Going Crazy',
-      'Fear of Making the Wrong Decision',
-      'Fear of Unintentionally Causing Harm',
-      'Magical Numbers',
-      'Need to Know',
-      'Not Just Right',
-      'Perfectionism',
-      'Relationship OCD',
-      'Scrupulosity/Morality',
-      'Sexual/Gender',
-      'Somatic OCD',
-      'Symmetry/Ordering',
-      'Fear of Uncertainty',
-    ],
-    'Panic/Agoraphobia': [],
-    'Specific Phobia': [
-      'Animals',
-      'Claustriphobia',
-      'Choking',
-      'Dark',
-      'Driving',
-      'Flying',
-      'Heights',
-      'Storms/Natural Disasters',
-      'Trypophobia',
-      'Vomit (Emetophobia)',
-    ],
-    'Posttraumatic Stress Disorder (PTSD)': [
-      'Combat/Military/Terrorism',
-      'Sexual Assault',
-      'Car Accident',
-    ],
-    'Separation Anxiety': [],
-    'Social Anxiety': [],
-    'Trichotillomania/Excoriation': [],
+    'Health Anxiety/Medical Phobia': {
+      'Blood/Injection/Injury': {},
+      'Dental Phobia': {},
+    },
+    Hoarding: {},
+    'Obsessive Compulsive Disorder (OCD)': {
+      'Aggressive/Violent': {
+        'Fear of Being a Sociopath/Murderer': {},
+        'Fear of a Hit-and-Run': {},
+        'Fear of Self-Harm': {},
+      },
+      Checking: {},
+      Contamination: {},
+      Existential: {
+        'Fear of Wasting Time': {},
+      },
+      'Fear of Acting on Unwanted Impulses': {},
+      'Fear of Being Cancelled': {},
+      'Fear of Being Misunderstood': {},
+      'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs': {},
+      'Fear of Developing Other Types of OCD': {},
+      'Fear of Forgetting': {},
+      'Fear of Getting in Trouble': {},
+      'Fear of Going Crazy': {},
+      'Fear of Making the Wrong Decision': {
+        'Fear of Buying the Wrong Thing': {},
+      },
+      'Fear of Unintentionally Causing Harm': {},
+      'Magical Numbers': {},
+      'Need to Know': {},
+      'Not Just Right': {},
+      Perfectionism: {},
+      'Relationship OCD': {
+        'Retractive Jealousy': {},
+      },
+      'Scrupulosity/Morality': {
+        'Fear of Being Racist': {},
+        'Fear of Sinning': {},
+      },
+      'Sexual/Gender': {
+        'Fear of Being Gay/Straight': {},
+        'Fear of Being Trans': {},
+        'Fear of Being a Pedophile': {},
+      },
+      'Somatic OCD': {},
+      'Symmetry/Ordering': {},
+      'Fear of Uncertainty': {},
+    },
+    'Panic/Agoraphobia': {},
+    'Specific Phobia': {
+      Animals: {
+        Birds: {},
+        Bugs: {},
+        Cats: {},
+        Dogs: {},
+        Fish: {},
+        'Mice/Rats': {},
+        Sharks: {},
+        Snakes: {},
+      },
+      Claustriphobia: {},
+      Choking: {},
+      Dark: {},
+      Driving: {},
+      Flying: {},
+      Heights: {},
+      'Storms/Natural Disasters': {},
+      Trypophobia: {},
+      'Vomit (Emetophobia)': {},
+    },
+    'Posttraumatic Stress Disorder (PTSD)': {
+      'Combat/Military/Terrorism': {},
+      'Sexual Assault': {},
+      'Car Accident': {},
+    },
+    'Separation Anxiety': {},
+    'Social Anxiety': {},
+    'Trichotillomania/Excoriation': {},
   };
 
-  const disordersLayer2: any = {
-    'Blood/Injection/Injury': [],
-    'Dental Phobia': [],
-    'Aggressive/Violent': [
-      'Fear of Being a Sociopath/Murderer',
-      'Fear of a Hit-and-Run',
-      'Fear of Self-Harm',
-    ],
-    Checking: [],
-    Contamination: [],
-    Existential: ['Fear of Wasting Time'],
-    'Fear of Acting on Unwanted Impulses': [],
-    'Fear of Being Cancelled': [],
-    'Fear of Being Misunderstood': [],
-    'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs': [],
-    'Fear of Developing Other Types of OCD': [],
-    'Fear of Forgetting': [],
-    'Fear of Getting in Trouble': [],
-    'Fear of Going Crazy': [],
-    'Fear of Making the Wrong Decision': ['Fear of Buying the Wrong Thing'],
-    'Fear of Unintentionally Causing Harm': [],
-    'Magical Numbers': [],
-    'Need to Know': [],
-    'Not Just Right': [],
-    Perfectionism: [],
-    'Relationship OCD': ['Retractive Jealousy'],
-    'Scrupulosity/Morality': ['Fear of Being Racist', 'Fear of Sinning'],
-    'Sexual/Gender': [
-      'Fear of Being Gay/Straight',
-      'Fear of Being Trans',
-      'Fear of Being a Pedophile',
-    ],
-    'Somatic OCD': [],
-    'Symmetry/Ordering': [],
-    'Fear of Uncertainty': [],
-    Animals: [
-      'Birds',
-      'Bugs',
-      'Cats',
-      'Dogs',
-      'Fish',
-      'Mice/Rats',
-      'Sharks',
-      'Snakes',
-    ],
-    Claustriphobia: [],
-    Choking: [],
-    Dark: [],
-    Driving: [],
-    Flying: [],
-    Heights: [],
-    'Storms/Natural Disasters': [],
-    Trypophobia: [],
-    'Vomit (Emetophobia)': [],
-    'Combat/Military/Terrorism': [],
-    'Sexual Assault': [],
-    'Car Accident': [],
+  const resolveDisorder = (path: string[]): string[] => {
+    let curr = masterDisorderObject;
+    path.forEach((ind) => {
+      curr = curr[ind];
+    });
+    return Object.keys(curr);
   };
+
+  const [disordersOpen, setDisordersOpen] = useState(false);
+  const [currPath, setCurrPath] = useState<string[]>([]);
+  // const [disorders, setDisorderState] = useState<string[]>(defaultDisorders);
+  // useEffect(() => {
+  //   setDisorderState(resolveDisorder(currPath));
+  // }, [currPath, resolveDisorder]);
+
+  const disorders = resolveDisorder(currPath);
 
   const submitResource = () => {
     const formats = Object.keys(values.formats).filter(
@@ -262,9 +245,6 @@ function SubmitResourcePage() {
       values.link,
     );
   };
-
-  console.log(values);
-  console.log(disorders);
 
   return (
     <div
@@ -324,49 +304,22 @@ function SubmitResourcePage() {
                 e.preventDefault();
                 e.stopPropagation();
                 setDisordersOpen(!disordersOpen);
-                setDisorderState(defaultDisorders);
-                setCurrLayer(0);
+                setCurrPath([]);
               }}
-              onChange={(event, value) => {
+              onChange={(event, value, reason) => {
                 event.preventDefault();
                 event.stopPropagation();
-                let newDisorderState;
-                if (values.disorder.includes(value[value.length - 1])) {
-                  console.log(1, value);
-                  const temp = values.disorder;
-                  temp.pop();
-                  if (currLayer === 2) {
-                    newDisorderState =
-                      masterDisorderObject[value[value.length - 1]] ||
-                      defaultDisorders;
-                    setDisorderState(newDisorderState);
-                  }
-                  setCurrLayer(currLayer - 1);
-                  setValue('disorder', value);
-                } else if (value) {
-                  if (currLayer === 0) {
-                    console.log(2);
-                    setValue('disorder', value);
-                    newDisorderState =
-                      masterDisorderObject[value[value.length - 1]] ||
-                      defaultDisorders;
-                    setDisorderState(newDisorderState);
-                    setCurrLayer(1);
-                  } else if (currLayer === 1) {
-                    console.log(3);
-                    newDisorderState =
-                      disordersLayer2[value[value.length - 1]] ||
-                      defaultDisorders;
-                    setValue('disorder', value);
-                    setDisorderState(newDisorderState);
-                    setCurrLayer(value.length);
-                  } else {
-                    console.log(4);
-                    setValue('disorder', value);
-                    setDisordersOpen(!disordersOpen);
-                    setCurrLayer(0);
-                  }
+                let newPath: string[] = [];
+                if (reason === 'selectOption') {
+                  const newOption: string = value[value.length - 1];
+                  newPath = [...currPath, newOption];
+                } else if (reason === 'removeOption') {
+                  newPath = currPath.slice(0, -1);
                 }
+                if (resolveDisorder(newPath).length === 0) {
+                  newPath = [];
+                }
+                setCurrPath(newPath);
               }}
               renderInput={(params) => (
                 // eslint-disable-next-line react/jsx-props-no-spreading
