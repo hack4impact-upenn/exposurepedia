@@ -25,6 +25,7 @@ import PrimaryButton from '../components/buttons/PrimaryButton';
 import FormCol from '../components/form/FormCol';
 import FormRow from '../components/form/FormRow';
 import submit from './api';
+import masterDisorderObject, { DisorderTree } from './disorders';
 
 const styles = {
   button: {
@@ -33,10 +34,6 @@ const styles = {
     marginTop: '10px',
   },
 };
-
-interface DisorderTree {
-  [key: string]: DisorderTree;
-}
 
 function SubmitResourcePage() {
   const interventionTypes = [
@@ -111,103 +108,6 @@ function SubmitResourcePage() {
     }));
   };
 
-  const defaultDisorders = [
-    'Body Dysmorphia',
-    'Generalized Anxiety',
-    'Health Anxiety/Medical Phobia',
-    'Hoarding',
-    'Obsessive Compulsive Disorder (OCD)',
-    'Panic/Agoraphobia',
-    'Specific Phobia',
-    'Posttraumatic Stress Disorder (PTSD)',
-    'Separation Anxiety',
-    'Social Anxiety',
-    'Trichotillomania/Excoriation',
-  ];
-
-  const masterDisorderObject: DisorderTree = {
-    'Body Dysmorphia': {},
-    'Generalized Anxiety': {},
-    'Health Anxiety/Medical Phobia': {
-      'Blood/Injection/Injury': {},
-      'Dental Phobia': {},
-    },
-    Hoarding: {},
-    'Obsessive Compulsive Disorder (OCD)': {
-      'Aggressive/Violent': {
-        'Fear of Being a Sociopath/Murderer': {},
-        'Fear of a Hit-and-Run': {},
-        'Fear of Self-Harm': {},
-      },
-      Checking: {},
-      Contamination: {},
-      Existential: {
-        'Fear of Wasting Time': {},
-      },
-      'Fear of Acting on Unwanted Impulses': {},
-      'Fear of Being Cancelled': {},
-      'Fear of Being Misunderstood': {},
-      'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs': {},
-      'Fear of Developing Other Types of OCD': {},
-      'Fear of Forgetting': {},
-      'Fear of Getting in Trouble': {},
-      'Fear of Going Crazy': {},
-      'Fear of Making the Wrong Decision': {
-        'Fear of Buying the Wrong Thing': {},
-      },
-      'Fear of Unintentionally Causing Harm': {},
-      'Magical Numbers': {},
-      'Need to Know': {},
-      'Not Just Right': {},
-      Perfectionism: {},
-      'Relationship OCD': {
-        'Retractive Jealousy': {},
-      },
-      'Scrupulosity/Morality': {
-        'Fear of Being Racist': {},
-        'Fear of Sinning': {},
-      },
-      'Sexual/Gender': {
-        'Fear of Being Gay/Straight': {},
-        'Fear of Being Trans': {},
-        'Fear of Being a Pedophile': {},
-      },
-      'Somatic OCD': {},
-      'Symmetry/Ordering': {},
-      'Fear of Uncertainty': {},
-    },
-    'Panic/Agoraphobia': {},
-    'Specific Phobia': {
-      Animals: {
-        Birds: {},
-        Bugs: {},
-        Cats: {},
-        Dogs: {},
-        Fish: {},
-        'Mice/Rats': {},
-        Sharks: {},
-        Snakes: {},
-      },
-      Claustriphobia: {},
-      Choking: {},
-      Dark: {},
-      Driving: {},
-      Flying: {},
-      Heights: {},
-      'Storms/Natural Disasters': {},
-      Trypophobia: {},
-      'Vomit (Emetophobia)': {},
-    },
-    'Posttraumatic Stress Disorder (PTSD)': {
-      'Combat/Military/Terrorism': {},
-      'Sexual Assault': {},
-      'Car Accident': {},
-    },
-    'Separation Anxiety': {},
-    'Social Anxiety': {},
-    'Trichotillomania/Excoriation': {},
-  };
-
   const resolveDisorder = (path: string[]): string[] => {
     let curr = masterDisorderObject;
     path.forEach((ind) => {
@@ -218,11 +118,6 @@ function SubmitResourcePage() {
 
   const [disordersOpen, setDisordersOpen] = useState(false);
   const [currPath, setCurrPath] = useState<string[]>([]);
-  // const [disorders, setDisorderState] = useState<string[]>(defaultDisorders);
-  // useEffect(() => {
-  //   setDisorderState(resolveDisorder(currPath));
-  // }, [currPath, resolveDisorder]);
-
   const disorders = resolveDisorder(currPath);
 
   const submitResource = () => {
@@ -257,17 +152,6 @@ function SubmitResourcePage() {
       <h2 style={{ fontSize: '50px', fontWeight: 'bold' }}>
         Submit New Resource
       </h2>
-      {/* <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          overflowY: 'scroll',
-          alignItems: 'center',
-          marginLeft: '100px',
-          marginRight: '100px',
-        }}
-      > */}
       <FormCol>
         <FormRow>
           <Grid item width="1">
@@ -284,15 +168,6 @@ function SubmitResourcePage() {
         </FormRow>
         <FormRow>
           <Grid item width="1">
-            {/* <TextField
-              fullWidth
-              size="small"
-              type="text"
-              required
-              label="Disorder"
-              value={values.disorder}
-              onChange={(e) => setValue('disorder', e.target.value)}
-            /> */}
             <Autocomplete
               multiple
               // open={disordersOpen}
