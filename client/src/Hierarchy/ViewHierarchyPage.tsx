@@ -20,6 +20,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { TextField } from '@material-ui/core';
 import { ViewHierarchyTable } from './ViewHierarchyTable';
 import { updateHierarchy, deleteHierarchy } from './api';
 import { getData } from '../util/api';
@@ -38,6 +39,8 @@ const ViewHierarchyPage = function () {
   const [hierarchyTitle, setHierarchyTitle] = useState('');
   const [hierarchyId, setHierarchyId] = useState('');
   const [textValue, setTextValue] = useState('');
+  const [titleEditable, setTitleEditable] = useState(false);
+  const [descriptionEditable, setDescriptionEditable] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,28 +68,32 @@ const ViewHierarchyPage = function () {
     fetchData();
   }, [email, location.state.id]);
 
-  const update = () => {
-    if (textValue) {
-      const newRows = [
-        ...rows,
-        {
-          key: `${rows.length + 1}`,
-          no: rows.length + 1,
-          itemName: textValue,
-          suds: '',
-        },
-      ];
-      setRows(newRows);
-      if (email) {
-        const toAdd: [string, string, string][] = newRows.map((row) => [
-          row.itemName,
-          row.no.toString(),
-          row.suds,
-        ]);
-        updateHierarchy(email, hierarchyId, hierarchyTitle, description, toAdd);
-      }
-      setTextValue('');
+  const update = async () => {
+    const newRows = [
+      ...rows,
+      {
+        key: `${rows.length + 1}`,
+        no: rows.length + 1,
+        itemName: textValue,
+        suds: '',
+      },
+    ];
+    setRows(newRows);
+    if (email) {
+      const toAdd: [string, string, string][] = newRows.map((row) => [
+        row.itemName,
+        row.no.toString(),
+        row.suds,
+      ]);
+      await updateHierarchy(
+        email,
+        hierarchyId,
+        hierarchyTitle,
+        description,
+        toAdd,
+      );
     }
+    setTextValue('');
   };
 
   const handleDelete = async () => {
@@ -123,12 +130,32 @@ const ViewHierarchyPage = function () {
               }}
             />
           </IconButton>
-          <h1 style={{ padding: '0px 20px 0px 20px' }}> {hierarchyTitle} </h1>
-          <ModeRoundedIcon
-            sx={{
-              color: 'black',
+          {titleEditable ? (
+            <TextField
+              value={hierarchyTitle}
+              onChange={(event) => {
+                setHierarchyTitle(event.target.value);
+              }}
+              onBlur={async () => {
+                console.log('blurred');
+                setTitleEditable(false);
+                await update();
+              }}
+            />
+          ) : (
+            <h1 style={{ padding: '0px 20px 0px 20px' }}> {hierarchyTitle} </h1>
+          )}
+          <IconButton
+            onClick={() => {
+              setTitleEditable(true);
             }}
-          />
+          >
+            <ModeRoundedIcon
+              sx={{
+                color: 'black',
+              }}
+            />
+          </IconButton>
         </div>
         <div>
           <Button
@@ -179,7 +206,30 @@ const ViewHierarchyPage = function () {
           </Button>
         </div>
       </div>
-      <p style={{ padding: '0px 0px 30px 45px' }}>{description}</p>
+      {descriptionEditable ? (
+        <TextField
+          multiline
+          value={description}
+          onChange={(event) => {
+            setDescription(event.target.value);
+          }}
+          onBlur={async () => {
+            setDescriptionEditable(false);
+            await update();
+          }}
+          style={{
+            minWidth: '25%',
+            marginBottom: '20px',
+          }}
+        />
+      ) : (
+        <div>
+          <p style={{ padding: '0px 0px 30px 45px' }}>{description}</p>
+          <Button onClick={() => setDescriptionEditable(true)}>
+            Edit Description
+          </Button>
+        </div>
+      )}
       <ViewHierarchyTable
         rows={rows}
         setRows={(r: any) => setRows(r)}

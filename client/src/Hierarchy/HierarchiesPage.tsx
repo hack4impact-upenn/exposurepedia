@@ -24,6 +24,7 @@ const styles = {
 export interface HierarchyListItem {
   id: string;
   title: string;
+  // eslint-disable-next-line camelcase
   updated_at: string;
   index: number;
 }

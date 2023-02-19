@@ -43,7 +43,7 @@ async function resolve(promise: Promise<any>) {
  */
 const BACKENDURL = process.env.PUBLIC_URL
   ? process.env.PUBLIC_URL
-  : 'http://localhost:4000';
+  : 'http://localhost:3000';
 
 const URLPREFIX = `${BACKENDURL}/api`;
 

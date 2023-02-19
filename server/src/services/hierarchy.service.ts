@@ -69,7 +69,7 @@ const updateHierarchy = async (
 
   await Hierarchy.updateOne(
     { _id: hierarchyId },
-    { $set: { exposures } },
+    { $set: { exposures, title, description } },
   ).exec();
   // await hierarchy.save();
 };
