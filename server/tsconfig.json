@@ -14,6 +14,7 @@
     "esModuleInterop": true,
     //
     "sourceMap": true,
+    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true // enables importers to jump to source
   },
