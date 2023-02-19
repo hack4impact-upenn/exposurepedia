@@ -1,9 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope,@typescript-eslint/ban-types */
-
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
-import { useEffect, useState } from 'react';
 import { ExposureItemTable, TRow } from './ExposureItemTable';
 import HierarchyDropdown from './HierarchyDropdown';
 import Filters from './Filters';
