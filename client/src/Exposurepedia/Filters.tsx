@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
-import { ArrowBack, ChevronRight } from '@mui/icons-material';
+import React, { useState } from 'react';
 import {
   Box,
-  Button,
   Checkbox,
   Chip,
   Drawer,
@@ -15,11 +14,10 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
-import data from './filterdata';
+import { ArrowBack, ChevronRight } from '@mui/icons-material';
 import SearchComponent from './SearchComponent';
 
-function Filtering2({ filterOptions, setFilterOptions }: any) {
+function Filters({ filterOptions, setFilterOptions }: any) {
   const emptyArr: string[] = [];
   const emptyObj: { [key: string]: string[] } = {
     Disorder: emptyArr,
@@ -35,12 +33,19 @@ function Filtering2({ filterOptions, setFilterOptions }: any) {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState(emptyArr);
 
-  const getCurrentList = (p: string[]) => {
+  const getCurrentList = (p: string[], forDisplay = false) => {
     let tempPath: any = p;
-    let tempOptions: any = filterOptions;
+    let tempOptions: any = {};
+    Object.assign(tempOptions, filterOptions);
     while (tempPath.length > 0) {
       tempOptions = tempOptions[tempPath[0]];
       tempPath = tempPath.slice(1);
+    }
+    // TODO: figure out why this doesn't truncate number of keywords displayed
+    if (tempOptions.Keyword && forDisplay) {
+      tempOptions.Keyword = Object.fromEntries(
+        Object.entries(tempOptions.Keyword).slice(0, 5),
+      );
     }
     return tempOptions;
   };
@@ -76,7 +81,7 @@ function Filtering2({ filterOptions, setFilterOptions }: any) {
     return p;
   };
 
-  const handleSearchChange = (str: string) => {
+  const handleSearchChange = async (str: string) => {
     const currList = getCurrentList(path);
     const emp: Object[] = [];
     const flattenedObj = Object.assign(
@@ -293,6 +298,7 @@ function Filtering2({ filterOptions, setFilterOptions }: any) {
   };
 
   const handleItemCheck = (item: string, p: string[]) => {
+    console.log(filterOptions);
     const tempOptions = filterOptions;
     let val: any = tempOptions;
     for (let i = 0; i < p.length; i += 1) {
@@ -424,7 +430,8 @@ function Filtering2({ filterOptions, setFilterOptions }: any) {
               )}
             </div>
             {search.length === 0 &&
-              Object.keys(getCurrentList(path)).map((curr) => (
+              console.log('hi') === console.log('bye') &&
+              Object.keys(getCurrentList(path, true)).map((curr) => (
                 <ListItem
                   sx={{ boxShadow: '2px 2px 4px rgba(0,0,0,0.1' }}
                   key={curr}
@@ -504,4 +511,4 @@ function Filtering2({ filterOptions, setFilterOptions }: any) {
   );
 }
 
-export default Filtering2;
+export default Filters;

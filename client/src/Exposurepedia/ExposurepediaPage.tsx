@@ -6,25 +6,145 @@ import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
 import { ExposureItemTable, TRow } from './ExposureItemTable';
 import HierarchyDropdown from './HierarchyDropdown';
-import Filtering2 from './Filtering2';
+import Filters from './Filters';
 import { getData, postData } from '../util/api';
-import filterOptionsData from './filterdata';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
 /**
- * A page only accessible to authenticated users that displays hierarchies
- * in a table and allows users to expand and delete hierarchies.
+ * A page only accessible to authenticated users that display exposure items in
+ * a table and allows users to filter and query exposure items as well as add them
+ * to hierarchies.
  */
-
 function Exposurepedia() {
+  const initFilterOptions = {
+    Disorder: {
+      'Body Dysmorphia': false,
+      'Generalized Anxiety': false,
+      'Health Anxiety/Medical Phobia': {
+        'Blood/Injection/Injury': false,
+        'Dental Phobia': false,
+      },
+      Hoarding: false,
+      'Obsessive Compulsive Disorder (OCD)': {
+        'Aggressive/Violent': {
+          'Fear of Being a Sociopath/Murderer': false,
+          'Fear of a Hit-and-Run': false,
+          'Fear of Self-Harm': false,
+        },
+        Checking: false,
+        Contamination: { 'Emotional/Mental Contamination': false },
+        Existential: {
+          'Fear of Wasting Time': false,
+        },
+        'Fear of Acting on Unwanted Impulses': false,
+        'Fear of Being Cancelled': false,
+        'Fear of Being Misunderstood': false,
+        'Fear of Contracting Sexually-Transmitted Diseases/HIV/AIDs': false,
+        'Fear of Developing Other Types of OCD': false,
+        'Fear of Forgetting': false,
+        'Fear of Getting in Trouble': false,
+        'Fear of Going Crazy': false,
+        'Fear of Making the Wrong Decision': {
+          'Fear of Buying the Wrong Thing': false,
+        },
+        'Fear of Unintentionally Causing Harm': false,
+        'Magical Numbers': false,
+        'Need to Know': false,
+        'Not Just Right': false,
+        Perfectionism: false,
+        'Relationship OCD': { 'Retractive Jealousy': false },
+        'Scrupulosity/Morality': {
+          'Fear of Being Racist': false,
+          'Fear of Sinning/Committing Blasphemy': false,
+        },
+        'Sexual/Gender': {
+          'Fear of Being Gay/Straight': false,
+          'Fear of Being Trans': false,
+          'Fear of Being a Pedophile': false,
+        },
+        'Somatic OCD': false,
+        'Symmetry/Ordering': false,
+        'Fear of Uncertainty': false,
+      },
+      'Panic/Agoraphobia': false,
+      'Specific Phobia': {
+        Animals: {
+          Birds: false,
+          Bugs: {
+            Spiders: false,
+            'House Centipedes': false,
+            Bees: false,
+          },
+          Cats: false,
+          Dogs: false,
+          Fish: false,
+          'Mice/Rats': false,
+          Sharks: false,
+          Snakes: false,
+        },
+        Claustriphobia: false,
+        Choking: false,
+        Dark: false,
+        Driving: false,
+        Flying: false,
+        Heights: false,
+        'Storms/Natural Disasters': false,
+        Trypophobia: false,
+        'Vomit (Emetophobia)': false,
+      },
+      'Posttraumatic Stress Disorder (PTSD)': {
+        'Combat/Military/Terrorism': false,
+        'Sexual Assault': false,
+        'Car Accident': false,
+      },
+      'Separation Anxiety': false,
+      'Social Anxiety': false,
+      'Trichotillomania/Excoriation': false,
+    },
+    Format: {
+      Video: false,
+      Picture: false,
+      Idea: false,
+      Script: false,
+      Reading: false,
+      Audio: false,
+    },
+    'Intervention Type': {
+      'In Vivo': false,
+      Imaginal: false,
+      Interoceptive: false,
+      Psychoeducation: false,
+      'Stimulus Control': false,
+      'Psychiatric Hospital': false,
+      'Habit Reversal Training': false,
+    },
+    Maturity: {
+      Children: false,
+      Adults: false,
+    },
+    Keyword: {},
+  };
+  const fetchFilterKeywordData = async () => {
+    const res = await postData(`exposure/keyword`, {
+      query: '',
+    });
+    const allKeywords = Object.assign(
+      {},
+      ...res.data.map((k: any) => ({ [k.name]: false })),
+    );
+    initFilterOptions.Keyword = allKeywords;
+  };
+  fetchFilterKeywordData();
+
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
   const [selectedRows, setSelectedRows] = useState<TRow[]>(rows);
-  const [filterOptions, setFilterOptions] = useState(filterOptionsData);
+  const [filterOptions, setFilterOptions] = useState(initFilterOptions);
   const [hierarchies, setHierarchies] = useState([]);
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`hierarchy/${email}`);
@@ -102,7 +222,7 @@ function Exposurepedia() {
     <div>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <Filtering2 filterOptions={filterOptions} setFilterOptions={sfo} />
+        <Filters filterOptions={filterOptions} setFilterOptions={sfo} />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <div
