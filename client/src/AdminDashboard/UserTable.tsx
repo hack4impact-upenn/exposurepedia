@@ -4,22 +4,11 @@
  */
 import React, { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import styled from 'styled-components';
-import { Dialog } from '@mui/material';
 import { PaginationTable, TColumn } from '../components/PaginationTable';
-import DeleteUserButton from './DeleteUserButton';
-import ApproveUserButton from './ApproveUserButton';
-import PromoteUserButton from './PromoteUserButton';
-import PopupDialog from './PopupDialog';
 import { useData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 import IUser from '../util/types/user';
-import ButtonFooter from './ButtonFooter';
 import ButtonContainer from './ButtonContainer';
 
 interface AdminDashboardRow {
@@ -68,15 +57,6 @@ function UserTable() {
       view,
     };
   }
-
-  const BootstrapDialog = styled(Dialog)(() => ({
-    // '& .MuiDialogContent-root': {
-    //   padding: theme.spacing(2),
-    // },
-    // '& .MuiDialogActions-root': {
-    //   padding: theme.spacing(1),
-    // },
-  }));
 
   const [userList, setUserList] = useState<IUser[]>([]);
   const users = useData('admin/all');
