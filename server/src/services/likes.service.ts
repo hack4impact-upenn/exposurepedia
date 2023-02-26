@@ -9,21 +9,6 @@ const getLikesByExposureItem = async (exposure_id: string) => {
   return likeCount || 0;
 };
 
-const createLike = async (exposure_id: string, user_id: string) => {
-  const existingLike = await Likes.findOne({
-    exposure_id: new mongoose.Types.ObjectId(exposure_id),
-    user_id: new mongoose.Types.ObjectId(user_id),
-  }).exec();
-  if (existingLike) {
-    throw new Error('User has already liked this exposure item');
-  }
-  const like = new Likes({
-    exposure_id,
-    user_id,
-  });
-  await like.save();
-};
-
 const removeLike = async (exposure_id: string, user_id: string) => {
   const like = await Likes.findOne({
     exposure_id: new mongoose.Types.ObjectId(exposure_id),
@@ -35,4 +20,4 @@ const removeLike = async (exposure_id: string, user_id: string) => {
   await like.remove();
 };
 
-export { getLikesByExposureItem, createLike, removeLike };
+export { getLikesByExposureItem, removeLike };

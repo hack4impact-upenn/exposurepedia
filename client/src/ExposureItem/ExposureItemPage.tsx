@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Chip,
@@ -8,6 +9,7 @@ import {
   Button,
   TextField,
   Toolbar,
+  IconButton,
 } from '@mui/material';
 import {
   Cancel,
@@ -15,23 +17,19 @@ import {
   Favorite,
   AddCircle,
 } from '@mui/icons-material';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
+import { deleteData, getData, postData } from '../util/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
 import {
   updateItem,
   approveItem,
   rejectItem,
 } from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
-import { deleteData, getData, postData, useData } from '../util/api';
-import { useAppSelector } from '../util/redux/hooks';
-import { selectUser } from '../util/redux/userSlice';
-
-interface ExposureItemProps {
-  item: Item;
-}
 
 interface Item {
   name: string;
@@ -79,6 +77,7 @@ export default function ExposureItem() {
     link: '',
   });
   const { id } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
   let { isApprove, isBroken } = location.state;
   const navigate = useNavigate();
@@ -121,10 +120,11 @@ export default function ExposureItem() {
       updateNumLikes(numLikesRes.data);
 
       const likeRes = await postData(`exposurelikes/${id}/${email}`);
-      if (likeRes.data.message === 'Unable to post like') {
+      if (likeRes.data.createdLike === false) {
         setLiked(true);
       } else {
         await deleteData(`exposurelikes/${id}/${email}`);
+        setLiked(false);
       }
     };
     fetchData();
@@ -183,6 +183,17 @@ export default function ExposureItem() {
   return (
     <div>
       <Toolbar />
+      <IconButton
+        onClick={() => {
+          navigate('/exposurepedia');
+        }}
+      >
+        <ArrowBackRoundedIcon
+          sx={{
+            color: 'black',
+          }}
+        />
+      </IconButton>
       {isApprove && (
         <div
           style={{
