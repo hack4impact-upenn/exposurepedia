@@ -38,17 +38,18 @@ function SubmitResourcePage() {
     'Interoceptive',
     'Psychoeducation',
     'Stimulus Control',
-    'Psychiatric Hospital',
     'Habit Reversal Training',
   ];
   const formatTypes = [
     'Idea',
+    'Video',
     'Audio',
     'Picture',
     'Virtual Reality',
     'Reading',
     'Joke',
     'Script',
+    'Recipe',
   ];
   const maturityTypes = ['Child', 'Adult'];
 
@@ -345,7 +346,7 @@ function SubmitResourcePage() {
               fullWidth
               size="small"
               type="text"
-              label="Keywords (optional)"
+              label="Keywords: enter keywords that others might search to find this resource, separated by commas (optional)"
               value={values.keywords}
               onChange={(e) => setValue('keywords', e.target.value)}
             />
@@ -357,7 +358,7 @@ function SubmitResourcePage() {
               fullWidth
               multiline
               type="text"
-              label="Modifications (optional)"
+              label="Modifications: enter ways to make this exposure easier or harder (if multiple, separated by commas) (optional)"
               rows={4}
               value={values.modifications}
               onChange={(e) => setValue('modifications', e.target.value)}
