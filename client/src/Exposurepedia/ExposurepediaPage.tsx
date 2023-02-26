@@ -9,6 +9,7 @@ import Filters from './Filters';
 import { getData, postData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
+import GeneralSearch from './GeneralSearch';
 
 /**
  * A page only accessible to authenticated users that display exposure items in
@@ -141,6 +142,7 @@ function Exposurepedia() {
   const [selectedRows, setSelectedRows] = useState<TRow[]>(rows);
   const [filterOptions, setFilterOptions] = useState(initFilterOptions);
   const [hierarchies, setHierarchies] = useState([]);
+  const [query, setQuery] = useState('');
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
 
@@ -207,6 +209,7 @@ function Exposurepedia() {
         isLinkBroken: false,
         isApproved: true,
         getApproved: true,
+        query,
       });
       setRows(response.data);
     };
@@ -215,6 +218,7 @@ function Exposurepedia() {
     filterOptions,
     filterOptions.Maturity.Adults,
     filterOptions.Maturity.Children,
+    query,
   ]);
 
   return (
@@ -239,6 +243,11 @@ function Exposurepedia() {
               setCount={setCount}
               exposureItems={selectedRows}
               setSelectedRows={setSelectedRows}
+            />
+            <GeneralSearch
+              name="disorders"
+              search={query}
+              handleChange={(e: string) => setQuery(e)}
             />
             <ExposureItemTable
               rows={rows}
