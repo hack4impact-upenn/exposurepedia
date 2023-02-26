@@ -430,7 +430,6 @@ function Filters({ filterOptions, setFilterOptions }: any) {
               )}
             </div>
             {search.length === 0 &&
-              console.log('hi') === console.log('bye') &&
               Object.keys(getCurrentList(path, true)).map((curr) => (
                 <ListItem
                   sx={{ boxShadow: '2px 2px 4px rgba(0,0,0,0.1' }}

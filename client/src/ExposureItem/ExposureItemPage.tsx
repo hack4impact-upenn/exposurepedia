@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   Box,
   Chip,
@@ -17,17 +18,16 @@ import {
 } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-import { useLocation, useParams } from 'react-router-dom';
 import WarningIcon from '@mui/icons-material/Warning';
+import { deleteData, getData, postData } from '../util/api';
+import { useAppSelector } from '../util/redux/hooks';
+import { selectUser } from '../util/redux/userSlice';
 import {
   updateItem,
   approveItem,
   rejectItem,
 } from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
-import { deleteData, getData, postData, useData } from '../util/api';
-import { useAppSelector } from '../util/redux/hooks';
-import { selectUser } from '../util/redux/userSlice';
 
 interface ExposureItemProps {
   item: Item;
@@ -120,10 +120,13 @@ export default function ExposureItem() {
       updateNumLikes(numLikesRes.data);
 
       const likeRes = await postData(`exposurelikes/${id}/${email}`);
-      if (likeRes.data.message === 'Unable to post like') {
+      console.log(likeRes.data);
+      if (likeRes.data.createdLike === false) {
+        console.log('already liked');
         setLiked(true);
       } else {
         await deleteData(`exposurelikes/${id}/${email}`);
+        setLiked(false);
       }
     };
     fetchData();
