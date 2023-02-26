@@ -94,62 +94,69 @@ function HierarchyDropdown({
       }}
     >
       <Toolbar />
-      <p
-        style={{
-          fontSize: '1.0rem',
-          textAlign: 'left',
-          width: '80%',
-          margin: '0px auto',
-          padding: '0px',
-        }}
-      >
-        Check exposure items to add them to a hierarchy.
-      </p>
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '80%',
-          margin: '10px auto',
+          flexDirection: 'column',
         }}
       >
-        <FormControl sx={{ m: 1, width: 700 }}>
-          <InputLabel size="small" id="demo-multiple-checkbox-label">
-            Select Hierarchies
-          </InputLabel>
-          <Select
-            size="small"
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            multiple
-            value={selectedHierarchies}
-            // eslint-disable-next-line react/jsx-no-bind
-            onChange={handleChange}
-            input={<OutlinedInput label="Select Hierarchies" />}
-            renderValue={(selected) => selected.join(', ')}
-            MenuProps={MenuProps}
-          >
-            {hierarchies.map((hierarchy) => (
-              <MenuItem key={hierarchy.id} value={hierarchy.title}>
-                <Checkbox
-                  checked={selectedHierarchies?.indexOf(hierarchy.title) > -1}
-                />
-                <ListItemText primary={hierarchy.title} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-        <PrimaryButton
-          variant="contained"
-          size="small"
-          sx={{ width: '30%' }}
-          onClick={() => addExposuresToHierarchies()}
+        <p
+          style={{
+            fontSize: '1.0rem',
+            textAlign: 'left',
+            width: '80%',
+            margin: '10px auto',
+            padding: '0px',
+          }}
         >
-          Add ({count}) Items
-        </PrimaryButton>
+          Check exposure items to add them to a hierarchy.
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '80%',
+            margin: '10px auto',
+          }}
+        >
+          <FormControl sx={{ width: 700 }}>
+            <InputLabel size="small" id="demo-multiple-checkbox-label">
+              Select Hierarchies
+            </InputLabel>
+            <Select
+              size="small"
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={selectedHierarchies}
+              // eslint-disable-next-line react/jsx-no-bind
+              onChange={handleChange}
+              input={<OutlinedInput label="Select Hierarchies" />}
+              renderValue={(selected) => selected.join(', ')}
+              MenuProps={MenuProps}
+            >
+              {hierarchies.map((hierarchy) => (
+                <MenuItem key={hierarchy.id} value={hierarchy.title}>
+                  <Checkbox
+                    checked={selectedHierarchies?.indexOf(hierarchy.title) > -1}
+                  />
+                  <ListItemText primary={hierarchy.title} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+          <PrimaryButton
+            variant="contained"
+            size="small"
+            sx={{ width: '30%', margin: '0px 10px' }}
+            onClick={() => addExposuresToHierarchies()}
+          >
+            Add ({count}) Items
+          </PrimaryButton>
+        </div>
       </div>
     </div>
   );

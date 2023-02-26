@@ -116,6 +116,7 @@ const getFilteredExposureItems = async (
     keywords,
     isLinkBroken,
     isApproved,
+    query,
   } = req.body;
 
   if (
@@ -138,6 +139,7 @@ const getFilteredExposureItems = async (
         'keywords',
         'isLinkBroken',
         'isApproved',
+        'query',
       ]),
     );
     return;
@@ -153,6 +155,7 @@ const getFilteredExposureItems = async (
       keywords,
       isLinkBroken,
       isApproved,
+      query,
     );
     res.status(StatusCode.OK).json(exposureItems);
   } catch (err) {
