@@ -63,14 +63,33 @@ function HierarchyPage() {
       >
         <Toolbar />
         <Grid item container justifyContent="flex-start" spacing={0}>
-          <Typography
-            variant="h2"
-            sx={{
+          <p
+            style={{
               fontWeight: 'bold',
+              margin: '0px',
+              marginTop: '20px',
+              marginBottom: '5px',
+              padding: '0px',
+              fontSize: '36px',
             }}
           >
             Hierarchies
-          </Typography>
+          </p>
+          <p
+            style={{
+              fontSize: '16px',
+              margin: '0px',
+              padding: '0px',
+              color: '#cc0000',
+            }}
+          >
+            {`To protect confidentiality, please do not include PHI/patient names
+            in hierarchies. Rather than using a patient's name or initials, you
+            might instead title a hierarchy according to the day/time you see
+            that patient (e.g., “Wednesday 2pm”) or their fear/diagnosis (e.g.,
+            “Relationship OCD”). Exposurepedia is not HIPAA compliant at this
+            time and should not contain PHI.`}
+          </p>
         </Grid>
         <Grid
           item
