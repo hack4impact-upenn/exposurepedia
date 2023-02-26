@@ -74,15 +74,25 @@ const getFilteredExposureItemsFromDB = async (
   isLinkBroken: boolean,
   isApproved: boolean,
   getApproved: boolean,
+  query: string,
 ) => {
   const match: any = {};
 
   let maxCount = 20;
+
+  if (query !== '') {
+    match.$or = [
+      { name: { $regex: query, $options: 'i' } },
+      { modifications: { $regex: query, $options: 'i' } },
+    ];
+  }
+
   if (
     disorders.length === 0 &&
     formats.length === 0 &&
     interventionTypes.length === 0 &&
-    keywords.length === 0
+    keywords.length === 0 &&
+    query === ''
   ) {
     maxCount = 500;
   }

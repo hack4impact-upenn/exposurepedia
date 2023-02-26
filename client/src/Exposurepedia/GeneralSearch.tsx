@@ -1,6 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField, InputAdornment, Button } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface SearchProps {
   name: string;
@@ -11,29 +11,34 @@ interface SearchProps {
 const styles = {
   row: {
     display: 'flex',
-    alignItems: 'left',
+    alignItems: 'center',
     flexDirection: 'row' as const,
     width: '100%',
     justifyContent: 'center',
-    margin: '0px 0px',
-    padding: '0px 0px',
+    margin: '10px 0px',
+    padding: '0px 10px',
+  },
+  button: {
+    textTransform: 'none',
+    height: 'px',
+    borderRadius: '6px',
+    marginLeft: '4px',
   },
 };
 
-function SearchComponent({ name, search, handleChange }: SearchProps) {
+function GeneralSearch({ name, search, handleChange }: SearchProps) {
   return (
     <div style={styles.row}>
       <TextField
-        sx={{ width: '100%' }}
+        style={{ width: '80%' }}
         placeholder={`Search ${name}`}
         variant="outlined"
         size="small"
         InputProps={{
           style: {
-            height: '35px',
-            margin: 'auto',
-            width: '90%',
-            marginBottom: '10px',
+            height: '45px',
+            marginRight: '4px',
+            width: '100%',
           },
           startAdornment: (
             <InputAdornment position="start">
@@ -44,8 +49,9 @@ function SearchComponent({ name, search, handleChange }: SearchProps) {
         value={search}
         onChange={(event) => handleChange(event.target.value)}
       />
+      <div style={{ width: '.5%' }} />
     </div>
   );
 }
 
-export default SearchComponent;
+export default GeneralSearch;
