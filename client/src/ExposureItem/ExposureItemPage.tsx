@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Chip,
@@ -9,6 +9,7 @@ import {
   Button,
   TextField,
   Toolbar,
+  IconButton,
 } from '@mui/material';
 import {
   Cancel,
@@ -16,6 +17,7 @@ import {
   Favorite,
   AddCircle,
 } from '@mui/icons-material';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -28,10 +30,6 @@ import {
   rejectItem,
 } from '../components/apis/ExposureApi';
 import Popup from '../components/Popup';
-
-interface ExposureItemProps {
-  item: Item;
-}
 
 interface Item {
   name: string;
@@ -79,6 +77,7 @@ export default function ExposureItem() {
     link: '',
   });
   const { id } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
   const { isApprove, isBroken } = location.state;
 
@@ -120,9 +119,7 @@ export default function ExposureItem() {
       updateNumLikes(numLikesRes.data);
 
       const likeRes = await postData(`exposurelikes/${id}/${email}`);
-      console.log(likeRes.data);
       if (likeRes.data.createdLike === false) {
-        console.log('already liked');
         setLiked(true);
       } else {
         await deleteData(`exposurelikes/${id}/${email}`);
@@ -183,6 +180,17 @@ export default function ExposureItem() {
   return (
     <div>
       <Toolbar />
+      <IconButton
+        onClick={() => {
+          navigate('/exposurepedia');
+        }}
+      >
+        <ArrowBackRoundedIcon
+          sx={{
+            color: 'black',
+          }}
+        />
+      </IconButton>
       {isApprove && (
         <div
           style={{
