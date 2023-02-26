@@ -73,7 +73,6 @@ const getFilteredExposureItemsFromDB = async (
   keywords: string[],
   isLinkBroken: boolean,
   isApproved: boolean,
-  getApproved: boolean,
   query: string,
 ) => {
   const match: any = {};
@@ -126,7 +125,7 @@ const getFilteredExposureItemsFromDB = async (
     match.isLinkBroken = true;
   }
 
-  match.isApproved = getApproved;
+  match.isApproved = isApproved;
 
   return ExposureItem.aggregate(
     Object.keys(match).length > 0

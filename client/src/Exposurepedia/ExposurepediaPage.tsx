@@ -208,7 +208,6 @@ function Exposurepedia() {
         keywords,
         isLinkBroken: false,
         isApproved: true,
-        getApproved: true,
         query,
       });
       setRows(response.data);
