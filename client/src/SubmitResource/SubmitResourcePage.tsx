@@ -1,3 +1,6 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/jsx-props-no-spreading */
 
@@ -5,14 +8,16 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Autocomplete,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
   Grid,
+  Snackbar,
   TextField,
   Toolbar,
 } from '@mui/material';
@@ -114,9 +119,12 @@ function SubmitResourcePage() {
 
   const [disordersOpen, setDisordersOpen] = useState(false);
   const [currPath, setCurrPath] = useState<string[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [searchedDisorders, setSearchedDisorders] = useState<string[]>([]);
+  const [successOpen, setSuccessOpen] = useState(false);
   const disorders = resolveDisorder(currPath);
 
-  const submitResource = () => {
+  const submitResource = async () => {
     const formats = Object.keys(values.formats).filter(
       (format) => values.formats[format],
     );
@@ -124,7 +132,7 @@ function SubmitResourcePage() {
       (intervention) => values.interventions[intervention],
     );
 
-    submit(
+    const res = await submit(
       values.title,
       values.disorder,
       formats,
@@ -135,6 +143,29 @@ function SubmitResourcePage() {
       values.modifications,
       values.link,
     );
+    if (res) {
+      setValueState(defaultValues);
+      setSuccessOpen(true);
+    } else {
+      setSuccessOpen(false);
+    }
+  };
+
+  const getCurrentList = (p: string[], forDisplay = false) => {
+    let tempPath: any = p;
+    let tempOptions: any = {};
+    Object.assign(tempOptions, masterDisorderObject);
+    while (tempPath.length > 0) {
+      tempOptions = tempOptions[tempPath[0]];
+      tempPath = tempPath.slice(1);
+    }
+    // TODO: figure out why this doesn't truncate number of keywords displayed
+    if (tempOptions.Keyword && forDisplay) {
+      tempOptions.Keyword = Object.fromEntries(
+        Object.entries(tempOptions.Keyword).slice(0, 5),
+      );
+    }
+    return tempOptions;
   };
 
   const shiftCategory = (event: any, newOption: any) => {
@@ -179,7 +210,7 @@ function SubmitResourcePage() {
               // open={disordersOpen}
               disableCloseOnSelect
               id="combo-box-demo"
-              options={disorders}
+              options={inputText === '' ? disorders : searchedDisorders}
               sx={{ width: '100%' }}
               onOpen={(e) => {
                 e.preventDefault();
@@ -187,49 +218,124 @@ function SubmitResourcePage() {
                 setDisordersOpen(!disordersOpen);
                 setCurrPath([]);
               }}
+              onInputChange={(event, inputValue) => {
+                setInputText(inputValue);
+                if (inputValue === '') {
+                  setCurrPath([]);
+                } else {
+                  const emp: Object[] = [];
+                  const flattenedObj = Object.assign(
+                    {},
+                    ...(function flatten(o: any): Object[] {
+                      return emp.concat(
+                        ...Object.keys(o).map((k) => {
+                          if (typeof o[k] === 'boolean') {
+                            return { [k]: 'temp' };
+                          }
+                          return [...flatten(o[k]), { [k]: 'temp' }];
+                        }),
+                      );
+                    })(getCurrentList([], false)),
+                  );
+                  const itemsBelow = Object.keys(flattenedObj);
+                  setSearchedDisorders(
+                    itemsBelow.filter(
+                      (it) =>
+                        it.toLowerCase().indexOf(inputValue.toLowerCase()) !==
+                        -1,
+                    ),
+                  );
+                }
+              }}
               renderOption={(props, option, { selected }) =>
-                resolveDisorder([...currPath, option]).length !== 0 ? (
-                  <li
-                    style={{
-                      alignItems: 'center',
-                      display: 'flex',
-                    }}
-                  >
+                inputText === '' ? (
+                  resolveDisorder([...currPath, option]).length !== 0 ? (
                     <li
-                      {...props}
                       style={{
-                        maxWidth: 'fit-content',
-                        padding: 0,
-                        display: 'inline-block',
+                        alignItems: 'center',
+                        display: 'flex',
                       }}
                     >
-                      <Checkbox checked={selected} />
-                    </li>
-                    <button
-                      type="button"
-                      style={{
-                        display: 'inline-block',
-                        margin: 0,
-                        background: 'none',
-                        color: 'inherit',
-                        border: 'none',
-                        padding: 0,
-                        font: 'inherit',
-                        cursor: 'pointer',
-                        outline: 'inherit',
-                      }}
-                      onClick={(e) => shiftCategory(e, option)}
-                    >
-                      {option}
-                      <ArrowRight
+                      <li
+                        {...props}
                         style={{
-                          width: 20,
-                          height: 20,
-                          paddingTop: 5,
+                          maxWidth: 'fit-content',
+                          padding: 0,
+                          display: 'inline-block',
                         }}
-                      />
-                    </button>
-                  </li>
+                      >
+                        <Checkbox checked={selected} />
+                      </li>
+                      <button
+                        type="button"
+                        style={{
+                          display: 'inline-block',
+                          margin: 0,
+                          background: 'none',
+                          color: 'inherit',
+                          border: 'none',
+                          padding: 0,
+                          font: 'inherit',
+                          cursor: 'pointer',
+                          outline: 'inherit',
+                          width: '100%',
+                        }}
+                        onClick={(e) => shiftCategory(e, option)}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {option}
+                          <ArrowRight
+                            style={{
+                              width: 25,
+                              height: 25,
+                            }}
+                          />
+                        </div>
+                      </button>
+                    </li>
+                  ) : (
+                    <li
+                      style={{
+                        alignItems: 'center',
+                        display: 'flex',
+                      }}
+                    >
+                      <li
+                        {...props}
+                        style={{
+                          maxWidth: 'fit-content',
+                          padding: 0,
+                          display: 'inline-block',
+                        }}
+                      >
+                        <Checkbox checked={selected} />
+                      </li>
+                      <button
+                        type="button"
+                        style={{
+                          display: 'inline-block',
+                          margin: 0,
+                          background: 'none',
+                          color: 'inherit',
+                          border: 'none',
+                          padding: 0,
+                          font: 'inherit',
+                          cursor: 'pointer',
+                          outline: 'inherit',
+                          width: '100%',
+                          textAlign: 'left',
+                        }}
+                      >
+                        {option}
+                      </button>
+                    </li>
+                  )
                 ) : (
                   <li
                     style={{
@@ -259,6 +365,8 @@ function SubmitResourcePage() {
                         font: 'inherit',
                         cursor: 'pointer',
                         outline: 'inherit',
+                        width: '100%',
+                        textAlign: 'left',
                       }}
                     >
                       {option}
@@ -377,6 +485,21 @@ function SubmitResourcePage() {
           </Grid>
         </FormRow>
       </FormCol>
+      <Snackbar
+        open={successOpen}
+        autoHideDuration={6000}
+        onClose={() => setSuccessOpen(!successOpen)}
+      >
+        <Alert
+          onClose={() => setSuccessOpen(!successOpen)}
+          severity={successOpen ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {successOpen
+            ? 'Successfully submitted resource!'
+            : 'Error - please try again'}
+        </Alert>
+      </Snackbar>
       {/* onSubmit={() => submitResource()} */}
       <PrimaryButton style={styles.button} onClick={() => submitResource()}>
         Submit
