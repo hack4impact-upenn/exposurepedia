@@ -245,7 +245,7 @@ function Exposurepedia() {
               setSelectedRows={setSelectedRows}
             />
             <GeneralSearch
-              name="disorders"
+              name="disorders by title and modifications"
               search={query}
               handleChange={(e: string) => setQuery(e)}
             />

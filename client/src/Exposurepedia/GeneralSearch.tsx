@@ -20,7 +20,7 @@ const styles = {
   },
   button: {
     textTransform: 'none',
-    height: '30px',
+    height: 'px',
     borderRadius: '6px',
     marginLeft: '4px',
   },
@@ -30,13 +30,15 @@ function GeneralSearch({ name, search, handleChange }: SearchProps) {
   return (
     <div style={styles.row}>
       <TextField
+        style={{ width: '80%' }}
         placeholder={`Search ${name}`}
         variant="outlined"
         size="small"
         InputProps={{
           style: {
-            height: '35px',
+            height: '45px',
             marginRight: '4px',
+            width: '100%',
           },
           startAdornment: (
             <InputAdornment position="start">
@@ -47,9 +49,7 @@ function GeneralSearch({ name, search, handleChange }: SearchProps) {
         value={search}
         onChange={(event) => handleChange(event.target.value)}
       />
-      <Button variant="contained" sx={styles.button}>
-        Search
-      </Button>
+      <div style={{ width: '.5%' }} />
     </div>
   );
 }

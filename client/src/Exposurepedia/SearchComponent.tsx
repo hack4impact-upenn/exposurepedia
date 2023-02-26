@@ -11,18 +11,12 @@ interface SearchProps {
 const styles = {
   row: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'left',
     flexDirection: 'row' as const,
     width: '100%',
     justifyContent: 'center',
-    margin: '10px 0px',
-    padding: '0px 10px',
-  },
-  button: {
-    textTransform: 'none',
-    height: '30px',
-    borderRadius: '6px',
-    marginLeft: '4px',
+    margin: '0px 0px',
+    padding: '0px 0px',
   },
 };
 
@@ -30,13 +24,16 @@ function SearchComponent({ name, search, handleChange }: SearchProps) {
   return (
     <div style={styles.row}>
       <TextField
+        sx={{ width: '100%' }}
         placeholder={`Search ${name}`}
         variant="outlined"
         size="small"
         InputProps={{
           style: {
             height: '35px',
-            marginRight: '4px',
+            margin: 'auto',
+            width: '90%',
+            marginBottom: '10px',
           },
           startAdornment: (
             <InputAdornment position="start">
@@ -47,9 +44,6 @@ function SearchComponent({ name, search, handleChange }: SearchProps) {
         value={search}
         onChange={(event) => handleChange(event.target.value)}
       />
-      <Button variant="contained" sx={styles.button}>
-        Search
-      </Button>
     </div>
   );
 }
