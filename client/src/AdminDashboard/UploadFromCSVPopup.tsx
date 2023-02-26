@@ -1,3 +1,4 @@
+/* eslint-disable no-promise-executor-return */
 import {
   Box,
   Dialog,
@@ -5,7 +6,9 @@ import {
   TextField,
   Typography,
   Button,
+  CircularProgress,
 } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../util/redux/hooks';
@@ -18,9 +21,20 @@ interface PopupProps {
 function UploadFromCSVPopup({ setPopupState }: PopupProps) {
   const [value, setValue] = useState('');
   const [valueDescr, setValueDescr] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
+
+  const parseCSV = async (img: any) => {
+    setIsUploading(true);
+    setFileUploaded(false);
+    const sleep = (ms: number) => new Promise((r: any) => setTimeout(r, ms));
+    await sleep(2000);
+    setIsUploading(false);
+    setFileUploaded(true);
+  };
 
   return (
     <Dialog open onClose={() => setPopupState('')} maxWidth="sm" fullWidth>
@@ -42,10 +56,17 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             width: '100%',
           }}
         >
-          <DialogContent sx={{ width: '100%' }}>
+          <DialogContent
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <Button variant="contained" component="label">
               Select File(s)
-              <input type="file" hidden />
+              <input type="file" accept=".csv" hidden onChange={parseCSV} />
             </Button>
             <div
               style={{
@@ -55,23 +76,23 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
                 width: '100%',
               }}
             >
-              <TextField
-                value={value}
-                variant="standard"
-                fullWidth
-                label="Name"
-                onChange={(event) => setValue(event.target.value)}
-                sx={{ marginBottom: '10px' }}
-              />
-              <TextField
-                value={valueDescr}
-                variant="standard"
-                label="Description"
-                fullWidth
-                multiline
-                rows={2}
-                onChange={(event) => setValueDescr(event.target.value)}
-              />
+              {isUploading && <CircularProgress sx={{ marginTop: '20px' }} />}
+              {fileUploaded && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p style={{ fontSize: '24px', marginRight: '5px' }}>
+                    Successfully uploaded
+                  </p>
+                  <CheckCircleOutlineIcon
+                    sx={{ color: 'green', fontSize: '36px' }}
+                  />
+                </div>
+              )}
             </div>
           </DialogContent>
           <Button
