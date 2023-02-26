@@ -79,7 +79,8 @@ export default function ExposureItem() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isApprove, isBroken } = location.state;
+  let { isApprove, isBroken } = location.state;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,7 +135,7 @@ export default function ExposureItem() {
     setSavedItem(curItem);
     const { isAdultAppropriate } = curItem;
     const { isChildAppropriate } = curItem;
-    const isLinkBroken = false; // update this
+    isBroken = false;
     updateItem(
       id || '',
       curItem.name,
@@ -143,7 +144,7 @@ export default function ExposureItem() {
       curItem.interventionTypes,
       isAdultAppropriate,
       isChildAppropriate,
-      isLinkBroken,
+      isBroken,
       curItem.keywords,
       curItem.modifications,
       curItem.link,
@@ -152,6 +153,8 @@ export default function ExposureItem() {
 
   const approve = () => {
     approveItem(id || '');
+    isApprove = false;
+    navigate('/home');
   };
 
   const reject = () => {

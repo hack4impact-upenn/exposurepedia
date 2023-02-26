@@ -1,39 +1,37 @@
-import React from 'react';
+import { fabClasses, Toolbar } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
+import { postData } from '../util/api';
 
-const FixLinksPage = function () {
-  const rows = [
-    {
-      key: '1',
-      title: 'Write your own obituary',
-      format: 'Idea',
-      likes: 45,
-      date: '2021-10-10',
-    },
-    {
-      key: '2',
-      title: 'Young boy gets blood drawn',
-      format: 'Reading',
-      likes: 2,
-      date: '2022-10-2',
-    },
-    {
-      key: '3',
-      title: 'Young girl gets a painfree shot',
-      format: 'Video',
-      likes: 100,
-      date: '2021-11-04',
-    },
-  ];
+function FixLinksPage() {
+  const [rows, setRows] = useState([]);
 
   const columns = [
-    { id: 'title', label: 'Title', minWidth: 170 },
-    { id: 'format', label: 'Format', minWidth: 100 },
-    { id: 'date', label: 'Date', minWidth: 100 },
+    { id: 'name', label: 'Title', minWidth: 170 },
+    { id: 'formats', label: 'Format', minWidth: 100 },
+    { id: 'createdAt', label: 'Date', minWidth: 100 },
   ];
+
+  useEffect(() => {
+    const fetch = async () => {
+      const response = await postData('exposure/filter', {
+        disorders: [],
+        formats: [],
+        interventionTypes: [],
+        isAdultAppropriate: true,
+        isChildAppropriate: false,
+        keywords: [],
+        isLinkBroken: true,
+        isApproved: true,
+      });
+      setRows(response.data);
+    };
+    fetch();
+  }, []);
 
   return (
     <div style={{ width: '90%', margin: 'auto' }}>
+      <Toolbar />
       <h1> Fix Broken Links </h1>
       <ExposureItemTable
         rows={rows}
@@ -43,6 +41,6 @@ const FixLinksPage = function () {
       />
     </div>
   );
-};
+}
 
 export default FixLinksPage;
