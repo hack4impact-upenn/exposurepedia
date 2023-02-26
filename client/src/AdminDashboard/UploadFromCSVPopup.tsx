@@ -1,33 +1,78 @@
 /* eslint-disable no-promise-executor-return */
+import React, { useState } from 'react';
 import {
   Box,
   Dialog,
   DialogContent,
-  TextField,
   Typography,
   Button,
   CircularProgress,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../util/redux/hooks';
-import { selectUser } from '../util/redux/userSlice';
+import Papa from 'papaparse';
+import { postData } from '../util/api';
 
 interface PopupProps {
   setPopupState: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function UploadFromCSVPopup({ setPopupState }: PopupProps) {
-  const [value, setValue] = useState('');
-  const [valueDescr, setValueDescr] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
-  const navigate = useNavigate();
-  const user = useAppSelector(selectUser);
-  const email = user?.email?.toLowerCase();
 
-  const parseCSV = async (img: any) => {
+  const parseCSV = async (e: any) => {
+    Papa.parse(e.target.files[0], {
+      header: true,
+      skipEmptyLines: true,
+      async complete(results) {
+        // eslint-disable-next-line no-restricted-syntax, guard-for-in
+        for (let i = 0; i < 10; i += 1) {
+          const exposure: any = results.data[i];
+          // for (const exposure in results.data) {
+          // disorders
+          let disorders = exposure.disorders_1
+            ? exposure.disorders_1.split(', ')
+            : '';
+          const disorders2 = exposure.disorders_2
+            ? exposure.disorders_2.split(', ')
+            : '';
+          const disorders3 = exposure.disorders_3
+            ? exposure.disorders_3.split(', ')
+            : '';
+          const disorders4 = exposure.disorders_4
+            ? exposure.disorders_4.split(', ')
+            : '';
+          if (disorders4.length > 0 && disorders4[0] !== '') {
+            disorders = disorders4;
+          } else if (disorders3.length > 0 && disorders3[0] !== '') {
+            disorders = disorders3;
+          } else if (disorders2.length > 0 && disorders2[0] !== '') {
+            disorders = disorders2;
+          }
+          // formats
+          const formats = exposure.formats.split(', ');
+          // intervention types
+          const interventionTypes = exposure.interventionTypes.split(', ');
+          // keywords
+          const keywords = exposure.keywords.split('; ');
+
+          const exposureItem = {
+            name: exposure.name,
+            disorders,
+            formats,
+            interventionTypes,
+            isAdultAppropriate: exposure.isAdultAppropriate === 'yes',
+            isChildAppropriate: exposure.isChildAppropriate === 'yes',
+            keywords,
+            modifications: exposure.modifications,
+            link: exposure.link,
+          };
+          // eslint-disable-next-line no-await-in-loop
+          const response = await postData('exposure', exposureItem);
+          console.log(response);
+        }
+      },
+    });
     setIsUploading(true);
     setFileUploaded(false);
     const sleep = (ms: number) => new Promise((r: any) => setTimeout(r, ms));
@@ -66,7 +111,12 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
           >
             <Button variant="contained" component="label">
               Select File(s)
-              <input type="file" accept=".csv" hidden onChange={parseCSV} />
+              <input
+                type="file"
+                accept=".csv"
+                hidden
+                onChange={(e) => parseCSV(e)}
+              />
             </Button>
             <div
               style={{
@@ -101,7 +151,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
               setPopupState('');
             }}
           >
-            Upload
+            Close
           </Button>
         </div>
       </Box>
