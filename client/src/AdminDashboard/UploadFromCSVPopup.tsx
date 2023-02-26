@@ -8,8 +8,6 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PrimaryButton from '../components/buttons/PrimaryButton';
-import { addHierarchy } from '../Hierarchy/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
