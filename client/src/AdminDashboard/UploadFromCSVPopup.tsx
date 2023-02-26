@@ -4,38 +4,25 @@ import {
   DialogContent,
   TextField,
   Typography,
+  Button,
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PrimaryButton from './buttons/PrimaryButton';
+import PrimaryButton from '../components/buttons/PrimaryButton';
 import { addHierarchy } from '../Hierarchy/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
 
 interface PopupProps {
   setPopupState: React.Dispatch<React.SetStateAction<string>>;
-  addToHierarchies: React.Dispatch<React.SetStateAction<any>>;
 }
 
-function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
+function UploadFromCSVPopup({ setPopupState }: PopupProps) {
   const [value, setValue] = useState('');
   const [valueDescr, setValueDescr] = useState('');
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
-
-  async function createHierarchy() {
-    if (value && valueDescr && email) {
-      addToHierarchies({ title: value, updated_at: Date.now() });
-      const res = await addHierarchy(email, value, valueDescr);
-      setPopupState('');
-      navigate('/viewhierarchy', {
-        state: {
-          id: res,
-        },
-      });
-    }
-  }
 
   return (
     <Dialog open onClose={() => setPopupState('')} maxWidth="sm" fullWidth>
@@ -48,7 +35,7 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
           padding: '2rem',
         }}
       >
-        <Typography variant="h5">Add Hierarchy</Typography>
+        <Typography variant="h5">Upload CSV</Typography>
         <div
           style={{
             display: 'flex',
@@ -58,6 +45,10 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
           }}
         >
           <DialogContent sx={{ width: '100%' }}>
+            <Button variant="contained" component="label">
+              Select File(s)
+              <input type="file" hidden />
+            </Button>
             <div
               style={{
                 display: 'flex',
@@ -85,18 +76,18 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
               />
             </div>
           </DialogContent>
-          <PrimaryButton
+          <Button
             type="submit"
-            variant="contained"
-            color="primary"
-            onClick={() => createHierarchy()}
+            onClick={() => {
+              setPopupState('');
+            }}
           >
-            Add
-          </PrimaryButton>
+            Upload
+          </Button>
         </div>
       </Box>
     </Dialog>
   );
 }
 
-export default AddHierarchyPopup;
+export default UploadFromCSVPopup;

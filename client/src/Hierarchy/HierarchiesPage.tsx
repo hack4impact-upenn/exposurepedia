@@ -7,7 +7,7 @@
 import { Button, Grid, Typography } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
-import AddHierarchyPopup from '../components/AddHierarchyPopup';
+import AddHierarchyPopup from './AddHierarchyPopup';
 import HierarchyListItem from './HierarchyListItem';
 import { getData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
