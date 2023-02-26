@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
 import { postData } from '../util/api';
 
-const ApproveResourcesPage = function () {
+function ApproveResourcesPage() {
   const [rows, setRows] = useState([]);
 
   const columns = [
@@ -22,8 +22,7 @@ const ApproveResourcesPage = function () {
         isChildAppropriate: false,
         keywords: [],
         isLinkBroken: false,
-        isApproved: true,
-        getApproved: false,
+        isApproved: false,
       });
       setRows(response.data);
     };
@@ -42,6 +41,6 @@ const ApproveResourcesPage = function () {
       />
     </div>
   );
-};
+}
 
 export default ApproveResourcesPage;

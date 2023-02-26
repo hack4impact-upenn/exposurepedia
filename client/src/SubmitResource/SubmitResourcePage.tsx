@@ -8,7 +8,7 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Autocomplete,
@@ -72,14 +72,13 @@ function SubmitResourcePage() {
   const [values, setValueState] = useState(defaultValues);
 
   const setValue = (field: string, value: any) => {
-    const temp = values.disorder;
     setValueState((prevState) => ({
       ...prevState,
       ...{ [field]: value },
     }));
   };
 
-  const setFormatCheckboxValues = (option: string, value: string) => {
+  const setFormatCheckboxValues = (option: string) => {
     setValueState((prevState) => ({
       ...prevState,
       formats: {
@@ -207,7 +206,6 @@ function SubmitResourcePage() {
             <Autocomplete
               freeSolo
               multiple
-              // open={disordersOpen}
               disableCloseOnSelect
               id="combo-box-demo"
               options={inputText === '' ? disorders : searchedDisorders}
@@ -390,9 +388,7 @@ function SubmitResourcePage() {
                     control={
                       <Checkbox
                         checked={values.formats[option]}
-                        onChange={(e) =>
-                          setFormatCheckboxValues(option, e.target.value)
-                        }
+                        onChange={() => setFormatCheckboxValues(option)}
                         name={option}
                       />
                     }
@@ -488,10 +484,10 @@ function SubmitResourcePage() {
       <Snackbar
         open={successOpen}
         autoHideDuration={6000}
-        onClose={() => setSuccessOpen(!successOpen)}
+        onClose={() => setSuccessOpen(false)}
       >
         <Alert
-          onClose={() => setSuccessOpen(!successOpen)}
+          onClose={() => setSuccessOpen(false)}
           severity={successOpen ? 'success' : 'error'}
           sx={{ width: '100%' }}
         >
@@ -500,11 +496,9 @@ function SubmitResourcePage() {
             : 'Error - please try again'}
         </Alert>
       </Snackbar>
-      {/* onSubmit={() => submitResource()} */}
       <PrimaryButton style={styles.button} onClick={() => submitResource()}>
         Submit
       </PrimaryButton>
-      {/* </div> */}
     </div>
   );
 }
