@@ -24,7 +24,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
     Papa.parse(e.target.files[0], {
       header: true,
       skipEmptyLines: true,
-      async complete(results) {
+      async complete(results: any) {
         // eslint-disable-next-line no-restricted-syntax, guard-for-in
         for (let i = 0; i < 10; i += 1) {
           const exposure: any = results.data[i];
@@ -68,7 +68,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             link: exposure.link,
           };
           // eslint-disable-next-line no-await-in-loop
-          const response = await postData('exposure', exposureItem);
+          await postData('exposure', exposureItem);
         }
       },
     });
