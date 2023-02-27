@@ -120,7 +120,6 @@ function Popup({ category, setPopupState, setCurItem }: PopupProps) {
             color="primary"
             onClick={() => {
               setCurItem((prev) => {
-                console.log(prev);
                 Object(prev)[category].push(val);
                 return prev;
               });

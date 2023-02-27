@@ -137,7 +137,6 @@ const ViewHierarchyPage = function () {
                 setHierarchyTitle(event.target.value);
               }}
               onBlur={async () => {
-                console.log('blurred');
                 setTitleEditable(false);
                 await update();
               }}

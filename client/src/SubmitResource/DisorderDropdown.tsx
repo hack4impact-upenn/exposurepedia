@@ -298,7 +298,6 @@ function DisorderDropdown({ filterOptions, setFilterOptions }: any) {
   };
 
   const handleItemCheck = (item: string, p: string[]) => {
-    console.log(filterOptions);
     const tempOptions = filterOptions;
     let val: any = tempOptions;
     for (let i = 0; i < p.length; i += 1) {
@@ -430,7 +429,6 @@ function DisorderDropdown({ filterOptions, setFilterOptions }: any) {
               )}
             </div>
             {search.length === 0 &&
-              console.log('hi') === console.log('bye') &&
               Object.keys(getCurrentList(path, true)).map((curr) => (
                 <ListItem
                   sx={{ boxShadow: '2px 2px 4px rgba(0,0,0,0.1' }}

@@ -298,7 +298,6 @@ function Filters({ filterOptions, setFilterOptions }: any) {
   };
 
   const handleItemCheck = (item: string, p: string[]) => {
-    console.log(filterOptions);
     const tempOptions = filterOptions;
     let val: any = tempOptions;
     for (let i = 0; i < p.length; i += 1) {

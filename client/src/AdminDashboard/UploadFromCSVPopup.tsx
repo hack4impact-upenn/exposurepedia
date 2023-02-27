@@ -69,7 +69,6 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
           };
           // eslint-disable-next-line no-await-in-loop
           const response = await postData('exposure', exposureItem);
-          console.log(response);
         }
       },
     });
