@@ -4,7 +4,7 @@
  * A page only accessible to authenticated users that displays hierarchies
  * in a table and allows users to expand and delete hierarchies.
  */
-import { Button, Grid, Typography } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
 import AddHierarchyPopup from './AddHierarchyPopup';
