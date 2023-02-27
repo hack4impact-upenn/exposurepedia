@@ -23,6 +23,7 @@ function ApproveResourcesPage() {
         keywords: [],
         isLinkBroken: false,
         isApproved: false,
+        query: '',
       });
       setRows(response.data);
     };

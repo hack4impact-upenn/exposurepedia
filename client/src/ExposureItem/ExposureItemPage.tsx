@@ -80,7 +80,6 @@ export default function ExposureItem() {
   const navigate = useNavigate();
   const location = useLocation();
   let { isApprove, isBroken } = location.state;
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,11 +153,12 @@ export default function ExposureItem() {
   const approve = () => {
     approveItem(id || '');
     isApprove = false;
-    navigate('/home');
+    navigate('/approve');
   };
 
   const reject = () => {
     rejectItem(id || '');
+    navigate('/approve');
   };
 
   const cancelChanges = () => {

@@ -23,6 +23,7 @@ function FixLinksPage() {
         keywords: [],
         isLinkBroken: true,
         isApproved: true,
+        query: '',
       });
       setRows(response.data);
     };
