@@ -72,13 +72,14 @@ const ViewHierarchyPage = function () {
     const newRows = [
       ...rows,
       {
-        key: `${rows.length + 1}`,
+        key: `${Date.now()}`,
         no: rows.length + 1,
         itemName: textValue,
         suds: '',
       },
     ];
     setRows(newRows);
+    setTextValue('');
     if (email) {
       const toAdd: [string, string, string][] = newRows.map((row) => [
         row.itemName,
@@ -93,7 +94,18 @@ const ViewHierarchyPage = function () {
         toAdd,
       );
     }
-    setTextValue('');
+  };
+
+  const updateTitle = async () => {
+    if (email) {
+      await updateHierarchy(
+        email,
+        hierarchyId,
+        hierarchyTitle,
+        description,
+        rows.map((row) => [row.itemName, row.no.toString(), row.suds]),
+      );
+    }
   };
 
   const handleDelete = async () => {
@@ -138,7 +150,7 @@ const ViewHierarchyPage = function () {
               }}
               onBlur={async () => {
                 setTitleEditable(false);
-                await update();
+                await updateTitle();
               }}
             />
           ) : (

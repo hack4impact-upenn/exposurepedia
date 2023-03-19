@@ -15,6 +15,7 @@ import {
   TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 import {
   DragDropContext,
   Droppable,
@@ -105,7 +106,11 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
               sx={{ width: '50px' }}
               size="small"
               value={row.suds}
-              inputProps={{ min: 0, style: { textAlign: 'center' } }}
+              type="number"
+              inputProps={{
+                min: 0,
+                style: { textAlign: 'center' },
+              }}
               onChange={(event) => {
                 updateItem(
                   {
@@ -119,6 +124,7 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
                 );
               }}
             />
+
             <IconButton onClick={() => updateRowItems(row)}>
               <DeleteIcon sx={{ color: '#474747' }} />
             </IconButton>
@@ -149,7 +155,7 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
       r.no.toString(),
       r.suds,
     ]);
-    updateHierarchy(email, hierarchyId, '', '', toEdit);
+    updateHierarchy(email, hierarchyId, undefined, undefined, toEdit);
   };
 
   const updateItem = (row: TRow, oldI: number, index: number) => {
@@ -163,7 +169,7 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
       r.no.toString(),
       r.suds,
     ]);
-    updateHierarchy(email, hierarchyId, '', '', toEdit);
+    updateHierarchy(email, hierarchyId, undefined, undefined, toEdit);
   };
 
   function onDragEnd(result: DropResult) {
@@ -184,22 +190,43 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
       r.no.toString(),
       r.suds,
     ]);
-    updateHierarchy(email, hierarchyId, '', '', toEdit);
+    updateHierarchy(email, hierarchyId, undefined, undefined, toEdit);
   }
+
+  const sortBySuds = () => {
+    const newRows = [...rows];
+    newRows.sort((a, b) => {
+      if (a.suds === '' && b.suds === '') {
+        return 0;
+      }
+      if (a.suds === '') {
+        return 1;
+      }
+      if (b.suds === '') {
+        return -1;
+      }
+      return Number(a.suds) - Number(b.suds);
+    });
+    setRows(newRows);
+    const toEdit: [string, string, string][] = newRows.map((r) => [
+      r.itemName,
+      r.no.toString(),
+      r.suds,
+    ]);
+    updateHierarchy(email, hierarchyId, undefined, undefined, toEdit);
+  };
 
   return (
     <Paper
       sx={{
         width: '800px',
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         margin: 'auto',
-        overflow: 'hidden',
       }}
     >
-      <TableContainer sx={{ flexGrow: 1, flexShrink: 1, maxHeight: 400 }}>
+      <TableContainer sx={{ flexGrow: 1, flexShrink: 1 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -221,7 +248,12 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
                     }}
                   >
                     <span>Item Name</span>
-                    <span>SUDS</span>
+                    <div>
+                      <span>SUDS</span>
+                      <IconButton onClick={sortBySuds}>
+                        <SwapVertIcon />
+                      </IconButton>
+                    </div>
                   </div>
                 </div>
               </TableCell>

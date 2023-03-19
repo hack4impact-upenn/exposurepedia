@@ -74,7 +74,13 @@ function HierarchyDropdown({
         (numCurrExposures + exposureItems.indexOf(e)).toString(),
         '',
       ]);
-      updateHierarchy(email, id, '', '', res.exposures.concat(toAdd));
+      updateHierarchy(
+        email,
+        id,
+        undefined,
+        undefined,
+        res.exposures.concat(toAdd),
+      );
     });
 
     // reset all selections
