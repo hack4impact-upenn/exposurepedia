@@ -236,6 +236,7 @@ function Exposurepedia() {
               height: '100vh',
             }}
           >
+            <Toolbar />
             <HierarchyDropdown
               hierarchies={hierarchies}
               count={count}

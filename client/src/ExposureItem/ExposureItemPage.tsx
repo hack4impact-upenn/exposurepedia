@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -15,7 +15,7 @@ import {
   Cancel,
   FavoriteBorder,
   Favorite,
-  AddCircle,
+  AddCircleOutline,
 } from '@mui/icons-material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EditIcon from '@mui/icons-material/Edit';
@@ -79,12 +79,18 @@ export default function ExposureItem() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  let { isApprove, isBroken } = location.state;
+  // console.log('LOCATION');
+  // console.log(location.state);
+  let isBroken = location.state ? location.state.isBroken : false;
+  let isApprove = location.state ? location.state.isApprove : false;
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
+      console.log('RES!');
+      console.log(res);
       const maturity = [];
+
       const disorders = res?.data[0].disorders.map((it: any) => it.name);
       const formats = res?.data[0].formats.map((it: any) => it.name);
       const interventionTypes = res?.data[0].interventionTypes.map(
@@ -183,17 +189,6 @@ export default function ExposureItem() {
   return (
     <div>
       <Toolbar />
-      <IconButton
-        onClick={() => {
-          navigate('/exposurepedia');
-        }}
-      >
-        <ArrowBackRoundedIcon
-          sx={{
-            color: 'black',
-          }}
-        />
-      </IconButton>
       {isApprove && (
         <div
           style={{
@@ -201,46 +196,56 @@ export default function ExposureItem() {
             background: '#f5f5f5',
             boxShadow: '2px 2px 5px rgba(0,0,0,0.3)',
             margin: '0px',
+            padding: '10px 10px',
             display: 'flex',
-            alignItems: 'center',
             flexDirection: 'column',
-            padding: '10px 0px',
+            justifyContent: 'left',
+            position: 'relative',
           }}
         >
-          <p style={{ margin: '0px' }}>This resource is awaiting approval</p>
-          <div style={{ marginTop: '10px' }}>
-            <Button
-              variant="outlined"
-              sx={{
-                maxWidth: '180px',
-                height: '30px',
-                borderColor: 'green',
-                color: 'green',
-                textTransform: 'none',
-                margin: '0px 5px',
-                borderRadius: '10px',
-                background: 'rgba(255,255,255,0.8)',
-              }}
-              onClick={() => approve()}
-            >
-              Approve Resource
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                maxWidth: '180px',
-                height: '30px',
-                borderColor: 'red',
-                color: 'red',
-                textTransform: 'none',
-                margin: '0px 5px',
-                borderRadius: '10px',
-                background: 'rgba(255,255,255,0.8)',
-              }}
-              onClick={() => reject()}
-            >
-              Reject Resource
-            </Button>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              padding: '10px 0px',
+            }}
+          >
+            <p style={{ margin: '0px' }}>This resource is awaiting approval</p>
+            <div style={{ marginTop: '10px' }}>
+              <Button
+                variant="outlined"
+                sx={{
+                  maxWidth: '180px',
+                  height: '30px',
+                  borderColor: 'green',
+                  color: 'green',
+                  textTransform: 'none',
+                  margin: '0px 5px',
+                  borderRadius: '10px',
+                  background: 'rgba(255,255,255,0.8)',
+                }}
+                onClick={() => approve()}
+              >
+                Approve Resource
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  maxWidth: '180px',
+                  height: '30px',
+                  borderColor: 'red',
+                  color: 'red',
+                  textTransform: 'none',
+                  margin: '0px 5px',
+                  borderRadius: '10px',
+                  background: 'rgba(255,255,255,0.8)',
+                }}
+                onClick={() => reject()}
+              >
+                Reject Resource
+              </Button>
+            </div>
           </div>
         </div>
       )}
@@ -303,13 +308,13 @@ export default function ExposureItem() {
           </div>
         </div>
       )}
-      <Paper
+      <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           padding: '1rem',
           margin: '1rem',
-          border: '1px solid #e9e9e9',
+          // border: '1px solid #e9e9e9',
           borderRadius: '16px',
         }}
       >
@@ -326,6 +331,19 @@ export default function ExposureItem() {
               alignItems: 'center',
             }}
           >
+            <div style={{ marginRight: '10px' }}>
+              <IconButton
+                onClick={() => {
+                  navigate('/exposurepedia');
+                }}
+              >
+                <ArrowBackRoundedIcon
+                  sx={{
+                    color: 'black',
+                  }}
+                />
+              </IconButton>
+            </div>
             <Typography variant="h5" sx={{ mr: '0.25rem' }}>
               {isEdit ? (
                 <TextField
@@ -422,7 +440,6 @@ export default function ExposureItem() {
               ))}
           </Box>
         </Box>
-
         {[
           'disorders',
           'formats',
@@ -437,10 +454,11 @@ export default function ExposureItem() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 my: '0.25rem',
+                mx: '3.25rem',
               }}
             >
               <Typography>
-                <strong>
+                <strong style={{ marginRight: '5px' }}>
                   {key.charAt(0).toUpperCase() + key.substring(1)}:
                 </strong>{' '}
               </Typography>
@@ -449,14 +467,15 @@ export default function ExposureItem() {
                   <Chip
                     sx={{
                       mx: '0.25rem',
-                      background: '#397FBF',
-                      color: 'white',
-                      height: '30px',
-                      margin: '2px',
+                      color: '#397FBF',
+                      height: '27px',
+                      margin: '2px 3px',
                       '& .MuiChip-deleteIcon': {
-                        color: 'rgba(237,237,237,0.9)',
+                        color: 'rgba(57, 127, 191, 0.6)',
                       },
                     }}
+                    color="primary"
+                    variant="outlined"
                     label={data.name || data}
                     onDelete={() => {
                       handleDelete(key, data.name || data);
@@ -471,7 +490,7 @@ export default function ExposureItem() {
                   />
                 ))}
               {isEdit && (
-                <AddCircle
+                <AddCircleOutline
                   style={{ color: '009054' }}
                   onClick={() => setPopupState(key)}
                 />
@@ -493,6 +512,7 @@ export default function ExposureItem() {
             flexDirection: 'row',
             alignItems: 'center',
             my: '0.25rem',
+            mx: '3.25rem',
           }}
         >
           <Typography>
@@ -524,6 +544,7 @@ export default function ExposureItem() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 my: '0.25rem',
+                mx: '3.25rem',
               }}
             >
               <Typography>
@@ -546,7 +567,7 @@ export default function ExposureItem() {
             )}
           </div>
         )}
-      </Paper>
+      </Box>
     </div>
   );
 }

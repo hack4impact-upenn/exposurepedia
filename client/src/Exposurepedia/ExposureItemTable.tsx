@@ -109,18 +109,23 @@ function Row({
   };
 
   const handleNavigate = () => {
-    // eslint-disable-next-line no-underscore-dangle
-    navigate(`/exposureitem/${row._id}`, {
-      state: {
-        key: row.key,
-        title: row.name,
-        format: row.formats,
-        likes: row.likes,
-        createdAt: row.createdAt,
-        isApprove,
-        isBroken,
-      },
-    });
+    if (isApprove || isBroken) {
+      // eslint-disable-next-line no-underscore-dangle
+      navigate(`/exposureitem/${row._id}`, {
+        state: {
+          key: row.key,
+          title: row.name,
+          format: row.formats,
+          likes: row.likes,
+          createdAt: row.createdAt,
+          isApprove,
+          isBroken,
+        },
+      });
+    } else {
+      // eslint-disable-next-line no-underscore-dangle
+      window.open(`/exposureitem/${row._id}`, '_blank');
+    }
   };
 
   return (
