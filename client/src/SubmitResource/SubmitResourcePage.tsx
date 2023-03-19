@@ -147,7 +147,7 @@ function SubmitResourcePage() {
       [values.keywords],
       values.modifications,
       values.link,
-      //TODO: ADD NEW DISORDER (ONCE BACKEND ROUTE IS DONE)
+      /* TODO: ADD NEW DISORDER (ONCE BACKEND ROUTE IS DONE) */
     );
     if (res) {
       setValueState(defaultValues);
