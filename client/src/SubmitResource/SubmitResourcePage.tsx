@@ -64,6 +64,7 @@ function SubmitResourcePage() {
   const defaultValues = {
     title: '',
     disorder: emp,
+    newDisorder: '',
     keywords: '',
     modifications: '',
     link: '',
@@ -146,6 +147,7 @@ function SubmitResourcePage() {
       [values.keywords],
       values.modifications,
       values.link,
+      //TODO: ADD NEW DISORDER (ONCE BACKEND ROUTE IS DONE)
     );
     if (res) {
       setValueState(defaultValues);
@@ -469,6 +471,7 @@ function SubmitResourcePage() {
                     setValueState({
                       ...values,
                       disorder: [],
+                      newDisorder: '',
                     });
                   }}
                   name="select"
@@ -478,12 +481,12 @@ function SubmitResourcePage() {
               {selectOtherDisorder && (
                 <TextField
                   size="small"
-                  value={values.disorder}
+                  value={values.newDisorder}
                   label="Disorder Title"
                   onChange={(event) => {
                     setValueState({
                       ...values,
-                      disorder: [event.target.value],
+                      newDisorder: event.target.value,
                     });
                   }}
                   disabled={!selectOtherDisorder}
