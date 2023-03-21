@@ -67,7 +67,7 @@ interface TRow {
 /**
  * Our pagination table is set up by passing in a row component for each row.
  * This is the row component for a table of users.
- * @param row  - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
+ * @param row - a object type containing a unique key for the row and props mapping each column id to a value. If the column id is not present, the corresponding cell will be empty
  * @returns User Row component, to be used in a user-specific pagination table.
  */
 function Row({ row, index, updateItem, updateRowItems }: RowProps) {
@@ -112,9 +112,15 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
                 style: { textAlign: 'center' },
               }}
               onChange={(event) => {
+                console.log(
+                  'event.target.value: ',
+                  event.target.value,
+                  row,
+                  index,
+                );
                 updateItem(
                   {
-                    key: `${row.no}`,
+                    key: `${row.key}`,
                     no: row.no,
                     itemName: row.itemName,
                     suds: event.target.value,
@@ -148,7 +154,11 @@ const reorder = (list: TRow[], startIndex: number, endIndex: number) => {
 function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
   const updateRowItems = (row: TRow) => {
     // deleting row
-    const tempRows = rows.filter((it) => it.key !== row.key);
+    const tempRows = rows.filter((it) => {
+      console.log('it.key: ', it.key, 'row.key: ', row.key);
+      return it.key !== row.key;
+    });
+    console.log('done: ');
     setRows(tempRows);
     const toEdit: [string, string, string][] = tempRows.map((r) => [
       r.itemName,

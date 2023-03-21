@@ -9,7 +9,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import CheckIcon from '@mui/icons-material/Check';
+import { v4 as uuidv4 } from 'uuid';
 import { CSVLink } from 'react-csv';
 import {
   Button,
@@ -59,7 +59,7 @@ const ViewHierarchyPage = function () {
       res.data.exposures.forEach((item: [string, string, string]) => {
         const [title, no, suds] = item;
         items.push({
-          key: `${no}`,
+          key: `${Date.now()}`,
           no: Number(no),
           itemName: title,
           suds,
@@ -74,7 +74,7 @@ const ViewHierarchyPage = function () {
     const newRows = [
       ...rows,
       {
-        key: `${Date.now()}`,
+        key: `${uuidv4()}`,
         no: rows.length + 1,
         itemName: textValue,
         suds: '',
@@ -151,7 +151,7 @@ const ViewHierarchyPage = function () {
               alignItems: 'flex-begin',
             }}
           >
-            <Typography>Last updated October 1st 2022</Typography>
+            <Typography>Last updated March 22nd, 2023</Typography>
             <Box
               sx={{
                 display: 'flex',
