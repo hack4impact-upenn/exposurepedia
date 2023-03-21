@@ -82,7 +82,7 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
           alignItems: 'center',
         }}
       >
-        <span style={{ marginRight: '5%' }}>{index + 1}</span>
+        <span style={{ marginRight: '7%' }}>{index + 1}</span>
         <div
           style={{
             display: 'flex',
@@ -97,8 +97,9 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              width: '14.2%',
+              width: '21.2%',
               justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <TextField

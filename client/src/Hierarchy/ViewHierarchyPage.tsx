@@ -226,8 +226,8 @@ const ViewHierarchyPage = function () {
                 <TextField
                   InputProps={{
                     style: {
-                      fontSize: '20px',
-                      width: '400px',
+                      fontSize: '16px',
+                      width: '500px',
                     },
                   }}
                   multiline
