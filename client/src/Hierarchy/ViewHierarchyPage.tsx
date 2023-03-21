@@ -9,6 +9,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import CheckIcon from '@mui/icons-material/Check';
 import { CSVLink } from 'react-csv';
 import {
   Button,
@@ -18,6 +19,8 @@ import {
   InputAdornment,
   Toolbar,
   IconButton,
+  Box,
+  Typography,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
@@ -39,8 +42,7 @@ const ViewHierarchyPage = function () {
   const [hierarchyTitle, setHierarchyTitle] = useState('');
   const [hierarchyId, setHierarchyId] = useState('');
   const [textValue, setTextValue] = useState('');
-  const [titleEditable, setTitleEditable] = useState(false);
-  const [descriptionEditable, setDescriptionEditable] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,7 +98,7 @@ const ViewHierarchyPage = function () {
     }
   };
 
-  const updateTitle = async () => {
+  const updateTitleDesc = async () => {
     if (email) {
       await updateHierarchy(
         email,
@@ -142,31 +144,93 @@ const ViewHierarchyPage = function () {
               }}
             />
           </IconButton>
-          {titleEditable ? (
-            <TextField
-              value={hierarchyTitle}
-              onChange={(event) => {
-                setHierarchyTitle(event.target.value);
-              }}
-              onBlur={async () => {
-                setTitleEditable(false);
-                await updateTitle();
-              }}
-            />
-          ) : (
-            <h1 style={{ padding: '0px 20px 0px 20px' }}> {hierarchyTitle} </h1>
-          )}
-          <IconButton
-            onClick={() => {
-              setTitleEditable(true);
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-begin',
             }}
           >
-            <ModeRoundedIcon
+            <Typography>Last updated October 1st 2022</Typography>
+            <Box
               sx={{
-                color: 'black',
+                display: 'flex',
+                justifyContent: 'space-between',
               }}
-            />
-          </IconButton>
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="h5" sx={{ mr: '0.25rem' }}>
+                  {isEdit ? (
+                    <TextField
+                      InputProps={{
+                        style: {
+                          fontSize: '24px',
+                          fontWeight: 'bold',
+                          width: '400px',
+                        },
+                      }}
+                      id="standard-basic"
+                      variant="standard"
+                      onChange={(event) => {
+                        setHierarchyTitle(event.target.value);
+                      }}
+                      onBlur={async () => {
+                        setIsEdit(false);
+                        await updateTitleDesc();
+                      }}
+                      defaultValue={hierarchyTitle}
+                      inputRef={(input) => input && input.focus()}
+                    />
+                  ) : (
+                    <strong style={{ width: '600px' }}>{hierarchyTitle}</strong>
+                  )}
+                </Typography>
+              </Box>
+              <IconButton
+                onClick={() => {
+                  setIsEdit(true);
+                }}
+              >
+                <ModeRoundedIcon
+                  sx={{
+                    color: 'black',
+                  }}
+                />
+              </IconButton>
+            </Box>
+            <Typography variant="h5" sx={{ mr: '0.25rem' }}>
+              {isEdit ? (
+                <TextField
+                  InputProps={{
+                    style: {
+                      fontSize: '20px',
+                      width: '400px',
+                    },
+                  }}
+                  id="standard-basic"
+                  variant="standard"
+                  onChange={(event) => {
+                    setDescription(event.target.value);
+                  }}
+                  onBlur={async () => {
+                    setIsEdit(false);
+                    await updateTitleDesc();
+                  }}
+                  defaultValue={description}
+                />
+              ) : (
+                <Typography variant="h5" sx={{ mr: '0.25rem' }}>
+                  {description}
+                </Typography>
+              )}
+            </Typography>
+          </Box>
         </div>
         <div>
           <Button
@@ -217,30 +281,6 @@ const ViewHierarchyPage = function () {
           </Button>
         </div>
       </div>
-      {descriptionEditable ? (
-        <TextField
-          multiline
-          value={description}
-          onChange={(event) => {
-            setDescription(event.target.value);
-          }}
-          onBlur={async () => {
-            setDescriptionEditable(false);
-            await update();
-          }}
-          style={{
-            minWidth: '25%',
-            marginBottom: '20px',
-          }}
-        />
-      ) : (
-        <div>
-          <p style={{ padding: '0px 0px 30px 45px' }}>{description}</p>
-          <Button onClick={() => setDescriptionEditable(true)}>
-            Edit Description
-          </Button>
-        </div>
-      )}
       <ViewHierarchyTable
         rows={rows}
         setRows={(r: any) => setRows(r)}
