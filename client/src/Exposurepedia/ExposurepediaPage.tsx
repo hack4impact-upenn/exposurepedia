@@ -233,10 +233,8 @@ function Exposurepedia() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100vh',
             }}
           >
-            <Toolbar />
             <HierarchyDropdown
               hierarchies={hierarchies}
               count={count}
