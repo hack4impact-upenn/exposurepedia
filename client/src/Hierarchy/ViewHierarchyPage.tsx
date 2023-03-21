@@ -131,6 +131,7 @@ const ViewHierarchyPage = function () {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          marginTop: '10px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>

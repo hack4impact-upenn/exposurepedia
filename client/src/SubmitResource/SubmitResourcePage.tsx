@@ -13,6 +13,7 @@ import {
   Alert,
   Autocomplete,
   Checkbox,
+  Chip,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -63,6 +64,7 @@ function SubmitResourcePage() {
   const defaultValues = {
     title: '',
     disorder: emp,
+    newDisorder: '',
     keywords: '',
     modifications: '',
     link: '',
@@ -71,6 +73,7 @@ function SubmitResourcePage() {
     maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
   };
   const [values, setValueState] = useState(defaultValues);
+  const [selectOtherDisorder, setSelectOtherDisorder] = useState(false);
 
   const setValue = (field: string, value: any) => {
     setValueState((prevState) => ({
@@ -132,6 +135,8 @@ function SubmitResourcePage() {
       (intervention) => values.interventions[intervention],
     );
 
+    setSelectOtherDisorder(false);
+
     const res = await submit(
       values.title,
       values.disorder,
@@ -142,6 +147,7 @@ function SubmitResourcePage() {
       [values.keywords],
       values.modifications,
       values.link,
+      /* TODO: ADD NEW DISORDER (ONCE BACKEND ROUTE IS DONE) */
     );
     if (res) {
       setValueState(defaultValues);
@@ -205,17 +211,33 @@ function SubmitResourcePage() {
         <FormRow>
           <Grid item width="1">
             <Autocomplete
+              disabled={selectOtherDisorder}
               freeSolo
               multiple
               disableCloseOnSelect
               id="combo-box-demo"
               options={inputText === '' ? disorders : searchedDisorders}
               sx={{ width: '100%' }}
+              value={selectOtherDisorder ? [] : values.disorder}
               onOpen={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setDisordersOpen(!disordersOpen);
                 setCurrPath([]);
+              }}
+              renderTags={(_, getTagProps) => {
+                return values.disorder.map((option, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    label={option}
+                    onDelete={() => {
+                      const temp = values.disorder.filter(
+                        (item) => item !== option,
+                      );
+                      setValueState({ ...values, disorder: temp });
+                    }}
+                  />
+                ));
               }}
               onInputChange={(event, inputValue) => {
                 setInputText(inputValue);
@@ -263,7 +285,24 @@ function SubmitResourcePage() {
                           display: 'inline-block',
                         }}
                       >
-                        <Checkbox checked={selected} />
+                        <Checkbox
+                          checked={selected}
+                          onChange={() => {
+                            let temp = values.disorder;
+                            if (
+                              temp.filter((item) => item === option).length ===
+                              0
+                            ) {
+                              temp.push(option);
+                            } else {
+                              temp = temp.filter((item) => item !== option);
+                            }
+                            setValueState({
+                              ...values,
+                              disorder: temp,
+                            });
+                          }}
+                        />
                       </li>
                       <button
                         type="button"
@@ -313,7 +352,24 @@ function SubmitResourcePage() {
                           display: 'inline-block',
                         }}
                       >
-                        <Checkbox checked={selected} />
+                        <Checkbox
+                          checked={selected}
+                          onChange={() => {
+                            let temp = values.disorder;
+                            if (
+                              temp.filter((item) => item === option).length ===
+                              0
+                            ) {
+                              temp.push(option);
+                            } else {
+                              temp = temp.filter((item) => item !== option);
+                            }
+                            setValueState({
+                              ...values,
+                              disorder: temp,
+                            });
+                          }}
+                        />
                       </li>
                       <button
                         type="button"
@@ -350,7 +406,23 @@ function SubmitResourcePage() {
                         display: 'inline-block',
                       }}
                     >
-                      <Checkbox checked={selected} />
+                      <Checkbox
+                        checked={selected}
+                        onChange={() => {
+                          let temp = values.disorder;
+                          if (
+                            temp.filter((item) => item === option).length === 0
+                          ) {
+                            temp.push(option);
+                          } else {
+                            temp = temp.filter((item) => item !== option);
+                          }
+                          setValueState({
+                            ...values,
+                            disorder: temp,
+                          });
+                        }}
+                      />
                     </li>
                     <button
                       type="button"
@@ -373,10 +445,54 @@ function SubmitResourcePage() {
                   </li>
                 )
               }
-              renderInput={(params) => (
-                <TextField {...params} label="Disorders" />
-              )}
+              renderInput={(params) => {
+                return <TextField {...params} label="Disorders" />;
+              }}
             />
+            <div
+              style={{
+                marginTop: '10px',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginRight: '15px',
+                }}
+              >
+                <Checkbox
+                  checked={selectOtherDisorder}
+                  onChange={() => {
+                    setSelectOtherDisorder(!selectOtherDisorder);
+                    setValueState({
+                      ...values,
+                      disorder: [],
+                      newDisorder: '',
+                    });
+                  }}
+                  name="select"
+                />
+                <p>Select Other Disorder</p>
+              </div>
+              {selectOtherDisorder && (
+                <TextField
+                  size="small"
+                  value={values.newDisorder}
+                  label="Disorder Title"
+                  onChange={(event) => {
+                    setValueState({
+                      ...values,
+                      newDisorder: event.target.value,
+                    });
+                  }}
+                  disabled={!selectOtherDisorder}
+                />
+              )}
+            </div>
           </Grid>
         </FormRow>
         <FormRow>

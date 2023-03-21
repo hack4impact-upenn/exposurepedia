@@ -190,6 +190,8 @@ const postExposureItemInDB = async (
   next: express.NextFunction,
 ) => {
   const item = req.body;
+  console.log('ELLOO');
+  console.log(item.disorders);
   if (
     item.name == null ||
     item.disorders == null ||
