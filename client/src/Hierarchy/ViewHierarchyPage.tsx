@@ -9,6 +9,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ModeRoundedIcon from '@mui/icons-material/ModeRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import CloseIcon from '@mui/icons-material/Close';
 import { v4 as uuidv4 } from 'uuid';
 import { CSVLink } from 'react-csv';
 import {
@@ -59,7 +60,7 @@ const ViewHierarchyPage = function () {
       res.data.exposures.forEach((item: [string, string, string]) => {
         const [title, no, suds] = item;
         items.push({
-          key: `${Date.now()}`,
+          key: `${uuidv4()}`,
           no: Number(no),
           itemName: title,
           suds,
@@ -149,6 +150,8 @@ const ViewHierarchyPage = function () {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-begin',
+              marginTop: '1rem',
+              marginBottom: '1rem',
             }}
           >
             <Typography>Last updated March 22nd, 2023</Typography>
@@ -185,24 +188,37 @@ const ViewHierarchyPage = function () {
                         await updateTitleDesc();
                       }}
                       defaultValue={hierarchyTitle}
-                      inputRef={(input) => input && input.focus()}
                     />
                   ) : (
                     <strong style={{ width: '600px' }}>{hierarchyTitle}</strong>
                   )}
                 </Typography>
               </Box>
-              <IconButton
-                onClick={() => {
-                  setIsEdit(true);
-                }}
-              >
-                <ModeRoundedIcon
-                  sx={{
-                    color: 'black',
+              {isEdit ? (
+                <IconButton
+                  onClick={() => {
+                    setIsEdit(false);
                   }}
-                />
-              </IconButton>
+                >
+                  <CloseIcon
+                    sx={{
+                      color: 'black',
+                    }}
+                  />
+                </IconButton>
+              ) : (
+                <IconButton
+                  onClick={() => {
+                    setIsEdit(true);
+                  }}
+                >
+                  <ModeRoundedIcon
+                    sx={{
+                      color: 'black',
+                    }}
+                  />
+                </IconButton>
+              )}
             </Box>
             <Typography variant="h5" sx={{ mr: '0.25rem' }}>
               {isEdit ? (
@@ -213,6 +229,7 @@ const ViewHierarchyPage = function () {
                       width: '400px',
                     },
                   }}
+                  multiline
                   id="standard-basic"
                   variant="standard"
                   onChange={(event) => {
@@ -225,7 +242,7 @@ const ViewHierarchyPage = function () {
                   defaultValue={description}
                 />
               ) : (
-                <Typography variant="h5" sx={{ mr: '0.25rem' }}>
+                <Typography variant="subtitle1" sx={{ mr: '0.25rem' }}>
                   {description}
                 </Typography>
               )}
@@ -301,11 +318,6 @@ const ViewHierarchyPage = function () {
           </InputLabel>
           <OutlinedInput
             id="outlined-adornment-amount"
-            startAdornment={
-              <InputAdornment position="start">
-                <AddCircleOutlineRoundedIcon />
-              </InputAdornment>
-            }
             label="Add Custom Exposure"
             value={textValue}
             onChange={(event) => setTextValue(event.target.value)}

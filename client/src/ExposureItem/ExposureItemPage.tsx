@@ -377,7 +377,7 @@ export default function ExposureItem() {
               alignItems: 'flex-end',
             }}
           >
-            <Typography>Last updated October 1st 2022</Typography>
+            <Typography>Last updated March 22nd, 2023</Typography>
             {user.admin &&
               (isEdit ? (
                 <>
