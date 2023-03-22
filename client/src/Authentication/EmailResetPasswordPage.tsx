@@ -6,7 +6,6 @@ import AlertDialog from '../components/AlertDialog';
 import FormGrid from '../components/form/FormGrid';
 import { emailRegex, InputErrorMessage } from '../util/inputvalidation';
 import PrimaryButton from '../components/buttons/PrimaryButton';
-import ScreenGrid from '../components/ScreenGrid';
 import FormCol from '../components/form/FormCol';
 
 const styles = {
@@ -14,7 +13,7 @@ const styles = {
     height: '90vh',
     display: 'flex',
     'margin-top': '10vh',
-    'justify-content': 'center',
+    justifyContent: 'center',
     margin: 'center',
   },
 };

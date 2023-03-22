@@ -11,6 +11,7 @@ import StatusCode from '../util/statusCode';
 import {
   passwordHashSaltRounds,
   createUser,
+  getUserById,
   getUserByEmail,
   getUserByResetPasswordToken,
   getUserByVerificationToken,
@@ -20,6 +21,23 @@ import {
   emailResetPasswordLink,
 } from '../services/mail.service';
 import ApiError from '../util/apiError';
+
+/**
+ * A controller function to retrieve a user
+ */
+const getUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const { id } = req.params;
+  const user: IUser | null = await getUserById(id);
+  if (user == null) {
+    next(ApiError.internal('No user found'));
+    return;
+  }
+  res.status(StatusCode.OK).send(user);
+};
 
 /**
  * A controller function to login a user and create a session with Passport.
@@ -333,6 +351,7 @@ const resetPassword = async (
 };
 
 export {
+  getUser,
   login,
   logout,
   register,

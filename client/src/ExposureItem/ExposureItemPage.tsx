@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Chip,
   Link,
-  Paper,
   Typography,
   Button,
   TextField,
@@ -87,8 +86,6 @@ export default function ExposureItem() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
-      console.log('RES!');
-      console.log(res);
       const maturity = [];
 
       const disorders = res?.data[0].disorders.map((it: any) => it.name);
