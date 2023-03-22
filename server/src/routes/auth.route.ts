@@ -4,6 +4,7 @@
  */
 import express from 'express';
 import {
+  getUser,
   login,
   logout,
   register,
@@ -16,6 +17,11 @@ import { isAuthenticated } from '../controllers/auth.middleware';
 import 'dotenv/config';
 
 const router = express.Router();
+
+/**
+ * A GET route to retrieve a user's information. Expects the user id.
+ */
+router.get('/user/:id', getUser);
 
 /**
  * A POST route to register a user. Expects a JSON body with the following fields:

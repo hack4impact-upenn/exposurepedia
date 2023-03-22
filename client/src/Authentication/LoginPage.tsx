@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from 'react';
 import { TextField, Link, Typography, Grid } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -10,14 +11,13 @@ import { emailRegex, InputErrorMessage } from '../util/inputvalidation';
 import { loginUser } from './api';
 import AlertDialog from '../components/AlertDialog';
 import PrimaryButton from '../components/buttons/PrimaryButton';
-import ScreenGrid from '../components/ScreenGrid';
 
 const styles = {
   container: {
     height: '90vh',
     display: 'flex',
     'margin-top': '10vh',
-    'justify-content': 'center',
+    justifyContent: 'center',
     margin: 'center',
   },
 };

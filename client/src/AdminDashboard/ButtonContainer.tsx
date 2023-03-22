@@ -5,7 +5,8 @@ import {
   styled,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getData } from '../util/api';
 import IUser from '../util/types/user';
 import ButtonFooter from './ButtonFooter';
 import PopupDialog from './PopupDialog';
@@ -26,7 +27,24 @@ function ButtonContainer({
   removeUser,
 }: ButtonContainerProps) {
   const [open, setOpen] = useState(false);
-  const handleClickOpen = (userId: number) => {
+  const [userInfo, setUserInfo] = useState({
+    isProfessional: false,
+    profession: '',
+    settings: [],
+    percentCaseload: 0,
+    difficulty: 0,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // eslint-disable-next-line no-underscore-dangle
+      const userRes = await getData(`auth/user/${user._id}`);
+      setUserInfo(userRes.data);
+    };
+    fetchData();
+  }, [user]);
+
+  const handleClickOpen = () => {
     setOpen(true);
   };
 
@@ -39,7 +57,7 @@ function ButtonContainer({
       <Button
         variant="outlined"
         // eslint-disable-next-line no-underscore-dangle
-        onClick={() => handleClickOpen(parseInt(user._id, 10))}
+        onClick={() => handleClickOpen()}
       >
         Open
       </Button>
@@ -56,33 +74,35 @@ function ButtonContainer({
           <DialogContent>
             <Typography gutterBottom>
               <span>
-                <b>Licensed Provider: </b>
+                <b>Licensed provider: </b>
               </span>{' '}
-              Yes
+              {userInfo.isProfessional ? 'Yes' : 'No'}
             </Typography>
             <Typography gutterBottom>
               <span>
                 <b>Profession: </b>
               </span>{' '}
-              School Counselor
+              {userInfo.profession}
             </Typography>
             <Typography gutterBottom>
               <span>
-                <b>Setting(s) worked in: </b>
+                <b>Primary work setting(s): </b>
               </span>{' '}
-              Private practice, Veterans Affair, Other (Hack4Immpact)
+              {userInfo.settings.join(', ')}
             </Typography>
             <Typography gutterBottom>
               <span>
-                <b>Exposure Therapy Use: </b>
+                <b>Exposure therapy use in caseload: </b>
               </span>{' '}
-              84%
+              {`${userInfo.percentCaseload}%`}
             </Typography>
             <Typography gutterBottom>
               <span>
-                <b>Difficulty to administer: </b>
+                <b>
+                  Perceived difficulty of administering exposure therapy (1-7):{' '}
+                </b>
               </span>{' '}
-              3
+              {userInfo.difficulty}
             </Typography>
           </DialogContent>
           <div

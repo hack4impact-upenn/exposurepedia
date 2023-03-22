@@ -1,52 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
-import { Typography, Grid, Toolbar, Tooltip } from '@mui/material';
+import { Link } from 'react-router-dom';
 import home from './home.jpeg';
-import { useAppDispatch, useAppSelector } from '../util/redux/hooks';
-import {
-  logout as logoutAction,
-  toggleAdmin,
-  selectUser,
-} from '../util/redux/userSlice';
-import { logout as logoutApi, selfUpgrade } from './api';
-import ScreenGrid from '../components/ScreenGrid';
-import PrimaryButton from '../components/buttons/PrimaryButton';
 import { useData } from '../util/api';
-
-interface PromoteButtonProps {
-  admin: boolean | null;
-  handleSelfPromote: () => void;
-  navigator: NavigateFunction;
-}
-
-/**
- * A button which, when clicked, will promote the user to admin. If the user is already admin, the button will be a link to the admin dashboard.
- * @param admin - a boolean indicating whether the user is an admin
- * @param handleSelfPromote - a function which promotes the user to admin
- * @param navigator - a function which navigates to a new page (passed in from parent function)
- */
-function PromoteButton({
-  admin,
-  handleSelfPromote,
-  navigator,
-}: PromoteButtonProps) {
-  if (admin === null) {
-    return null;
-  }
-  return !admin ? (
-    <PrimaryButton variant="contained" onClick={handleSelfPromote}>
-      Promote self to admin
-    </PrimaryButton>
-  ) : (
-    <PrimaryButton
-      variant="contained"
-      onClick={() => navigator('/users', { replace: true })}
-    >
-      View all users
-    </PrimaryButton>
-  );
-}
 
 const styles = {
   img: {
@@ -72,7 +28,7 @@ const styles = {
     color: 'black',
     // height: '60vh',
     display: 'flex',
-    'justify-content': 'center',
+    justifyContent: 'center',
     'flex-direction': 'column',
     'z-index': '1',
   },
@@ -88,26 +44,7 @@ const styles = {
  * The HomePage of the user dashboard. Displays a welcome message, a logout button and a button to promote the user to admin if they are not already an admin. If the user is an admin, the button will navigate them to the admin dashboard. This utilizes redux to access the current user's information.
  */
 function HomePage() {
-  const user = useAppSelector(selectUser);
   const data = useData('auth/authstatus');
-  const dispatch = useAppDispatch();
-  const navigator = useNavigate();
-  const [admin, setAdmin] = useState(user.admin);
-  const logoutDispatch = () => dispatch(logoutAction());
-  const handleLogout = async () => {
-    if (await logoutApi()) {
-      logoutDispatch();
-      navigator('/login', { replace: true });
-    }
-  };
-
-  const handleSelfPromote = async () => {
-    const newAdminStatus = await selfUpgrade(user.email as string);
-    if (newAdminStatus) {
-      dispatch(toggleAdmin());
-      setAdmin(true);
-    }
-  };
 
   return (
     <div>
