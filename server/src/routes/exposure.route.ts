@@ -16,6 +16,7 @@ import {
   getAllExposureItems,
   getFilteredExposureItems,
   getFilteredKeywords,
+  getFilterOptions,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
@@ -27,7 +28,7 @@ router.get('/disorders', isAuthenticated, getAllDisorders);
 router.get('/keywords', isAuthenticated, getAllKeywords);
 router.get('/interventionTypes', isAuthenticated, getAllInterventionTypes);
 router.get('/formats', isAuthenticated, getAllFormats);
-
+router.get('/filterOptions', isAuthenticated, getFilterOptions);
 router.post('/filter', isAuthenticated, getFilteredExposureItems);
 
 /**

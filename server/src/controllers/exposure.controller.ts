@@ -99,6 +99,31 @@ const getAllExposureItems = async (
     });
 };
 
+const getFilterOptions = async (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  req: express.Request,
+  res: express.Response,
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: express.NextFunction,
+) => {
+  const formats = await Format.distinct('name').exec();
+  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
+  let formatObj: any = {};
+  formats.forEach((format: string) => {
+    formatObj[format] = false;
+  });
+
+  const filterOptions = {
+    Disorder: {},
+    Format: formatObj,
+    'Intervention Type': {},
+    Maturity: {},
+    Keyword: {},
+  };
+  res.status(StatusCode.OK).send(filterOptions);
+};
+
 /**
  * Gets exposure items by given filter. Upon success, returns the items with 200 OK status code.
  */
@@ -190,8 +215,6 @@ const postExposureItemInDB = async (
   next: express.NextFunction,
 ) => {
   const item = req.body;
-  console.log('ELLOO');
-  console.log(item.disorders);
   if (
     item.name == null ||
     item.disorders == null ||
@@ -356,6 +379,7 @@ export {
   getAllKeywords,
   getAllInterventionTypes,
   getAllFormats,
+  getFilterOptions,
   getFilteredExposureItems,
   patchExposureItemByID,
   deleteExposureItemByID,
