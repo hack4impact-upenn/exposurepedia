@@ -114,10 +114,17 @@ const getFilterOptions = async (
     formatObj[format] = false;
   });
 
+  const interventionTypes = await InterventionType.distinct('name').exec();
+  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
+  let intTypeObj: any = {};
+  interventionTypes.forEach((intType: string) => {
+    intTypeObj[intType] = false;
+  });
+
   const filterOptions = {
     Disorder: {},
     Format: formatObj,
-    'Intervention Type': {},
+    'Intervention Type': intTypeObj,
     Maturity: {},
     Keyword: {},
   };
