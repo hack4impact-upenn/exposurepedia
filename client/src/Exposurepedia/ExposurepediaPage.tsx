@@ -9,7 +9,7 @@ import Filters from './Filters';
 import { getData, postData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
-import GeneralSearch from './GeneralSearch';
+// import GeneralSearch from './GeneralSearch';
 
 /**
  * A page only accessible to authenticated users that display exposure items in
@@ -242,11 +242,11 @@ function Exposurepedia() {
               exposureItems={selectedRows}
               setSelectedRows={setSelectedRows}
             />
-            <GeneralSearch
+            {/* <GeneralSearch
               name="disorders by title and modifications"
               search={query}
               handleChange={(e: string) => setQuery(e)}
-            />
+            /> */}
             <ExposureItemTable
               rows={rows}
               columns={columns}
