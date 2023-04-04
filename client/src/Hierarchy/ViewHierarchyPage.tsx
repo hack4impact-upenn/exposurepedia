@@ -22,6 +22,7 @@ import {
   IconButton,
   Box,
   Typography,
+  Alert,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
@@ -44,6 +45,7 @@ const ViewHierarchyPage = function () {
   const [hierarchyId, setHierarchyId] = useState('');
   const [textValue, setTextValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
+  const [exposureLimitError, setExposureLimitError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +74,11 @@ const ViewHierarchyPage = function () {
   }, [email, location.state.id]);
 
   const update = async () => {
+    const exposureLimit = 100;
+    if (rows.length >= exposureLimit) {
+      setExposureLimitError(true);
+      return;
+    }
     const newRows = [
       ...rows,
       {
@@ -346,6 +353,20 @@ const ViewHierarchyPage = function () {
           Add
         </Button>
       </div>
+      {exposureLimitError && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: '55px',
+          }}
+        >
+          <Alert severity="error">
+            Exposure limit exceeded. Please delete an exposure to add a new one.
+          </Alert>
+        </div>
+      )}
     </div>
   );
 };
