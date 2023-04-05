@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import { Toolbar } from '@mui/material';
+import { Alert, Snackbar, Toolbar } from '@mui/material';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import { getHierarchy, updateHierarchy } from '../Hierarchy/api';
 import { useAppSelector } from '../util/redux/hooks';
@@ -40,6 +40,7 @@ function HierarchyDropdown({
   setSelectedRows,
 }: HierarchyDropdownProps) {
   const [selectedHierarchies, setSelectedHierarchies] = useState<string[]>([]);
+  const [exposureLimitError, setExposureLimitError] = useState<boolean>(false);
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase() || '';
 
@@ -69,6 +70,11 @@ function HierarchyDropdown({
     selectedHierarchyIds.forEach(async (id) => {
       const res = await getHierarchy(email, id);
       const numCurrExposures = res.exposures.length;
+      const exposureLimit = 100;
+      if (numCurrExposures + exposureItems.length > exposureLimit) {
+        setExposureLimitError(true);
+        return;
+      }
       const toAdd: [string, string, string][] = exposureItems.map((e) => [
         e.name,
         (numCurrExposures + exposureItems.indexOf(e)).toString(),
@@ -163,6 +169,21 @@ function HierarchyDropdown({
             Add ({count}) Items
           </PrimaryButton>
         </div>
+        {exposureLimitError && (
+          <Snackbar
+            open={exposureLimitError}
+            autoHideDuration={6000}
+            onClose={() => setExposureLimitError(false)}
+          >
+            <Alert
+              onClose={() => setExposureLimitError(false)}
+              severity="error"
+              sx={{ width: '100%' }}
+            >
+              Exposure limit exceeded. No exposure items were added.
+            </Alert>
+          </Snackbar>
+        )}
       </div>
     </div>
   );

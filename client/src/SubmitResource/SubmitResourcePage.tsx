@@ -188,6 +188,7 @@ function SubmitResourcePage() {
       style={{
         marginLeft: '100px',
         marginRight: '100px',
+        marginBottom: '10px',
       }}
     >
       <Toolbar />
