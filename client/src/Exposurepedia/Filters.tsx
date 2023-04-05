@@ -24,7 +24,6 @@ function Filters({ filterOptions, setFilterOptions }: any) {
     Format: emptyArr,
     'Intervention Type': emptyArr,
     Maturity: emptyArr,
-    Keyword: emptyArr,
   };
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);
@@ -40,12 +39,6 @@ function Filters({ filterOptions, setFilterOptions }: any) {
     while (tempPath.length > 0) {
       tempOptions = tempOptions[tempPath[0]];
       tempPath = tempPath.slice(1);
-    }
-    // TODO: figure out why this doesn't truncate number of keywords displayed
-    if (tempOptions.Keyword && forDisplay) {
-      tempOptions.Keyword = Object.fromEntries(
-        Object.entries(tempOptions.Keyword).slice(0, 5),
-      );
     }
     return tempOptions;
   };
