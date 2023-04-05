@@ -357,23 +357,6 @@ const deleteExposureItemByID = async (
     });
 };
 
-/**
- * Filters keywords
- */
-const getFilteredKeywords = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  const { query } = req.body;
-  try {
-    const keywords = await getFilteredKeywordsFromDB(query);
-    res.status(StatusCode.OK).json(keywords);
-  } catch (err) {
-    next(ApiError.internal('Unable to retrieve keywords'));
-  }
-};
-
 export {
   getAllExposureItems,
   getExposureItemByID,
@@ -386,5 +369,4 @@ export {
   patchExposureItemByID,
   deleteExposureItemByID,
   postExposureItemInDB,
-  getFilteredKeywords,
 };

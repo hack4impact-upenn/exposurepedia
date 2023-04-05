@@ -15,7 +15,6 @@ import {
   postExposureItemInDB,
   getAllExposureItems,
   getFilteredExposureItems,
-  getFilteredKeywords,
   getFilterOptions,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
