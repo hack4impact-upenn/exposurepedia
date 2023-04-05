@@ -46,8 +46,6 @@ router.post('/', isAuthenticated, postExposureItemInDB);
  */
 router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
 
-router.post('/keyword', isAuthenticated, getFilteredKeywords);
-
 /**
  * A DELETE route to delete the exposure item with the specified id.
  */

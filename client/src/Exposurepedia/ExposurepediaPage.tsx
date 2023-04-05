@@ -9,7 +9,7 @@ import Filters from './Filters';
 import { getData, postData } from '../util/api';
 import { useAppSelector } from '../util/redux/hooks';
 import { selectUser } from '../util/redux/userSlice';
-// import GeneralSearch from './GeneralSearch';
+import GeneralSearch from './GeneralSearch';
 
 /**
  * A page only accessible to authenticated users that display exposure items in
@@ -123,19 +123,7 @@ function Exposurepedia() {
       Children: false,
       Adults: false,
     },
-    Keyword: {},
   };
-  const fetchFilterKeywordData = async () => {
-    const res = await postData(`exposure/keyword`, {
-      query: '',
-    });
-    const allKeywords = Object.assign(
-      {},
-      ...res.data.map((k: any) => ({ [k.name]: false })),
-    );
-    initFilterOptions.Keyword = allKeywords;
-  };
-  fetchFilterKeywordData();
 
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
@@ -197,15 +185,12 @@ function Exposurepedia() {
       const isAdultAppropriate = filterOptions.Maturity.Adults;
       const isChildAppropriate = filterOptions.Maturity.Children;
 
-      const keywords = f(filterOptions.Keyword);
-
       const response = await postData('exposure/filter', {
         disorders,
         formats,
         interventionTypes,
         isAdultAppropriate,
         isChildAppropriate,
-        keywords,
         isLinkBroken: false,
         isApproved: true,
         query,
@@ -242,11 +227,11 @@ function Exposurepedia() {
               exposureItems={selectedRows}
               setSelectedRows={setSelectedRows}
             />
-            {/* <GeneralSearch
-              name="disorders by title and modifications"
+            <GeneralSearch
+              name="disorders by title, keywords, and modifications"
               search={query}
               handleChange={(e: string) => setQuery(e)}
-            /> */}
+            />
             <ExposureItemTable
               rows={rows}
               columns={columns}

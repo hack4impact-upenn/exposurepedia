@@ -15,7 +15,6 @@ import {
   getAllInterventionTypeItemsFromDB,
   getAllKeywordItemsFromDB,
   getFilteredExposureItemsFromDB,
-  getFilteredKeywordsFromDB,
 } from '../services/exposure.service';
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
@@ -145,7 +144,6 @@ const getFilteredExposureItems = async (
     interventionTypes,
     isAdultAppropriate,
     isChildAppropriate,
-    keywords,
     isLinkBroken,
     isApproved,
     query,
@@ -157,7 +155,6 @@ const getFilteredExposureItems = async (
     interventionTypes == null ||
     isAdultAppropriate == null ||
     isChildAppropriate == null ||
-    keywords == null ||
     isLinkBroken == null ||
     isApproved == null
   ) {
@@ -168,7 +165,6 @@ const getFilteredExposureItems = async (
         'interventionTypes',
         'isAdultAppropriate',
         'isChildAppropriate',
-        'keywords',
         'isLinkBroken',
         'isApproved',
         'query',
@@ -184,7 +180,6 @@ const getFilteredExposureItems = async (
       interventionTypes,
       isAdultAppropriate,
       isChildAppropriate,
-      keywords,
       isLinkBroken,
       isApproved,
       query,

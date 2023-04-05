@@ -70,7 +70,6 @@ const getFilteredExposureItemsFromDB = async (
   interventionTypes: string[],
   isAdultAppropriate: boolean,
   isChildAppropriate: boolean,
-  keywords: string[],
   isLinkBroken: boolean,
   isApproved: boolean,
   query: string,
@@ -80,9 +79,12 @@ const getFilteredExposureItemsFromDB = async (
   let maxCount = 20;
 
   if (query !== '') {
+    const keywords = query.split(/\s+|,\s+/);
+    const keywordsRegex = keywords.map((k) => new RegExp(`.*${k}.*`));
     match.$or = [
       { name: { $regex: query, $options: 'i' } },
       { modifications: { $regex: query, $options: 'i' } },
+      { keywords: { $elemMatch: { name: { $in: keywordsRegex } } } },
     ];
   }
 
@@ -90,7 +92,6 @@ const getFilteredExposureItemsFromDB = async (
     disorders.length === 0 &&
     formats.length === 0 &&
     interventionTypes.length === 0 &&
-    keywords.length === 0 &&
     query === ''
   ) {
     maxCount = 500;
@@ -115,10 +116,6 @@ const getFilteredExposureItemsFromDB = async (
 
   if (isChildAppropriate) {
     match.isChildAppropriate = true;
-  }
-
-  if (keywords.length !== 0) {
-    match.keywords = { $elemMatch: { name: { $in: keywords } } };
   }
 
   if (isLinkBroken) {
@@ -320,15 +317,6 @@ const deleteExposureItemFromDB = async (id: string) => {
   return item;
 };
 
-/**
- * Gets filtered keywords
- */
-const getFilteredKeywordsFromDB = async (query: string) => {
-  return Keyword.aggregate([
-    { $match: { name: new RegExp(query, 'i') } },
-  ]).exec();
-};
-
 export {
   getAllExposureItemsFromDB,
   getExposureItemFromDB,
@@ -339,5 +327,4 @@ export {
   getFilteredExposureItemsFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
-  getFilteredKeywordsFromDB,
 };
