@@ -133,11 +133,8 @@ function Filters({ filterOptions, setFilterOptions }: any) {
       for (const k in tempPos) {
         const newItem: [string[], string] = [[...tempPath, tempKey], k];
         queue.push(newItem);
-        console.log('pushed');
       }
     }
-    console.log('count!');
-    console.log(count);
     return count;
   };
 
