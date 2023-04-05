@@ -38,7 +38,10 @@ async function submit(
     modifications,
     link,
   });
-  if (res.error) return false;
+  if (res.error) {
+    console.log(res.error);
+    return false;
+  }
   return true;
 }
 

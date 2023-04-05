@@ -272,6 +272,13 @@ const createExposureItemInDB = async (
   link: string,
 ) => {
   // updateOne does not return documents, so must update/create and then find
+  disorders.forEach(async (disorder) => {
+    await Disorder.updateOne(
+      { name: disorder },
+      { name: disorder },
+      { upsert: true },
+    ).exec();
+  });
   keywords.forEach(async (keyword) => {
     await Keyword.updateOne(
       { name: keyword },

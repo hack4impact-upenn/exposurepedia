@@ -136,15 +136,21 @@ function SubmitResourcePage() {
     );
 
     setSelectOtherDisorder(false);
+    let keywords: string[] = values.keywords.split(',');
+    keywords = keywords.map((str) => str.trim());
+
+    const disorder = values.newDisorder
+      ? values.newDisorder.split(',').map((str) => str.trim())
+      : values.disorder;
 
     const res = await submit(
       values.title,
-      values.disorder,
+      disorder,
       formats,
       interventions,
-      values.maturity.Child,
       values.maturity.Adult,
-      [values.keywords],
+      values.maturity.Child,
+      keywords,
       values.modifications,
       values.link,
       /* TODO: ADD NEW DISORDER (ONCE BACKEND ROUTE IS DONE) */
