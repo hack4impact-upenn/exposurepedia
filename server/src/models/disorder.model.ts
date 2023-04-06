@@ -9,7 +9,7 @@ const DisorderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  subdisorder: {
+  subdisorders: {
     type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
     required: false,
   },
@@ -18,6 +18,7 @@ const DisorderSchema = new mongoose.Schema({
 interface IDisorder extends mongoose.Document {
   _id: string;
   name: string;
+  subdisorders?: IDisorder[];
 }
 
 const Disorder = mongoose.model<IDisorder>('Disorder', DisorderSchema);

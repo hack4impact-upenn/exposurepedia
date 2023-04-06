@@ -3,6 +3,7 @@
  * exposure items.
  */
 import express from 'express';
+import mongoose from 'mongoose';
 import ApiError from '../util/apiError';
 import StatusCode from '../util/statusCode';
 import {
@@ -102,10 +103,43 @@ const getFilterOptions = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   req: express.Request,
   res: express.Response,
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: express.NextFunction,
 ) => {
+  const disorders = await Disorder.find().exec();
+  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
+  let disorderObjOne: any = {};
+  disorders.forEach((disorder: any) => {
+    disorderObjOne[disorder.name] = false;
+    // checking if subdisorders exist
+    const { subdisorders } = disorder;
+    if (subdisorders && JSON.stringify(subdisorders) !== '{}') {
+      disorderObjOne[disorder.name] = subdisorders;
+    }
+  });
+
+  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
+  let disorderObjTwo: any = disorderObjOne;
+  Object.keys(disorderObjOne).forEach((disorder: any) => {
+    if (disorderObjOne[disorder] !== false) {
+      console.log(disorderObjOne[disorder]);
+      const subdisorderIds = disorderObjOne[disorder];
+      // eslint-disable-next-line prefer-const
+      let newSubdisorders: any = {};
+      Object.keys(subdisorderIds).forEach(async (id: any) => {
+        const subdisorder = await Disorder.findOne({
+          _id: new mongoose.Types.ObjectId(id._id),
+        }).exec();
+        if (subdisorder) {
+          console.log(subdisorder.name);
+          newSubdisorders[subdisorder.name] = false;
+          // TODO
+        }
+      });
+      disorderObjTwo[disorder] = newSubdisorders;
+    }
+  });
+
   const formats = await Format.distinct('name').exec();
   // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
   let formatObj: any = {};
@@ -121,11 +155,13 @@ const getFilterOptions = async (
   });
 
   const filterOptions = {
-    Disorder: {},
+    Disorder: disorderObjTwo,
     Format: formatObj,
     'Intervention Type': intTypeObj,
-    Maturity: {},
-    Keyword: {},
+    'Adult/Child Friendly': {
+      'Child Friendly': false,
+      'Adult Friendly': false,
+    },
   };
   res.status(StatusCode.OK).send(filterOptions);
 };

@@ -119,9 +119,9 @@ function Exposurepedia() {
       'Psychiatric Hospital': false,
       'Habit Reversal Training': false,
     },
-    Maturity: {
-      Children: false,
-      Adults: false,
+    'Adult/Child Friendly': {
+      'Child Friendly': false,
+      'Adult Friendly': false,
     },
   };
 
@@ -182,8 +182,10 @@ function Exposurepedia() {
 
       const interventionTypes = f(filterOptions['Intervention Type']);
 
-      const isAdultAppropriate = filterOptions.Maturity.Adults;
-      const isChildAppropriate = filterOptions.Maturity.Children;
+      const isAdultAppropriate =
+        filterOptions['Adult/Child Friendly']['Adult Friendly'];
+      const isChildAppropriate =
+        filterOptions['Adult/Child Friendly']['Child Friendly'];
 
       const response = await postData('exposure/filter', {
         disorders,
@@ -198,12 +200,7 @@ function Exposurepedia() {
       setRows(response.data);
     };
     fetchData();
-  }, [
-    filterOptions,
-    filterOptions.Maturity.Adults,
-    filterOptions.Maturity.Children,
-    query,
-  ]);
+  }, [filterOptions, query]);
 
   return (
     <div>
