@@ -9,7 +9,9 @@ import {
   TablePagination,
   TableRow,
   Checkbox,
+  IconButton,
 } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,6 +33,7 @@ interface TableProps {
 interface RowProps {
   row: TRow;
   columns: TColumn[];
+  link: string;
   isApprove: boolean;
   isBroken: boolean;
   setCount?: React.Dispatch<React.SetStateAction<number>>;
@@ -71,6 +74,7 @@ interface TRow {
 function Row({
   row,
   columns,
+  link,
   isApprove,
   isBroken,
   setCount,
@@ -158,7 +162,25 @@ function Row({
             key={column.id + row.key}
             align={column.align || 'left'}
           >
-            {value}
+            {column.id === 'name' && link ? (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <p>{value}</p>
+                <IconButton
+                  sx={{ height: '30px', width: '30px', marginLeft: '5px' }}
+                  onClick={() => window.open(link)}
+                >
+                  <OpenInNewIcon sx={{ fontSize: '20px' }} />
+                </IconButton>
+              </div>
+            ) : (
+              value
+            )}
           </TableCell>
         );
       })}
@@ -230,6 +252,7 @@ function ExposureItemTable({
                     row={row}
                     key={row.key}
                     columns={columns}
+                    link={row.link}
                     isApprove={isApprove}
                     isBroken={isBroken}
                     setCount={setCount}

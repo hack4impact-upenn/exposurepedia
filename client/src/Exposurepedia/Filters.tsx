@@ -40,6 +40,12 @@ function Filters({ filterOptions, setFilterOptions }: any) {
       tempOptions = tempOptions[tempPath[0]];
       tempPath = tempPath.slice(1);
     }
+    // TODO: figure out why this doesn't truncate number of keywords displayed
+    if (tempOptions && tempOptions.Keyword && forDisplay) {
+      tempOptions.Keyword = Object.fromEntries(
+        Object.entries(tempOptions.Keyword).slice(0, 5),
+      );
+    }
     return tempOptions;
   };
 
@@ -102,6 +108,33 @@ function Filters({ filterOptions, setFilterOptions }: any) {
     const tempPath = [...p];
     tempPath.push(item);
     return typeof getCurrentList(tempPath) === 'boolean';
+  };
+
+  const countNodes = (p: string[]) => {
+    const currList = getCurrentList(p.slice(0, p.length - 1));
+    let count = 0;
+    let queue: [string[], string][] = [[[], p[p.length - 1]]];
+
+    while (queue.length > 0) {
+      const tempPath: string[] = queue[0][0];
+      const tempKey = queue[0][1];
+
+      let tempPos = currList;
+      for (let i = 0; i < tempPath.length; i += 1) {
+        tempPos = tempPos[tempPath[i]];
+      }
+      tempPos = tempPos[tempKey];
+
+      count += 1;
+
+      queue = queue.slice(1);
+
+      for (const k in tempPos) {
+        const newItem: [string[], string] = [[...tempPath, tempKey], k];
+        queue.push(newItem);
+      }
+    }
+    return count;
   };
 
   const checkChildrenTrue = (p: string[], item: string) => {
@@ -406,7 +439,7 @@ function Filters({ filterOptions, setFilterOptions }: any) {
                   </div>
                 ))}
               </div>
-              {path.length > 0 && (
+              {path.length > 0 && countNodes(path) > 10 && (
                 <div style={{ width: '100%', margin: 'auto' }}>
                   <SearchComponent
                     name={`${
