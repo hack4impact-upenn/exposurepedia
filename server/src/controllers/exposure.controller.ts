@@ -255,7 +255,7 @@ const postExposureItemInDB = async (
   const item = req.body;
   if (
     item.name == null ||
-    item.disorders == null ||
+    item.disorder1 == null ||
     item.formats == null ||
     item.interventionTypes == null ||
     item.isAdultAppropriate == null ||
@@ -265,7 +265,7 @@ const postExposureItemInDB = async (
     next(
       ApiError.missingFields([
         'name',
-        'disorders',
+        'disorder1',
         'formats',
         'interventionTypes',
         'isAdultAppropriate',
@@ -274,6 +274,15 @@ const postExposureItemInDB = async (
       ]),
     );
     return;
+  }
+  if (item.disorder2 == null) {
+    item.disorder2 = [];
+  }
+  if (item.disorder3 == null) {
+    item.disorder3 = [];
+  }
+  if (item.disorder4 == null) {
+    item.disorder4 = [];
   }
   if (item.modifications == null) {
     item.modifications = '';
@@ -285,7 +294,10 @@ const postExposureItemInDB = async (
   try {
     const exposureItem = await createExposureItemInDB(
       item.name,
-      item.disorders,
+      item.disorder1,
+      item.disorder2,
+      item.disorder3,
+      item.disorder4,
       item.formats,
       item.interventionTypes,
       item.isAdultAppropriate,

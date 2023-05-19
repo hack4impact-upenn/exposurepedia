@@ -28,7 +28,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
         // eslint-disable-next-line no-restricted-syntax, guard-for-in
         for (let i = 0; i < 10; i += 1) {
           const exposure: any = results.data[i];
-          // for (const exposure in results.data) {
+          // TODO: fix how disorders are created
           // disorders
           let disorders = exposure.disorders_1
             ? exposure.disorders_1.split(', ')

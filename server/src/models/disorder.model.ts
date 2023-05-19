@@ -13,12 +13,17 @@ const DisorderSchema = new mongoose.Schema({
     type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
     required: false,
   },
+  parent: {
+    type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
+    required: false,
+  },
 });
 
 interface IDisorder extends mongoose.Document {
   _id: string;
   name: string;
   subdisorders?: IDisorder[];
+  parent?: IDisorder;
 }
 
 const Disorder = mongoose.model<IDisorder>('Disorder', DisorderSchema);

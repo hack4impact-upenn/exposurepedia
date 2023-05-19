@@ -2,7 +2,7 @@
  * All the functions for interacting with exposure data in the MongoDB database
  */
 import mongoose from 'mongoose';
-import { Disorder } from '../models/disorder.model';
+import { Disorder, IDisorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
 import { Format } from '../models/format.model';
 import { InterventionType } from '../models/interventionType.model';
@@ -252,6 +252,101 @@ const getExposureItemFromDB = async (id: string) => {
   ]).exec();
 };
 
+async function getOrCreateDisorder(name: string) {
+  let currDisorder = await Disorder.findOne({
+    name,
+  }).exec();
+  if (!currDisorder) {
+    const newDisorder = new Disorder({
+      name,
+    });
+    currDisorder = await newDisorder.save();
+  }
+  return currDisorder;
+}
+
+async function updateDisorder(
+  name: string,
+  subdisorders: string[],
+  parent: string,
+) {
+  let currDisorder = await getOrCreateDisorder(name);
+
+  currSubIds = currDisorder.subdisorders;
+  currSubIds = 
+
+  subdisorderObjects = [];
+  subdisorders.forEach(async (disorder: string) => {
+    let curr = await Disorder.findOne({
+      name: disorder,
+    }).exec();
+    if (!curr) {
+      const newDisorder = new Disorder({
+        name: disorder,
+        parent: currDisorder,
+      });
+      await newDisorder.save();
+      curr = await Disorder.findOne({
+        name: disorder,
+      }).exec();
+    }
+  });
+  const newDisorder = new Disorder({
+    name,
+    subdisorders,
+    parent,
+  });
+  const disorder = await newDisorder.save();
+  return disorder;
+}
+
+// assumes distinct disorder names
+function categorizeDisorders(
+  disorder1: string[],
+  disorder2: string[],
+  disorder3: string[],
+  disorder4: string[],
+) {
+  // update disorder hierarchy if necessary
+  disorder1.forEach(async (disorder: string) => {
+    // update disorder
+  });
+  disorder2.forEach(async (disorder: string) => {
+    // update disorder
+  });
+
+  // return disorders for exposure item
+  if (disorder4.length === 0) {
+    if (disorder3.length === 0) {
+      if (disorder2.length === 0) {
+        // eslint-disable-next-line prefer-const
+        let disorders = [];
+        disorder1.forEach(async (disorder: string) => {
+          disorders.push(currDisorder);
+        });
+        return disorders;
+      }
+      // parent disorders
+      let disorders = [];
+      disorder1.forEach(async (disorder: string) => {
+        let currDisorder = await Disorder.findOne({
+          name: disorder,
+        }).exec();
+        if (!currDisorder) {
+          const newDisorder = new Disorder({
+            name: disorder,
+          });
+          await newDisorder.save();
+          currDisorder = await Disorder.findOne({
+            name: disorder,
+          }).exec();
+        }
+        disorders.push(currDisorder);
+      });
+    }
+  }
+}
+
 /**
  * Creates the exposure item from the DB with the specified id
  * @param exposureItem The new exposure item
@@ -259,7 +354,10 @@ const getExposureItemFromDB = async (id: string) => {
  */
 const createExposureItemInDB = async (
   name: string,
-  disorders: string[],
+  disorder1: string[],
+  disorder2: string[],
+  disorder3: string[],
+  disorder4: string[],
   formats: string[],
   interventionTypes: string[],
   isAdultAppropriate: boolean,
@@ -268,11 +366,32 @@ const createExposureItemInDB = async (
   modifications: string,
   link: string,
 ) => {
+  // if exposure item with the same name exists, then update associated disorders
+  const existingItem = await ExposureItem.find({ name }).exec();
+  if (existingItem) {
+    // organize disorders
+  }
+
   // updateOne does not return documents, so must update/create and then find
+  // TODO: edit this so that the disorder includes the parent and the child
   disorders.forEach(async (disorder) => {
     await Disorder.updateOne(
       { name: disorder },
       { name: disorder },
+      { upsert: true },
+    ).exec();
+  });
+  formats.forEach(async (format) => {
+    await Format.updateOne(
+      { name: format },
+      { name: format },
+      { upsert: true },
+    ).exec();
+  });
+  interventionTypes.forEach(async (intType) => {
+    await InterventionType.updateOne(
+      { name: intType },
+      { name: intType },
       { upsert: true },
     ).exec();
   });
