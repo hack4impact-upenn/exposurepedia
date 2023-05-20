@@ -9,12 +9,10 @@ const DisorderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  subdisorders: {
-    type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
-    required: false,
-  },
+  subdisorders: [{ type: Schema.Types.ObjectId, ref: 'Disorder' }], // doesn't seem like you can create optional arrays
   parent: {
-    type: { type: Schema.Types.ObjectId, ref: 'Disorder' },
+    type: Schema.Types.ObjectId,
+    ref: 'Disorder',
     required: false,
   },
 });
@@ -22,8 +20,8 @@ const DisorderSchema = new mongoose.Schema({
 interface IDisorder extends mongoose.Document {
   _id: string;
   name: string;
-  subdisorders?: IDisorder[];
-  parent?: IDisorder;
+  subdisorders: IDisorder[];
+  parent: IDisorder;
 }
 
 const Disorder = mongoose.model<IDisorder>('Disorder', DisorderSchema);
