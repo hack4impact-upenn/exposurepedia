@@ -79,8 +79,6 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
                 variant="standard"
                 label="Description"
                 fullWidth
-                multiline
-                rows={2}
                 onChange={(event) => setValueDescr(event.target.value)}
               />
             </div>
