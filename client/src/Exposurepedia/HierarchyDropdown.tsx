@@ -55,6 +55,9 @@ function HierarchyDropdown({
   }
 
   function addExposuresToHierarchies() {
+    if (selectedHierarchies.length === 0) {
+      return;
+    }
     // get the ids of the selected hierarchies
     // eslint-disable-next-line prefer-const
     let selectedHierarchyIds: string[] = [];
