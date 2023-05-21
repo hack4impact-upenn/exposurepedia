@@ -69,19 +69,22 @@ const createHierarchyHandler = async (
 ) => {
   const { email, title, description } = req.body;
   const user = await getUserByEmail(email);
-  const user_id = user?.id;
-
-  if (!user_id || !title || !description) {
-    next(ApiError.missingFields(['user_id', 'title', 'description']));
+  if (!user) {
+    next(ApiError.notFound('User not found'));
     return;
   }
 
-  createHierarchy(user_id, req.body.title, req.body.description)
-    .then((hierarchyId) => {
-      res.status(StatusCode.OK).json(hierarchyId);
+  if (!title || !description) {
+    next(ApiError.missingFields(['title', 'description']));
+    return;
+  }
+
+  createHierarchy(user.id, title, description)
+    .then((hierarchy) => {
+      res.status(StatusCode.OK).json(hierarchy);
     })
-    .catch(() => {
-      next(ApiError.internal('Unable to create hierarchy'));
+    .catch((e) => {
+      next(ApiError.internal(e.toString().split('\n')[0]));
     });
 };
 

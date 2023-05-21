@@ -35,6 +35,13 @@ const createHierarchy = async (
   title: string,
   description: string,
 ) => {
+  const existingHierarchy = await Hierarchy.find({
+    title,
+    user: userId,
+  }).exec();
+  if (existingHierarchy && existingHierarchy.length !== 0) {
+    throw new Error('Hierarchy name already exists');
+  }
   const hierarchy = new Hierarchy({
     user: userId,
     title,
@@ -42,7 +49,7 @@ const createHierarchy = async (
     dateUpdated: new Date(),
   });
   await hierarchy.save();
-  return hierarchy._id;
+  return hierarchy;
 };
 
 const updateHierarchy = async (
