@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * All the controller functions containing the logic for routes relating to
  * exposure items.
@@ -82,62 +85,34 @@ const getAllFormats = async (
 };
 
 const getFilterOptions = async (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   req: express.Request,
   res: express.Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: express.NextFunction,
 ) => {
-  const disorders = await Disorder.find().exec();
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
-  let disorderObjOne: any = {};
-  disorders.forEach((disorder: any) => {
-    disorderObjOne[disorder.name] = false;
-    // checking if subdisorders exist
-    const { subdisorders } = disorder;
-    if (subdisorders && JSON.stringify(subdisorders) !== '{}') {
-      disorderObjOne[disorder.name] = subdisorders;
+  let disorderObj: any = {};
+  const disorders1 = await Disorder.find({ parent: null }).exec();
+  disorders1.forEach((disorder) => {
+    if (disorder.subdisorders.length === 0) {
+      disorderObj[disorder.name] = false;
     }
-  });
-
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
-  let disorderObjTwo: any = disorderObjOne;
-  Object.keys(disorderObjOne).forEach((disorder: any) => {
-    if (disorderObjOne[disorder] !== false) {
-      console.log(disorderObjOne[disorder]);
-      const subdisorderIds = disorderObjOne[disorder];
-      // eslint-disable-next-line prefer-const
-      let newSubdisorders: any = {};
-      Object.keys(subdisorderIds).forEach(async (id: any) => {
-        const subdisorder = await Disorder.findOne({
-          _id: new mongoose.Types.ObjectId(id._id),
-        }).exec();
-        if (subdisorder) {
-          console.log(subdisorder.name);
-          newSubdisorders[subdisorder.name] = false;
-          // TODO
-        }
-      });
-      disorderObjTwo[disorder] = newSubdisorders;
-    }
+    // expand
+    // disorderObj[disorder.name] = false;
   });
 
   const formats = await Format.distinct('name').exec();
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
   let formatObj: any = {};
   formats.forEach((format: string) => {
     formatObj[format] = false;
   });
 
   const interventionTypes = await InterventionType.distinct('name').exec();
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
   let intTypeObj: any = {};
   interventionTypes.forEach((intType: string) => {
     intTypeObj[intType] = false;
   });
 
   const filterOptions = {
-    Disorder: disorderObjTwo,
+    Disorder: disorderObj,
     Format: formatObj,
     'Intervention Type': intTypeObj,
     'Adult/Child Friendly': {
