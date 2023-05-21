@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -93,44 +95,41 @@ const getFilterOptions = async (
   const disorders1 = await Disorder.find({ parent: null })
     .sort({ name: 1 })
     .exec();
-  disorders1.forEach((disorder) => {
+  for (const disorder of disorders1) {
     // no subdisorders
     if (disorder.subdisorders && disorder.subdisorders.length === 0) {
       disorderObj[disorder.name] = false;
     } else {
       disorderObj[disorder.name] = {};
-      console.log('1', disorder.name, disorder.subdisorders);
       const disorder2Ids = disorder.subdisorders;
-      disorder2Ids.forEach(async (id2) => {
+      for (const id2 of disorder2Ids) {
         const dis2 = await Disorder.findOne({ _id: id2 }).exec();
         if (!dis2) return;
         if (dis2.subdisorders && dis2.subdisorders.length === 0) {
           disorderObj[disorder.name][dis2.name] = false;
         } else {
           disorderObj[disorder.name][dis2.name] = {};
-          console.log('2', dis2.name, dis2.subdisorders);
           const disorder3Ids = dis2.subdisorders;
-          disorder3Ids.forEach(async (id3) => {
+          for (const id3 of disorder3Ids) {
             const dis3 = await Disorder.findOne({ _id: id3 }).exec();
             if (!dis3) return;
             if (dis3.subdisorders && dis3.subdisorders.length === 0) {
               disorderObj[disorder.name][dis2.name][dis3.name] = false;
             } else {
-              disorderObj[disorder.name][dis2.name] = {};
-              console.log('3', dis3.name, dis3.subdisorders);
+              disorderObj[disorder.name][dis2.name][dis3.name] = {};
               const disorder4Ids = dis3.subdisorders;
-              disorder4Ids.forEach(async (id4) => {
+              for (const id4 of disorder4Ids) {
                 const dis4 = await Disorder.findOne({ _id: id4 }).exec();
                 if (!dis4) return;
                 disorderObj[disorder.name][dis2.name][dis3.name][dis4.name] =
                   false;
-              });
+              }
             }
-          });
+          }
         }
-      });
+      }
     }
-  });
+  }
 
   const formats = await Format.distinct('name').exec();
   let formatObj: any = {};
