@@ -4,9 +4,9 @@
 import 'dotenv/config';
 import SGmail, { MailDataRequired } from '@sendgrid/mail';
 
-const appName = 'Exposurepedia'; // Replace with a relevant project name
-const senderName = 'Exposurepedia Admin'; // Replace with a relevant project sender
-const baseUrl = 'https://test-exposurepedia.herokuapp.com'; // TODO: figure out better place to put this
+const appName = 'Exposurepedia';
+const senderName = 'Exposurepedia Admin';
+const baseUrl = 'https://test-exposurepedia.herokuapp.com'; // TODO: change this once deployed
 
 // eslint-disable-next-line no-useless-concat
 SGmail.setApiKey(`${process.env.SENDGRID_API_KEY}`);
@@ -17,7 +17,6 @@ SGmail.setApiKey(`${process.env.SENDGRID_API_KEY}`);
  * @param token The unique token identifying this reset attempt for the user
  */
 const emailResetPasswordLink = async (email: string, token: string) => {
-  // TODO DURING DEVELOPMENT: use a template to make this prettier and match client's style
   const resetLink = `${baseUrl}/reset-password/${token}`;
   const mailSettings: MailDataRequired = {
     from: {
