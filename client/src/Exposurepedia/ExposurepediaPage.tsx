@@ -17,6 +17,7 @@ import GeneralSearch from './GeneralSearch';
  * to hierarchies.
  */
 function Exposurepedia() {
+  // TODO Kat: replace with exposure/filterOptions
   const initFilterOptions = {
     Disorder: {
       'Body Dysmorphia': false,

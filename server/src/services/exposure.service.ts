@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
@@ -15,7 +16,68 @@ import { Keyword } from '../models/keyword.model';
  * Get all disorder items from DB
  */
 const getAllDisorderItemsFromDB = async () => {
-  return Disorder.distinct('name').exec();
+  // eslint-disable-next-line prefer-const
+  let disorderObj: any = {};
+  const disorders1 = await Disorder.find({ parent: null, approved: true })
+    .sort({ name: 1 })
+    .exec();
+  for (const disorder of disorders1) {
+    disorderObj[disorder.name] = {};
+    if (disorder.subdisorders && disorder.subdisorders.length > 0) {
+      // level 2 subdisorders exist
+      disorderObj[disorder.name] = {};
+      const disorder2Ids = disorder.subdisorders;
+      for (const id2 of disorder2Ids) {
+        const dis2 = await Disorder.findOne({
+          _id: id2,
+        }).exec();
+        if (!dis2 || !dis2.approved) continue;
+        disorderObj[disorder.name][dis2.name] = {};
+        if (dis2.subdisorders && dis2.subdisorders.length > 0) {
+          // level 3 subdisorders exist
+          const disorder3Ids = dis2.subdisorders;
+          for (const id3 of disorder3Ids) {
+            const dis3 = await Disorder.findOne({
+              _id: id3,
+            }).exec();
+            if (!dis3 || !dis3.approved) continue;
+
+            disorderObj[disorder.name][dis2.name][dis3.name] = {};
+            if (dis3.subdisorders && dis3.subdisorders.length > 0) {
+              // level 4 subdisorders exist
+              const disorder4Ids = dis3.subdisorders;
+              for (const id4 of disorder4Ids) {
+                const dis4 = await Disorder.findOne({
+                  _id: id4,
+                }).exec();
+                if (!dis4 || !dis4.approved) continue;
+                disorderObj[disorder.name][dis2.name][dis3.name][dis4.name] =
+                  {};
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const sortKeys = (obj: any, newObj: any) => {
+    Object.keys(obj)
+      .sort()
+      .forEach((key) => {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          const newObj2 = {};
+          // eslint-disable-next-line no-param-reassign
+          newObj[key] = sortKeys(obj[key], newObj2);
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          newObj[key] = obj[key];
+        }
+      });
+    return newObj;
+  };
+  const sortedDisorderObj = sortKeys(disorderObj, {});
+  return sortedDisorderObj;
 };
 
 /**

@@ -1,6 +1,7 @@
 export interface DisorderTree {
   [key: string]: DisorderTree;
 }
+// TODO Kat: replace with exposure/disorders (and delete this file)
 const masterDisorderObject: DisorderTree = {
   'Body Dysmorphia': {},
   'Generalized Anxiety': {},
