@@ -243,19 +243,26 @@ async function updateDisorder(
   if (!currDisorder) return new Error('Error finding or creating disorder');
 
   // retrieve all existing subdisorders in the database
-  const currSubIds = JSON.parse(JSON.stringify(currDisorder.subdisorders));
-  // eslint-disable-next-line prefer-const
-  let currSubdisorderNames: string[] = [];
-  if (currSubIds.length > 0) {
-    currSubIds.forEach(async (id: any) => {
-      const subdisorder = await Disorder.findOne({
-        _id: new mongoose.Types.ObjectId(id._id),
-      }).exec();
-      if (subdisorder) {
-        currSubdisorderNames.push(subdisorder.name);
-      }
-    });
-  }
+  const currSubdisorders = await Disorder.aggregate([
+    {
+      $lookup: {
+        from: 'disorders',
+        localField: 'parent',
+        foreignField: '_id',
+        as: 'parent',
+      },
+    },
+    {
+      $unwind: '$parent',
+    },
+    {
+      $match: { 'parent.name': name },
+    },
+    {
+      $project: { name: 1 },
+    },
+  ]).exec();
+  const currSubdisorderNames = currSubdisorders.map((x) => x.name);
 
   // creates new subdisorders, assumes that all subdisorders have one unique parent
   // frontend doesn't like .filter for some reason
@@ -304,15 +311,15 @@ async function categorizeDisorders(
   for (const disorder of disorder1) {
     await updateDisorder(disorder, disorder2, '');
   }
-  disorder2.forEach(async (disorder: string) => {
+  for (const disorder of disorder2) {
     await updateDisorder(disorder, disorder3, disorder1[0]);
-  });
-  disorder3.forEach(async (disorder: string) => {
+  }
+  for (const disorder of disorder3) {
     await updateDisorder(disorder, disorder4, disorder2[0]);
-  });
-  disorder4.forEach(async (disorder: string) => {
+  }
+  for (const disorder of disorder4) {
     await updateDisorder(disorder, [], disorder3[0]);
-  });
+  }
 }
 
 /**

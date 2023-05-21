@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -90,14 +92,44 @@ const getFilterOptions = async (
   next: express.NextFunction,
 ) => {
   let disorderObj: any = {};
-  const disorders1 = await Disorder.find({ parent: null }).exec();
-  disorders1.forEach((disorder) => {
-    if (disorder.subdisorders.length === 0) {
+  const disorders1 = await Disorder.find({ parent: null })
+    .sort({ name: 1 })
+    .exec();
+  for (const disorder of disorders1) {
+    // no subdisorders
+    if (disorder.subdisorders && disorder.subdisorders.length === 0) {
       disorderObj[disorder.name] = false;
+    } else {
+      disorderObj[disorder.name] = {};
+      const disorder2Ids = disorder.subdisorders;
+      for (const id2 of disorder2Ids) {
+        const dis2 = await Disorder.findOne({ _id: id2 }).exec();
+        if (!dis2) return;
+        if (dis2.subdisorders && dis2.subdisorders.length === 0) {
+          disorderObj[disorder.name][dis2.name] = false;
+        } else {
+          disorderObj[disorder.name][dis2.name] = {};
+          const disorder3Ids = dis2.subdisorders;
+          for (const id3 of disorder3Ids) {
+            const dis3 = await Disorder.findOne({ _id: id3 }).exec();
+            if (!dis3) return;
+            if (dis3.subdisorders && dis3.subdisorders.length === 0) {
+              disorderObj[disorder.name][dis2.name][dis3.name] = false;
+            } else {
+              disorderObj[disorder.name][dis2.name][dis3.name] = {};
+              const disorder4Ids = dis3.subdisorders;
+              for (const id4 of disorder4Ids) {
+                const dis4 = await Disorder.findOne({ _id: id4 }).exec();
+                if (!dis4) return;
+                disorderObj[disorder.name][dis2.name][dis3.name][dis4.name] =
+                  false;
+              }
+            }
+          }
+        }
+      }
     }
-    // expand
-    // disorderObj[disorder.name] = false;
-  });
+  }
 
   const formats = await Format.distinct('name').exec();
   let formatObj: any = {};
