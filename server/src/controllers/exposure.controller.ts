@@ -10,7 +10,6 @@ import {
   getExposureItemFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
-  getAllExposureItemsFromDB,
   getAllDisorderItemsFromDB,
   getAllFormatItemsFromDB,
   getAllInterventionTypeItemsFromDB,
@@ -79,23 +78,6 @@ const getAllFormats = async (
     })
     .catch(() => {
       next(ApiError.internal('Unable to retrieve format items'));
-    });
-};
-
-/**
- * Gets all exposure items. Upon success, returns the items with 200 OK status code.
- */
-const getAllExposureItems = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  getAllExposureItemsFromDB()
-    .then((items) => {
-      res.status(StatusCode.OK).send(items.slice(10));
-    })
-    .catch(() => {
-      next(ApiError.internal('Unable to retrieve exposure items'));
     });
 };
 
@@ -290,6 +272,9 @@ const postExposureItemInDB = async (
   if (item.link == null) {
     item.link = '';
   }
+  if (item.isAdminUpload == null) {
+    item.isAdminUpload = false;
+  }
 
   try {
     const exposureItem = await createExposureItemInDB(
@@ -305,6 +290,7 @@ const postExposureItemInDB = async (
       item.keywords,
       item.modifications,
       item.link,
+      item.isAdminUpload,
     );
     res.status(StatusCode.OK).json(exposureItem);
   } catch (err) {
@@ -406,7 +392,6 @@ const deleteExposureItemByID = async (
 };
 
 export {
-  getAllExposureItems,
   getExposureItemByID,
   getAllDisorders,
   getAllKeywords,

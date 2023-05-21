@@ -13,15 +13,12 @@ import {
   getAllInterventionTypes,
   getAllFormats,
   postExposureItemInDB,
-  getAllExposureItems,
   getFilteredExposureItems,
   getFilterOptions,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
 const router = express.Router();
-
-router.get('/', isAuthenticated, getAllExposureItems);
 
 router.get('/disorders', isAuthenticated, getAllDisorders);
 router.get('/keywords', isAuthenticated, getAllKeywords);

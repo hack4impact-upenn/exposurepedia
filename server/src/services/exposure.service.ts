@@ -39,31 +39,6 @@ const getAllKeywordItemsFromDB = async () => {
 };
 
 /**
- * Get all exposure items from the DB
- * @returns All exposure items in the DB
- */
-const getAllExposureItemsFromDB = async () => {
-  return ExposureItem.aggregate([
-    {
-      $lookup: {
-        from: 'disorders',
-        localField: 'disorders',
-        foreignField: '_id',
-        as: 'disorders',
-      },
-    },
-    {
-      $lookup: {
-        from: 'formats',
-        localField: 'formats',
-        foreignField: '_id',
-        as: 'formats',
-      },
-    },
-  ]).exec();
-};
-
-/**
  * Gets filtered exposure items from DB
  */
 const getFilteredExposureItemsFromDB = async (
@@ -283,9 +258,17 @@ async function updateDisorder(
   }
 
   // creates new subdisorders, assumes that all subdisorders have one unique parent
-  const newSubdisorderNames = subdisorderNames.filter(
-    (x) => !currSubdisorderNames.includes(x),
-  );
+  // frontend doesn't like .filter for some reason
+  // const newSubdisorderNames = subdisorderNames.filter(
+  //   (x) => !currSubdisorderNames.includes(x),
+  // );
+  const newSubdisorderNames = [];
+  for (let i = 0; i < subdisorderNames.length; i += 1) {
+    const x = subdisorderNames[i];
+    if (!currSubdisorderNames.includes(x)) {
+      newSubdisorderNames.push(x);
+    }
+  }
   for (const disorderName of newSubdisorderNames) {
     await Disorder.findOneAndUpdate(
       { name: disorderName },
@@ -295,7 +278,9 @@ async function updateDisorder(
   }
 
   const allSubdisorders = await Disorder.find({
-    name: { $in: [...currSubdisorderNames, ...newSubdisorderNames] },
+    name: {
+      $in: [...currSubdisorderNames, ...newSubdisorderNames],
+    },
   }).exec();
   const parentDisorder = await Disorder.findOne({
     name: parentName,
@@ -348,6 +333,7 @@ const createExposureItemInDB = async (
   keywords: string[],
   modifications: string,
   link: string,
+  isAdminUpload: boolean,
 ) => {
   // update the disorder hierarchy
   await categorizeDisorders(disorder1, disorder2, disorder3, disorder4);
@@ -369,7 +355,6 @@ const createExposureItemInDB = async (
       name: { $in: disorder3 },
     }).exec();
   }
-  console.log('new', newDisorders);
 
   // if exposure item with the same name exists, then update associated disorders
   let existingItem = await ExposureItem.findOne({ name }).exec();
@@ -436,7 +421,7 @@ const createExposureItemInDB = async (
     modifications,
     link,
     isLinkBroken: false,
-    isApproved: false,
+    isApproved: isAdminUpload,
   });
   const item = await newExposureItem.save();
   return item;
@@ -453,7 +438,6 @@ const deleteExposureItemFromDB = async (id: string) => {
 };
 
 export {
-  getAllExposureItemsFromDB,
   getExposureItemFromDB,
   getAllDisorderItemsFromDB,
   getAllFormatItemsFromDB,

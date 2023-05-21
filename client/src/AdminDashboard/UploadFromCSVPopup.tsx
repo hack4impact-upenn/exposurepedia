@@ -26,39 +26,40 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
       skipEmptyLines: true,
       async complete(results: any) {
         // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (let i = 0; i < 10; i += 1) {
+        for (let i = 0; i < results.data.length; i += 1) {
           const exposure: any = results.data[i];
-          // TODO: fix how disorders are created
           // disorders
-          let disorders = exposure.disorders_1
-            ? exposure.disorders_1.split(', ')
-            : '';
-          const disorders2 = exposure.disorders_2
-            ? exposure.disorders_2.split(', ')
-            : '';
-          const disorders3 = exposure.disorders_3
-            ? exposure.disorders_3.split(', ')
-            : '';
-          const disorders4 = exposure.disorders_4
-            ? exposure.disorders_4.split(', ')
-            : '';
-          if (disorders4.length > 0 && disorders4[0] !== '') {
-            disorders = disorders4;
-          } else if (disorders3.length > 0 && disorders3[0] !== '') {
-            disorders = disorders3;
-          } else if (disorders2.length > 0 && disorders2[0] !== '') {
-            disorders = disorders2;
-          }
+          const disorder1 = exposure.disorders_1
+            ? exposure.disorders_1.split(',').map((s: string) => s.trim())
+            : [];
+          const disorder2 = exposure.disorders_2
+            ? exposure.disorders_2.split(',').map((s: string) => s.trim())
+            : [];
+          const disorder3 = exposure.disorders_3
+            ? exposure.disorders_3.split(',').map((s: string) => s.trim())
+            : [];
+          const disorder4 = exposure.disorders_4
+            ? exposure.disorders_4.split(',').map((s: string) => s.trim())
+            : [];
           // formats
-          const formats = exposure.formats.split(', ');
+          const formats = exposure.formats
+            .split(',')
+            .map((s: string) => s.trim());
           // intervention types
-          const interventionTypes = exposure.interventionTypes.split(', ');
+          const interventionTypes = exposure.interventionTypes
+            .split(',')
+            .map((s: string) => s.trim());
           // keywords
-          const keywords = exposure.keywords.split('; ');
+          const keywords = exposure.keywords
+            .split(';')
+            .map((s: string) => s.trim());
 
           const exposureItem = {
             name: exposure.name,
-            disorders,
+            disorder1,
+            disorder2,
+            disorder3,
+            disorder4,
             formats,
             interventionTypes,
             isAdultAppropriate: exposure.isAdultAppropriate === 'yes',
@@ -66,7 +67,9 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             keywords,
             modifications: exposure.modifications,
             link: exposure.link,
+            isAdminUpload: true,
           };
+
           // eslint-disable-next-line no-await-in-loop
           await postData('exposure', exposureItem);
         }
