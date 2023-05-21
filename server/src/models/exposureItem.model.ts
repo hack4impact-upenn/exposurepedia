@@ -51,7 +51,7 @@ const ExposureItemSchema = new mongoose.Schema(
 interface IExposureItem extends mongoose.Document {
   _id: string;
   name: string;
-  disorders: IDisorder[];
+  disorders: IDisorder[]; // all leaf disorders
   formats: IFormat[];
   interventionTypes: IInterventionType[];
   isAdultAppropriate: boolean;

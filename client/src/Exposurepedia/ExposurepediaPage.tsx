@@ -119,23 +119,11 @@ function Exposurepedia() {
       'Psychiatric Hospital': false,
       'Habit Reversal Training': false,
     },
-    Maturity: {
-      Children: false,
-      Adults: false,
+    'Adult/Child Friendly': {
+      'Child Friendly': false,
+      'Adult Friendly': false,
     },
-    Keyword: {},
   };
-  const fetchFilterKeywordData = async () => {
-    const res = await postData(`exposure/keyword`, {
-      query: '',
-    });
-    const allKeywords = Object.assign(
-      {},
-      ...res.data.map((k: any) => ({ [k.name]: false })),
-    );
-    initFilterOptions.Keyword = allKeywords;
-  };
-  fetchFilterKeywordData();
 
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
@@ -194,10 +182,10 @@ function Exposurepedia() {
 
       const interventionTypes = f(filterOptions['Intervention Type']);
 
-      const isAdultAppropriate = filterOptions.Maturity.Adults;
-      const isChildAppropriate = filterOptions.Maturity.Children;
-
-      const keywords = f(filterOptions.Keyword);
+      const isAdultAppropriate =
+        filterOptions['Adult/Child Friendly']['Adult Friendly'];
+      const isChildAppropriate =
+        filterOptions['Adult/Child Friendly']['Child Friendly'];
 
       const response = await postData('exposure/filter', {
         disorders,
@@ -205,7 +193,6 @@ function Exposurepedia() {
         interventionTypes,
         isAdultAppropriate,
         isChildAppropriate,
-        keywords,
         isLinkBroken: false,
         isApproved: true,
         query,
@@ -215,12 +202,7 @@ function Exposurepedia() {
       console.log(response.data);
     };
     fetchData();
-  }, [
-    filterOptions,
-    filterOptions.Maturity.Adults,
-    filterOptions.Maturity.Children,
-    query,
-  ]);
+  }, [filterOptions, query]);
 
   return (
     <div>
@@ -245,7 +227,7 @@ function Exposurepedia() {
               setSelectedRows={setSelectedRows}
             />
             <GeneralSearch
-              name="disorders by title and modifications"
+              name="disorders by title, keywords, and modifications"
               search={query}
               handleChange={(e: string) => setQuery(e)}
             />

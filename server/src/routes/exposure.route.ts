@@ -13,16 +13,12 @@ import {
   getAllInterventionTypes,
   getAllFormats,
   postExposureItemInDB,
-  getAllExposureItems,
   getFilteredExposureItems,
-  getFilteredKeywords,
   getFilterOptions,
 } from '../controllers/exposure.controller';
 import { isAuthenticated } from '../controllers/auth.middleware';
 
 const router = express.Router();
-
-router.get('/', isAuthenticated, getAllExposureItems);
 
 router.get('/disorders', isAuthenticated, getAllDisorders);
 router.get('/keywords', isAuthenticated, getAllKeywords);
@@ -45,8 +41,6 @@ router.post('/', isAuthenticated, postExposureItemInDB);
  * A PATCH route to edit the exposure item with the specified id.
  */
 router.patch('/:exposure_id', isAuthenticated, patchExposureItemByID);
-
-router.post('/keyword', isAuthenticated, getFilteredKeywords);
 
 /**
  * A DELETE route to delete the exposure item with the specified id.

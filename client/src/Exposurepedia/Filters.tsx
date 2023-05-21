@@ -24,7 +24,6 @@ function Filters({ filterOptions, setFilterOptions }: any) {
     Format: emptyArr,
     'Intervention Type': emptyArr,
     Maturity: emptyArr,
-    Keyword: emptyArr,
   };
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);

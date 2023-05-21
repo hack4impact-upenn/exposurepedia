@@ -1,5 +1,5 @@
 import SearchIcon from '@mui/icons-material/Search';
-import { TextField, InputAdornment, Button } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
 import React from 'react';
 
 interface SearchProps {

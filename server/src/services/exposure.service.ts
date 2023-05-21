@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /**
  * All the functions for interacting with exposure data in the MongoDB database
  */
@@ -37,31 +39,6 @@ const getAllKeywordItemsFromDB = async () => {
 };
 
 /**
- * Get all exposure items from the DB
- * @returns All exposure items in the DB
- */
-const getAllExposureItemsFromDB = async () => {
-  return ExposureItem.aggregate([
-    {
-      $lookup: {
-        from: 'disorders',
-        localField: 'disorders',
-        foreignField: '_id',
-        as: 'disorders',
-      },
-    },
-    {
-      $lookup: {
-        from: 'formats',
-        localField: 'formats',
-        foreignField: '_id',
-        as: 'formats',
-      },
-    },
-  ]).exec();
-};
-
-/**
  * Gets filtered exposure items from DB
  */
 const getFilteredExposureItemsFromDB = async (
@@ -70,7 +47,6 @@ const getFilteredExposureItemsFromDB = async (
   interventionTypes: string[],
   isAdultAppropriate: boolean,
   isChildAppropriate: boolean,
-  keywords: string[],
   isLinkBroken: boolean,
   isApproved: boolean,
   query: string,
@@ -80,9 +56,12 @@ const getFilteredExposureItemsFromDB = async (
   let maxCount = 20;
 
   if (query !== '') {
+    const keywords = query.split(/\s+|,\s+/);
+    const keywordsRegex = keywords.map((k) => new RegExp(`.*${k}.*`));
     match.$or = [
       { name: { $regex: query, $options: 'i' } },
       { modifications: { $regex: query, $options: 'i' } },
+      { keywords: { $elemMatch: { name: { $in: keywordsRegex } } } },
     ];
   }
 
@@ -90,7 +69,6 @@ const getFilteredExposureItemsFromDB = async (
     disorders.length === 0 &&
     formats.length === 0 &&
     interventionTypes.length === 0 &&
-    keywords.length === 0 &&
     query === ''
   ) {
     maxCount = 500;
@@ -115,10 +93,6 @@ const getFilteredExposureItemsFromDB = async (
 
   if (isChildAppropriate) {
     match.isChildAppropriate = true;
-  }
-
-  if (keywords.length !== 0) {
-    match.keywords = { $elemMatch: { name: { $in: keywords } } };
   }
 
   if (isLinkBroken) {
@@ -255,6 +229,92 @@ const getExposureItemFromDB = async (id: string) => {
   ]).exec();
 };
 
+async function updateDisorder(
+  name: string,
+  subdisorderNames: string[],
+  parentName: string,
+) {
+  // create the current disorder
+  const currDisorder = await Disorder.findOneAndUpdate(
+    { name },
+    { name },
+    { new: true, upsert: true },
+  ).exec();
+  if (!currDisorder) return new Error('Error finding or creating disorder');
+
+  // retrieve all existing subdisorders in the database
+  const currSubIds = JSON.parse(JSON.stringify(currDisorder.subdisorders));
+  // eslint-disable-next-line prefer-const
+  let currSubdisorderNames: string[] = [];
+  if (currSubIds.length > 0) {
+    currSubIds.forEach(async (id: any) => {
+      const subdisorder = await Disorder.findOne({
+        _id: new mongoose.Types.ObjectId(id._id),
+      }).exec();
+      if (subdisorder) {
+        currSubdisorderNames.push(subdisorder.name);
+      }
+    });
+  }
+
+  // creates new subdisorders, assumes that all subdisorders have one unique parent
+  // frontend doesn't like .filter for some reason
+  // const newSubdisorderNames = subdisorderNames.filter(
+  //   (x) => !currSubdisorderNames.includes(x),
+  // );
+  const newSubdisorderNames = [];
+  for (let i = 0; i < subdisorderNames.length; i += 1) {
+    const x = subdisorderNames[i];
+    if (!currSubdisorderNames.includes(x)) {
+      newSubdisorderNames.push(x);
+    }
+  }
+  for (const disorderName of newSubdisorderNames) {
+    await Disorder.findOneAndUpdate(
+      { name: disorderName },
+      { name: disorderName, parent: currDisorder },
+      { new: true, upsert: true },
+    ).exec();
+  }
+
+  const allSubdisorders = await Disorder.find({
+    name: {
+      $in: [...currSubdisorderNames, ...newSubdisorderNames],
+    },
+  }).exec();
+  const parentDisorder = await Disorder.findOne({
+    name: parentName,
+  }).exec();
+  const updatedDisorder = await Disorder.findOneAndUpdate(
+    { name },
+    { subdisorders: allSubdisorders, parent: parentDisorder },
+    { new: true, upsert: true },
+  ).exec();
+  return updatedDisorder;
+}
+
+// assumes distinct disorder names
+async function categorizeDisorders(
+  disorder1: string[],
+  disorder2: string[],
+  disorder3: string[],
+  disorder4: string[],
+) {
+  // update disorder hierarchy
+  for (const disorder of disorder1) {
+    await updateDisorder(disorder, disorder2, '');
+  }
+  disorder2.forEach(async (disorder: string) => {
+    await updateDisorder(disorder, disorder3, disorder1[0]);
+  });
+  disorder3.forEach(async (disorder: string) => {
+    await updateDisorder(disorder, disorder4, disorder2[0]);
+  });
+  disorder4.forEach(async (disorder: string) => {
+    await updateDisorder(disorder, [], disorder3[0]);
+  });
+}
+
 /**
  * Creates the exposure item from the DB with the specified id
  * @param exposureItem The new exposure item
@@ -262,7 +322,10 @@ const getExposureItemFromDB = async (id: string) => {
  */
 const createExposureItemInDB = async (
   name: string,
-  disorders: string[],
+  disorder1: string[],
+  disorder2: string[],
+  disorder3: string[],
+  disorder4: string[],
   formats: string[],
   interventionTypes: string[],
   isAdultAppropriate: boolean,
@@ -270,12 +333,61 @@ const createExposureItemInDB = async (
   keywords: string[],
   modifications: string,
   link: string,
+  isAdminUpload: boolean,
 ) => {
-  // updateOne does not return documents, so must update/create and then find
-  disorders.forEach(async (disorder) => {
-    await Disorder.updateOne(
-      { name: disorder },
-      { name: disorder },
+  // update the disorder hierarchy
+  await categorizeDisorders(disorder1, disorder2, disorder3, disorder4);
+
+  // retrieve disorders for this exposure item
+  let newDisorders = await Disorder.find({
+    name: { $in: disorder4 },
+  }).exec();
+  if (disorder2.length === 0) {
+    newDisorders = await Disorder.find({
+      name: { $in: disorder1 },
+    }).exec();
+  } else if (disorder3.length === 0) {
+    newDisorders = await Disorder.find({
+      name: { $in: disorder2 },
+    }).exec();
+  } else if (disorder4.length === 0) {
+    newDisorders = await Disorder.find({
+      name: { $in: disorder3 },
+    }).exec();
+  }
+
+  // if exposure item with the same name exists, then update associated disorders
+  let existingItem = await ExposureItem.findOne({ name }).exec();
+  if (existingItem) {
+    // retrieve already associated disorders
+    const existingDisorders = await Disorder.find({
+      _id: {
+        $in: existingItem.disorders,
+      },
+    }).exec();
+    // only add disorders that are not already associated
+    const addDisorders = newDisorders.filter(
+      (d) => !existingDisorders.includes(d),
+    );
+    existingItem = await ExposureItem.findOneAndUpdate(
+      { name },
+      { disorders: [...existingDisorders, ...addDisorders] },
+    ).exec();
+    return existingItem;
+  }
+
+  // create new formats, intervention types, and keywords
+  formats.forEach(async (format) => {
+    await Format.updateOne(
+      { name: format },
+      { name: format },
+      { upsert: true },
+    ).exec();
+  });
+  interventionTypes.forEach(async (intType) => {
+    await InterventionType.updateOne(
+      { name: intType },
+      { name: intType },
       { upsert: true },
     ).exec();
   });
@@ -287,9 +399,7 @@ const createExposureItemInDB = async (
     ).exec();
   });
 
-  const newDisorders = await Disorder.find({
-    name: { $in: disorders },
-  }).exec();
+  // retrieve associated formats, intervention types, and keywords
   const newFormats = await Format.find({
     name: { $in: formats },
   }).exec();
@@ -311,7 +421,7 @@ const createExposureItemInDB = async (
     modifications,
     link,
     isLinkBroken: false,
-    isApproved: false,
+    isApproved: isAdminUpload,
   });
   const item = await newExposureItem.save();
   return item;
@@ -327,17 +437,7 @@ const deleteExposureItemFromDB = async (id: string) => {
   return item;
 };
 
-/**
- * Gets filtered keywords
- */
-const getFilteredKeywordsFromDB = async (query: string) => {
-  return Keyword.aggregate([
-    { $match: { name: new RegExp(query, 'i') } },
-  ]).exec();
-};
-
 export {
-  getAllExposureItemsFromDB,
   getExposureItemFromDB,
   getAllDisorderItemsFromDB,
   getAllFormatItemsFromDB,
@@ -346,5 +446,4 @@ export {
   getFilteredExposureItemsFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
-  getFilteredKeywordsFromDB,
 };

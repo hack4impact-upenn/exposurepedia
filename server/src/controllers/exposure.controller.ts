@@ -1,21 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * All the controller functions containing the logic for routes relating to
  * exposure items.
  */
 import express from 'express';
+import mongoose from 'mongoose';
 import ApiError from '../util/apiError';
 import StatusCode from '../util/statusCode';
 import {
   getExposureItemFromDB,
   deleteExposureItemFromDB,
   createExposureItemInDB,
-  getAllExposureItemsFromDB,
   getAllDisorderItemsFromDB,
   getAllFormatItemsFromDB,
   getAllInterventionTypeItemsFromDB,
   getAllKeywordItemsFromDB,
   getFilteredExposureItemsFromDB,
-  getFilteredKeywordsFromDB,
 } from '../services/exposure.service';
 import { Disorder } from '../models/disorder.model';
 import { ExposureItem } from '../models/exposureItem.model';
@@ -82,51 +84,41 @@ const getAllFormats = async (
     });
 };
 
-/**
- * Gets all exposure items. Upon success, returns the items with 200 OK status code.
- */
-const getAllExposureItems = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  getAllExposureItemsFromDB()
-    .then((items) => {
-      res.status(StatusCode.OK).send(items.slice(10));
-    })
-    .catch(() => {
-      next(ApiError.internal('Unable to retrieve exposure items'));
-    });
-};
-
 const getFilterOptions = async (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   req: express.Request,
   res: express.Response,
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: express.NextFunction,
 ) => {
+  let disorderObj: any = {};
+  const disorders1 = await Disorder.find({ parent: null }).exec();
+  disorders1.forEach((disorder) => {
+    if (disorder.subdisorders.length === 0) {
+      disorderObj[disorder.name] = false;
+    }
+    // expand
+    // disorderObj[disorder.name] = false;
+  });
+
   const formats = await Format.distinct('name').exec();
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
   let formatObj: any = {};
   formats.forEach((format: string) => {
     formatObj[format] = false;
   });
 
   const interventionTypes = await InterventionType.distinct('name').exec();
-  // eslint-disable-next-line prefer-const, @typescript-eslint/no-explicit-any
   let intTypeObj: any = {};
   interventionTypes.forEach((intType: string) => {
     intTypeObj[intType] = false;
   });
 
   const filterOptions = {
-    Disorder: {},
+    Disorder: disorderObj,
     Format: formatObj,
     'Intervention Type': intTypeObj,
-    Maturity: {},
-    Keyword: {},
+    'Adult/Child Friendly': {
+      'Child Friendly': false,
+      'Adult Friendly': false,
+    },
   };
   res.status(StatusCode.OK).send(filterOptions);
 };
@@ -145,7 +137,6 @@ const getFilteredExposureItems = async (
     interventionTypes,
     isAdultAppropriate,
     isChildAppropriate,
-    keywords,
     isLinkBroken,
     isApproved,
     query,
@@ -157,7 +148,6 @@ const getFilteredExposureItems = async (
     interventionTypes == null ||
     isAdultAppropriate == null ||
     isChildAppropriate == null ||
-    keywords == null ||
     isLinkBroken == null ||
     isApproved == null
   ) {
@@ -168,7 +158,6 @@ const getFilteredExposureItems = async (
         'interventionTypes',
         'isAdultAppropriate',
         'isChildAppropriate',
-        'keywords',
         'isLinkBroken',
         'isApproved',
         'query',
@@ -184,7 +173,6 @@ const getFilteredExposureItems = async (
       interventionTypes,
       isAdultAppropriate,
       isChildAppropriate,
-      keywords,
       isLinkBroken,
       isApproved,
       query,
@@ -224,7 +212,7 @@ const postExposureItemInDB = async (
   const item = req.body;
   if (
     item.name == null ||
-    item.disorders == null ||
+    item.disorder1 == null ||
     item.formats == null ||
     item.interventionTypes == null ||
     item.isAdultAppropriate == null ||
@@ -234,7 +222,7 @@ const postExposureItemInDB = async (
     next(
       ApiError.missingFields([
         'name',
-        'disorders',
+        'disorder1',
         'formats',
         'interventionTypes',
         'isAdultAppropriate',
@@ -244,17 +232,32 @@ const postExposureItemInDB = async (
     );
     return;
   }
+  if (item.disorder2 == null) {
+    item.disorder2 = [];
+  }
+  if (item.disorder3 == null) {
+    item.disorder3 = [];
+  }
+  if (item.disorder4 == null) {
+    item.disorder4 = [];
+  }
   if (item.modifications == null) {
     item.modifications = '';
   }
   if (item.link == null) {
     item.link = '';
   }
+  if (item.isAdminUpload == null) {
+    item.isAdminUpload = false;
+  }
 
   try {
     const exposureItem = await createExposureItemInDB(
       item.name,
-      item.disorders,
+      item.disorder1,
+      item.disorder2,
+      item.disorder3,
+      item.disorder4,
       item.formats,
       item.interventionTypes,
       item.isAdultAppropriate,
@@ -262,6 +265,7 @@ const postExposureItemInDB = async (
       item.keywords,
       item.modifications,
       item.link,
+      item.isAdminUpload,
     );
     res.status(StatusCode.OK).json(exposureItem);
   } catch (err) {
@@ -362,25 +366,7 @@ const deleteExposureItemByID = async (
     });
 };
 
-/**
- * Filters keywords
- */
-const getFilteredKeywords = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  const { query } = req.body;
-  try {
-    const keywords = await getFilteredKeywordsFromDB(query);
-    res.status(StatusCode.OK).json(keywords);
-  } catch (err) {
-    next(ApiError.internal('Unable to retrieve keywords'));
-  }
-};
-
 export {
-  getAllExposureItems,
   getExposureItemByID,
   getAllDisorders,
   getAllKeywords,
@@ -391,5 +377,4 @@ export {
   patchExposureItemByID,
   deleteExposureItemByID,
   postExposureItemInDB,
-  getFilteredKeywords,
 };
