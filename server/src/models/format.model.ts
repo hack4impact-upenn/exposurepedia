@@ -9,11 +9,16 @@ const FormatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  approved: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 interface IFormat extends mongoose.Document {
   _id: string;
   name: string;
+  approved: boolean;
 }
 
 const Format = mongoose.model<IFormat>('Format', FormatSchema);

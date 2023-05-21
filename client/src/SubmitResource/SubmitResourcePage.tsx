@@ -38,6 +38,7 @@ const styles = {
 };
 
 function SubmitResourcePage() {
+  // TODO Kat: replace with exposure/interventionTypes
   const interventionTypes = [
     'In Vivo',
     'Imaginal',
@@ -46,6 +47,7 @@ function SubmitResourcePage() {
     'Stimulus Control',
     'Habit Reversal Training',
   ];
+  // TODO Kat: replace with exposure/formats
   const formatTypes = [
     'Idea',
     'Video',

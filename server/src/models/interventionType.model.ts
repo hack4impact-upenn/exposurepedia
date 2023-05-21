@@ -9,11 +9,16 @@ const InterventionTypeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  approved: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 interface IInterventionType extends mongoose.Document {
   _id: string;
   name: string;
+  approved: boolean;
 }
 
 const InterventionType = mongoose.model<IInterventionType>(

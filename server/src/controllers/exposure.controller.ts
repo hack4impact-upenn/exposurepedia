@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,7 +9,6 @@
  * exposure items.
  */
 import express from 'express';
-import mongoose from 'mongoose';
 import ApiError from '../util/apiError';
 import StatusCode from '../util/statusCode';
 import {
@@ -92,35 +92,42 @@ const getFilterOptions = async (
   next: express.NextFunction,
 ) => {
   let disorderObj: any = {};
-  const disorders1 = await Disorder.find({ parent: null })
+  const disorders1 = await Disorder.find({ parent: null, approved: true })
     .sort({ name: 1 })
     .exec();
   for (const disorder of disorders1) {
-    // no subdisorders
     if (disorder.subdisorders && disorder.subdisorders.length === 0) {
+      // no subdisorders
       disorderObj[disorder.name] = false;
     } else {
+      // level 2 subdisorders exist
       disorderObj[disorder.name] = {};
       const disorder2Ids = disorder.subdisorders;
       for (const id2 of disorder2Ids) {
-        const dis2 = await Disorder.findOne({ _id: id2 }).exec();
-        if (!dis2) return;
+        const dis2 = await Disorder.findOne({
+          _id: id2,
+        }).exec();
+        if (!dis2 || !dis2.approved) continue;
         if (dis2.subdisorders && dis2.subdisorders.length === 0) {
           disorderObj[disorder.name][dis2.name] = false;
         } else {
           disorderObj[disorder.name][dis2.name] = {};
           const disorder3Ids = dis2.subdisorders;
           for (const id3 of disorder3Ids) {
-            const dis3 = await Disorder.findOne({ _id: id3 }).exec();
-            if (!dis3) return;
+            const dis3 = await Disorder.findOne({
+              _id: id3,
+            }).exec();
+            if (!dis3 || !dis3.approved) continue;
             if (dis3.subdisorders && dis3.subdisorders.length === 0) {
               disorderObj[disorder.name][dis2.name][dis3.name] = false;
             } else {
               disorderObj[disorder.name][dis2.name][dis3.name] = {};
               const disorder4Ids = dis3.subdisorders;
               for (const id4 of disorder4Ids) {
-                const dis4 = await Disorder.findOne({ _id: id4 }).exec();
-                if (!dis4) return;
+                const dis4 = await Disorder.findOne({
+                  _id: id4,
+                }).exec();
+                if (!dis4 || !dis4.approved) continue;
                 disorderObj[disorder.name][dis2.name][dis3.name][dis4.name] =
                   false;
               }
@@ -131,22 +138,41 @@ const getFilterOptions = async (
     }
   }
 
+  const sortKeys = (obj: any, newObj: any) => {
+    Object.keys(obj)
+      .sort()
+      .forEach((key) => {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          const newObj2 = {};
+          // eslint-disable-next-line no-param-reassign
+          newObj[key] = sortKeys(obj[key], newObj2);
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          newObj[key] = obj[key];
+        }
+      });
+    return newObj;
+  };
+  const sortedDisorderObj = sortKeys(disorderObj, {});
+
   const formats = await Format.distinct('name').exec();
   let formatObj: any = {};
   formats.forEach((format: string) => {
     formatObj[format] = false;
   });
+  const sortedFormatObj = sortKeys(formatObj, {});
 
   const interventionTypes = await InterventionType.distinct('name').exec();
   let intTypeObj: any = {};
   interventionTypes.forEach((intType: string) => {
     intTypeObj[intType] = false;
   });
+  const sortedIntTypeObj = sortKeys(intTypeObj, {});
 
   const filterOptions = {
-    Disorder: disorderObj,
-    Format: formatObj,
-    'Intervention Type': intTypeObj,
+    Disorder: sortedDisorderObj,
+    Format: sortedFormatObj,
+    'Intervention Type': sortedIntTypeObj,
     'Adult/Child Friendly': {
       'Child Friendly': false,
       'Adult Friendly': false,
@@ -248,8 +274,7 @@ const postExposureItemInDB = async (
     item.formats == null ||
     item.interventionTypes == null ||
     item.isAdultAppropriate == null ||
-    item.isChildAppropriate == null ||
-    item.keywords == null
+    item.isChildAppropriate == null
   ) {
     next(
       ApiError.missingFields([
@@ -259,7 +284,6 @@ const postExposureItemInDB = async (
         'interventionTypes',
         'isAdultAppropriate',
         'isChildAppropriate',
-        'keywords',
       ]),
     );
     return;
@@ -272,6 +296,9 @@ const postExposureItemInDB = async (
   }
   if (item.disorder4 == null) {
     item.disorder4 = [];
+  }
+  if (item.keywords == null) {
+    item.keywords = [];
   }
   if (item.modifications == null) {
     item.modifications = '';
@@ -308,6 +335,7 @@ const postExposureItemInDB = async (
 /**
  * Updates exposure item by id. Upon success, returns 200 OK status code.
  */
+// TODO: update parent disorders if something is being marked as approved
 const patchExposureItemByID = async (
   req: express.Request,
   res: express.Response,
@@ -369,8 +397,61 @@ const patchExposureItemByID = async (
     exposureItem.modifications = updatedItem.modifications;
   if (updatedItem.isLinkBroken !== undefined)
     exposureItem.isLinkBroken = updatedItem.isLinkBroken;
-  if (updatedItem.isApproved !== undefined)
+  if (updatedItem.isApproved !== undefined) {
     exposureItem.isApproved = updatedItem.isApproved;
+    if (updatedItem.isApproved === true) {
+      // update disorders (including parents), formats, intervention types, and keywords to be approved
+      exposureItem.disorders.forEach(async (disorderId) => {
+        const disorder2 = await Disorder.findOneAndUpdate(
+          { _id: disorderId },
+          { approved: true },
+          { new: true, upsert: true },
+        ).exec();
+        if (disorder2 && disorder2.parent) {
+          const disorder3 = await Disorder.findOneAndUpdate(
+            { _id: disorder2.parent },
+            { approved: true },
+            { new: true, upsert: true },
+          ).exec();
+          if (disorder3 && disorder3.parent) {
+            const disorder4 = await Disorder.findOneAndUpdate(
+              { _id: disorder3.parent },
+              { approved: true },
+              { new: true, upsert: true },
+            ).exec();
+            if (disorder4 && disorder4.parent) {
+              const disorder5 = await Disorder.findOneAndUpdate(
+                { _id: disorder4.parent },
+                { approved: true },
+                { new: true, upsert: true },
+              ).exec();
+            }
+          }
+        }
+      });
+      exposureItem.formats.forEach(async (formatId) => {
+        await Format.findOneAndUpdate(
+          { _id: formatId },
+          { approved: true },
+          { new: true, upsert: true },
+        ).exec();
+      });
+      exposureItem.interventionTypes.forEach(async (intTypeId) => {
+        await InterventionType.findOneAndUpdate(
+          { _id: intTypeId },
+          { approved: true },
+          { new: true, upsert: true },
+        ).exec();
+      });
+      exposureItem.keywords.forEach(async (keywordId) => {
+        await Keyword.findOneAndUpdate(
+          { _id: keywordId },
+          { approved: true },
+          { new: true, upsert: true },
+        ).exec();
+      });
+    }
+  }
 
   try {
     await exposureItem.save();

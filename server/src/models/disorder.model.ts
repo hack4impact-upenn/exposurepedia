@@ -15,6 +15,10 @@ const DisorderSchema = new mongoose.Schema({
     ref: 'Disorder',
     required: false,
   },
+  approved: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 interface IDisorder extends mongoose.Document {
@@ -22,6 +26,7 @@ interface IDisorder extends mongoose.Document {
   name: string;
   subdisorders: IDisorder[];
   parent: IDisorder;
+  approved: boolean;
 }
 
 const Disorder = mongoose.model<IDisorder>('Disorder', DisorderSchema);
