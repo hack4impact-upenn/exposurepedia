@@ -147,7 +147,7 @@ function Exposurepedia() {
     { id: 'name', label: 'Title', minWidth: 170 },
     { id: 'formats', label: 'Format', minWidth: 100 },
     { id: 'likes', label: 'Likes', minWidth: 100 },
-    { id: 'createdAt', label: 'Date', minWidth: 100 },
+    { id: 'updatedAt', label: 'Date', minWidth: 100 },
   ];
 
   const sfo = (o: any) => {

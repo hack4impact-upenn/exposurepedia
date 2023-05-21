@@ -121,7 +121,7 @@ function Row({
           title: row.name,
           format: row.formats,
           likes: row.likes,
-          createdAt: row.createdAt,
+          createdAt: row.updatedAt,
           isApprove,
           isBroken,
         },
@@ -147,7 +147,7 @@ function Row({
         let value = row[column.id];
         if (column.id === 'likes') {
           value = value.length;
-        } else if (column.id === 'createdAt') {
+        } else if (column.id === 'updatedAt') {
           value = new Date(value).toLocaleDateString();
         } else if (column.id === 'formats') {
           value = value.map((format: any) => format.name).join(', ');
