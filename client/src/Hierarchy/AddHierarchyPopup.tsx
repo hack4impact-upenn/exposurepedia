@@ -31,7 +31,8 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
       setPopupState('');
       navigate('/viewhierarchy', {
         state: {
-          id: res,
+          // eslint-disable-next-line no-underscore-dangle
+          id: res._id,
         },
       });
     }
