@@ -9,11 +9,16 @@ const KeywordSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  approved: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 interface IKeyword extends mongoose.Document {
   _id: string;
   name: string;
+  approved: boolean;
 }
 
 const Keyword = mongoose.model<IKeyword>('Keyword', KeywordSchema);

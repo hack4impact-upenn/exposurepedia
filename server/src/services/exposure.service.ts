@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /**
@@ -233,11 +234,20 @@ async function updateDisorder(
   name: string,
   subdisorderNames: string[],
   parentName: string,
+  isApproved: boolean,
 ) {
   // create the current disorder
+  const existingDisorder = await Disorder.findOne({
+    name,
+  }).exec();
   const currDisorder = await Disorder.findOneAndUpdate(
     { name },
-    { name },
+    {
+      name,
+      approved: existingDisorder
+        ? existingDisorder.approved || isApproved
+        : isApproved,
+    },
     { new: true, upsert: true },
   ).exec();
   if (!currDisorder) return new Error('Error finding or creating disorder');
@@ -265,11 +275,13 @@ async function updateDisorder(
   const currSubdisorderNames = currSubdisorders.map((x) => x.name);
 
   // creates new subdisorders, assumes that all subdisorders have one unique parent
-  // frontend doesn't like .filter for some reason
-  // const newSubdisorderNames = subdisorderNames.filter(
-  //   (x) => !currSubdisorderNames.includes(x),
-  // );
   const newSubdisorderNames = [];
+  if (subdisorderNames.length > 0) {
+    // add general category in subdisorders if subdisorders exist
+    // eslint-disable-next-line no-param-reassign
+    subdisorderNames = [...subdisorderNames, `General ${currDisorder.name}`];
+  }
+  // frontend doesn't like .filter for some reason, hence this for loop
   for (let i = 0; i < subdisorderNames.length; i += 1) {
     const x = subdisorderNames[i];
     if (!currSubdisorderNames.includes(x)) {
@@ -277,9 +289,14 @@ async function updateDisorder(
     }
   }
   for (const disorderName of newSubdisorderNames) {
+    const currApproved = isApproved || disorderName.includes('General');
     await Disorder.findOneAndUpdate(
       { name: disorderName },
-      { name: disorderName, parent: currDisorder },
+      {
+        name: disorderName,
+        parent: currDisorder,
+        approved: currApproved,
+      },
       { new: true, upsert: true },
     ).exec();
   }
@@ -294,7 +311,11 @@ async function updateDisorder(
   }).exec();
   const updatedDisorder = await Disorder.findOneAndUpdate(
     { name },
-    { subdisorders: allSubdisorders, parent: parentDisorder },
+    {
+      subdisorders: allSubdisorders,
+      parent: parentDisorder,
+      // approved is already handled above
+    },
     { new: true, upsert: true },
   ).exec();
   return updatedDisorder;
@@ -306,20 +327,41 @@ async function categorizeDisorders(
   disorder2: string[],
   disorder3: string[],
   disorder4: string[],
+  isApproved: boolean,
 ) {
   // update disorder hierarchy
   for (const disorder of disorder1) {
-    await updateDisorder(disorder, disorder2, '');
+    await updateDisorder(disorder, disorder2, '', isApproved);
   }
   for (const disorder of disorder2) {
-    await updateDisorder(disorder, disorder3, disorder1[0]);
+    await updateDisorder(disorder, disorder3, disorder1[0], isApproved);
   }
   for (const disorder of disorder3) {
-    await updateDisorder(disorder, disorder4, disorder2[0]);
+    await updateDisorder(disorder, disorder4, disorder2[0], isApproved);
   }
   for (const disorder of disorder4) {
-    await updateDisorder(disorder, [], disorder3[0]);
+    await updateDisorder(disorder, [], disorder3[0], isApproved);
   }
+}
+
+// determine whether exposure item needs to have a "General ..." disorder tag
+function addGeneralDisorder(newDisorders: any) {
+  const generalDisorders: any = [];
+  // eslint-disable-next-line consistent-return
+  newDisorders.forEach(async (disorder: any) => {
+    if (disorder.subdisorder && disorder.subdisorder.length !== 0) {
+      const generalDisorder = await Disorder.findOneAndUpdate(
+        { name: `General ${disorder.name}` },
+        {
+          name: `General ${disorder.name}`,
+          approved: true,
+        },
+        { new: true, upsert: true },
+      ).exec();
+      generalDisorders.push(generalDisorder);
+    }
+  });
+  return generalDisorders;
 }
 
 /**
@@ -343,7 +385,13 @@ const createExposureItemInDB = async (
   isAdminUpload: boolean,
 ) => {
   // update the disorder hierarchy
-  await categorizeDisorders(disorder1, disorder2, disorder3, disorder4);
+  await categorizeDisorders(
+    disorder1,
+    disorder2,
+    disorder3,
+    disorder4,
+    isAdminUpload,
+  );
 
   // retrieve disorders for this exposure item
   let newDisorders = await Disorder.find({
@@ -363,6 +411,12 @@ const createExposureItemInDB = async (
     }).exec();
   }
 
+  // check if disorder should be tagged with a general subdisorder
+  const generalDisorders = await addGeneralDisorder(newDisorders);
+  if (generalDisorders.length > 0) {
+    newDisorders = [...newDisorders, ...generalDisorders];
+  }
+
   // if exposure item with the same name exists, then update associated disorders
   let existingItem = await ExposureItem.findOne({ name }).exec();
   if (existingItem) {
@@ -378,32 +432,60 @@ const createExposureItemInDB = async (
     );
     existingItem = await ExposureItem.findOneAndUpdate(
       { name },
-      { disorders: [...existingDisorders, ...addDisorders] },
+      {
+        disorders: [...existingDisorders, ...addDisorders],
+      },
     ).exec();
     return existingItem;
   }
 
   // create new formats, intervention types, and keywords
   formats.forEach(async (format) => {
-    await Format.updateOne(
-      { name: format },
-      { name: format },
-      { upsert: true },
-    ).exec();
+    if (format !== '') {
+      const currFormat = await Format.findOne({ name: format }).exec();
+      await Format.updateOne(
+        { name: format },
+        {
+          name: format,
+          approved: currFormat
+            ? currFormat.approved || isAdminUpload
+            : isAdminUpload,
+        },
+        { upsert: true },
+      ).exec();
+    }
   });
   interventionTypes.forEach(async (intType) => {
-    await InterventionType.updateOne(
-      { name: intType },
-      { name: intType },
-      { upsert: true },
-    ).exec();
+    if (intType !== '') {
+      const currIntType = await InterventionType.findOne({
+        name: intType,
+      }).exec();
+      await InterventionType.updateOne(
+        { name: intType },
+        {
+          name: intType,
+          approved: currIntType
+            ? currIntType.approved || isAdminUpload
+            : isAdminUpload,
+        },
+        { upsert: true },
+      ).exec();
+    }
   });
   keywords.forEach(async (keyword) => {
-    await Keyword.updateOne(
-      { name: keyword },
-      { name: keyword },
-      { upsert: true },
-    ).exec();
+    if (keyword !== '') {
+      const currKeyword = await Keyword.findOne({ name: keyword }).exec();
+      await Keyword.updateOne(
+        { name: keyword },
+        {
+          name: keyword,
+          approved: currKeyword
+            ? currKeyword.approved || isAdminUpload
+            : isAdminUpload,
+        },
+        { upsert: true },
+      ).exec();
+    }
   });
 
   // retrieve associated formats, intervention types, and keywords
