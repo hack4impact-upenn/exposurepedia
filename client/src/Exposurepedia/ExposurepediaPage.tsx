@@ -131,8 +131,8 @@ function Exposurepedia() {
   const [filterOptions, setFilterOptions] = useState(initFilterOptions);
   const [hierarchies, setHierarchies] = useState([]);
   const [query, setQuery] = useState('');
-  const [sortColumn, setSortColumn] = useState('Likes');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState('likes');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
 
