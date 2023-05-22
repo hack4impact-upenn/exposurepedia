@@ -172,6 +172,8 @@ const getFilteredExposureItems = async (
     isLinkBroken,
     isApproved,
     query,
+    sortColumn,
+    sortDirection,
   } = req.body;
 
   if (
@@ -208,6 +210,8 @@ const getFilteredExposureItems = async (
       isLinkBroken,
       isApproved,
       query,
+      sortColumn,
+      sortDirection,
     );
     res.status(StatusCode.OK).json(exposureItems);
   } catch (err) {

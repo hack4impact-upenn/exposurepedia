@@ -50,6 +50,8 @@ const getFilteredExposureItemsFromDB = async (
   isLinkBroken: boolean,
   isApproved: boolean,
   query: string,
+  sortColumn: string,
+  sortDirection: 'asc' | 'desc'
 ) => {
   const match: any = {};
 
@@ -175,6 +177,7 @@ const getFilteredExposureItemsFromDB = async (
           },
         ],
   )
+    .sort({ [sortColumn]: sortDirection })
     .limit(maxCount)
     .exec();
 };
