@@ -12,6 +12,8 @@ import {
   IconButton,
 } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { TableSortLabel } from '@material-ui/core';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,6 +30,10 @@ interface TableProps {
   setCount?: React.Dispatch<React.SetStateAction<number>>;
   selectedRows?: TRow[];
   setSelectedRows?: React.Dispatch<React.SetStateAction<TRow[]>>;
+  sortColumn?: string;
+  setSortColumn?: React.Dispatch<React.SetStateAction<string>>;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
 }
 
 interface RowProps {
@@ -202,9 +208,21 @@ function ExposureItemTable({
   setCount,
   selectedRows,
   setSelectedRows,
+  sortColumn,
+  setSortColumn,
+  sortDirection,
+  setSortDirection,
 }: TableProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleSort = (columnId: string) => {
+    const isAsc = sortColumn === columnId && sortDirection === 'asc';
+    if (setSortColumn && setSortDirection) {
+      setSortColumn(columnId);
+      setSortDirection(isAsc ? 'desc' : 'asc');
+    }
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -238,7 +256,13 @@ function ExposureItemTable({
                   align={column.align || 'left'}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
+                  <TableSortLabel
+                    active={sortColumn === column.id}
+                    direction={sortColumn === column.id ? sortDirection : 'asc'}
+                    onClick={() => handleSort(column.id)}
+                  >
+                    {column.label}
+                  </TableSortLabel>
                 </TableCell>
               ))}
             </TableRow>

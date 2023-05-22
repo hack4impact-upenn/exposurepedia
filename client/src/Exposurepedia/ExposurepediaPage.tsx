@@ -132,6 +132,8 @@ function Exposurepedia() {
   const [filterOptions, setFilterOptions] = useState(initFilterOptions);
   const [hierarchies, setHierarchies] = useState([]);
   const [query, setQuery] = useState('');
+  const [sortColumn, setSortColumn] = useState('likes');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
 
@@ -197,13 +199,15 @@ function Exposurepedia() {
         isLinkBroken: false,
         isApproved: true,
         query,
+        sortColumn,
+        sortDirection,
       });
       setRows(response.data);
       console.log('response data:');
       console.log(response.data);
     };
     fetchData();
-  }, [filterOptions, query]);
+  }, [filterOptions, query, sortColumn, sortDirection]);
 
   return (
     <div>
@@ -240,6 +244,10 @@ function Exposurepedia() {
               setCount={setCount}
               selectedRows={selectedRows}
               setSelectedRows={setSelectedRows}
+              sortColumn={sortColumn}
+              setSortColumn={setSortColumn}
+              sortDirection={sortDirection}
+              setSortDirection={setSortDirection}
             />
           </div>
         </Box>
