@@ -30,7 +30,7 @@ function ButtonFooter({
     return <p style={{ color: 'gray' }}>Already Approved</p>;
   }
 
-  if (!status || status === 'pending') {
+  if (!status || status === 'Pending') {
     if (!isConfirmed) {
       return (
         <>

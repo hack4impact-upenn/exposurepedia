@@ -203,8 +203,6 @@ function Exposurepedia() {
         sortDirection,
       });
       setRows(response.data);
-      console.log('response data:');
-      console.log(response.data);
     };
     fetchData();
   }, [filterOptions, query, sortColumn, sortDirection]);

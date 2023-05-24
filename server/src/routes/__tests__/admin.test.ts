@@ -48,7 +48,7 @@ const user1 = {
   date: getDate(),
   admin: true,
   verified: true,
-  status: 'approved',
+  status: 'Approved',
   ...defaultRegistrationOptions,
 };
 
@@ -63,7 +63,7 @@ const user2 = {
   date: getDate(),
   admin: false,
   verified: true,
-  status: 'approved',
+  status: 'Approved',
   ...defaultRegistrationOptions,
 };
 
@@ -78,7 +78,7 @@ const user3 = {
   date: getDate(),
   admin: true,
   verified: true,
-  status: 'approved',
+  status: 'Approved',
   ...defaultRegistrationOptions,
 };
 
@@ -93,7 +93,7 @@ const user4 = {
   date: getDate(),
   admin: false,
   verified: true,
-  status: 'approved',
+  status: 'Approved',
   ...defaultRegistrationOptions,
 };
 

@@ -54,7 +54,7 @@ const upgradePrivilege = async (
     next(ApiError.notFound(`User with email ${email} does not exist`));
     return;
   }
-  if (user.status && user.status === 'pending') {
+  if (user.status && user.status === 'Pending') {
     next(ApiError.badRequest(`User is not approved`));
     return;
   }
@@ -94,7 +94,7 @@ const approveUser = async (
     return;
   }
 
-  if (user.status && user.status !== 'pending') {
+  if (user.status && user.status !== 'Pending') {
     next(ApiError.forbidden('User already approved.'));
     return;
   }
