@@ -42,16 +42,10 @@ const createHierarchy = async (
   if (existingHierarchy && existingHierarchy.length !== 0) {
     throw new Error('Hierarchy name already exists');
   }
-  const defaultExposures: [string, string, string][] = [
-    ['exposure item 1', '1', '50'],
-    ['exposure item 2', '2', '50'],
-    ['exposure item 3', '3', '50'],
-  ];
   const hierarchy = new Hierarchy({
     user: userId,
     title,
     description,
-    exposures: defaultExposures,
     dateUpdated: new Date(),
   });
   await hierarchy.save();
