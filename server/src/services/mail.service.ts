@@ -29,7 +29,7 @@ const emailResetPasswordLink = async (email: string, token: string) => {
       `<p>You are receiving this because you (or someone else) have requested ` +
       `the reset of your account password for ${appName}. Please visit this ` +
       `<a href=${resetLink}>link</a> ` +
-      `within an hour of receiving this email to successfully reset your password </p>` +
+      `within an hour of receiving this email to successfully reset your password.</p>` +
       `<p>If you did not request this change, please ignore this email and your ` +
       `account will remain secured.</p>`,
   };
@@ -55,7 +55,7 @@ const emailVerificationLink = async (email: string, token: string) => {
     html:
       `<p> Please visit the following ` +
       `<a href=${resetLink}>link</a> ` +
-      `to verify your account for ${appName} and complete registration</p>` +
+      `to verify your account for ${appName} and complete registration.</p>` +
       `<p>If you did not attempt to register an account with this email address, ` +
       `please ignore this message.</p>`,
   };

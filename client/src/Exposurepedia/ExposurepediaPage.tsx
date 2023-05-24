@@ -199,8 +199,6 @@ function Exposurepedia() {
         query,
       });
       setRows(response.data);
-      console.log('response data:');
-      console.log(response.data);
     };
     fetchData();
   }, [filterOptions, query]);

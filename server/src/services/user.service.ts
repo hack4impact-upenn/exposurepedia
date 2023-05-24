@@ -66,7 +66,7 @@ const createUser = async (
     date: getDate(),
     password: hashedPassword,
     admin: false,
-    status: 'pending',
+    status: 'Pending',
     isProfessional,
     profession,
     degree,
@@ -182,7 +182,7 @@ const deleteUserById = async (id: string) => {
  */
 const approveUserById = async (id: string) => {
   const user = await User.findByIdAndUpdate(id, [
-    { $set: { status: 'approved' } },
+    { $set: { status: 'Approved' } },
   ]).exec();
   if (process.env.NODE_ENV !== 'test') {
     const verificationToken = crypto.randomBytes(32).toString('hex');

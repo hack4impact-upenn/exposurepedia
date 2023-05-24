@@ -279,7 +279,10 @@ function RegisterPage() {
           setShowError('alert', true);
           setAlertTitle('');
           setRegistered(true);
-          setErrorMessage('alert', 'Registered!');
+          setErrorMessage(
+            'alert',
+            'Registration is pending admin approval! Wait for an email confirmation.',
+          );
         })
         .catch((e) => {
           setShowError('alert', true);
