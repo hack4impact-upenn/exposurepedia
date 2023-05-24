@@ -53,7 +53,7 @@ const emailVerificationLink = async (email: string, token: string) => {
     to: email,
     subject: 'Verify account',
     html:
-      `<p> Please visit the following ` +
+      `<p> Your Exposurepedia account has been approved! Please visit the following ` +
       `<a href=${resetLink}>link</a> ` +
       `to verify your account for ${appName} and complete registration.</p>` +
       `<p>If you did not attempt to register an account with this email address, ` +
