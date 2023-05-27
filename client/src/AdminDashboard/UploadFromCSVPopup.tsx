@@ -11,7 +11,6 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Papa from 'papaparse';
-import { isRouteErrorResponse } from 'react-router-dom';
 import { postData } from '../util/api';
 
 interface PopupProps {
