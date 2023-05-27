@@ -177,7 +177,11 @@ function LoginPage() {
       {isLoading ? (
         <div style={styles.centered}>
           <CircularProgress />
-          {isLoadingFilters && <p>loading exposurepedia database...</p>}
+          {isLoadingFilters ? (
+            <p>loading exposurepedia database...</p>
+          ) : (
+            <p>logging in (this may take a few moments)...</p>
+          )}
         </div>
       ) : (
         <div style={styles.container}>
