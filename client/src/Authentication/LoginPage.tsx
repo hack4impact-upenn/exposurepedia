@@ -151,6 +151,7 @@ function LoginPage() {
         setShowError('alert', true);
         setErrorMessage('alert', e.message);
         setIsLoading(false);
+        return;
       }
 
       setIsLoadingFilters(true);

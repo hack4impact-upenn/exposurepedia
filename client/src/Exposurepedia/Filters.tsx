@@ -24,7 +24,7 @@ function Filters({ filterOptions, setFilterOptions, isLoading }: any) {
     Disorder: emptyArr,
     Format: emptyArr,
     'Intervention Type': emptyArr,
-    Maturity: emptyArr,
+    'Adult/Child Friendly': emptyArr,
   };
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);
@@ -347,7 +347,7 @@ function Filters({ filterOptions, setFilterOptions, isLoading }: any) {
       setTags({ ...tags, [type]: [] });
       handleItemCheck(type, p);
     } else {
-      setTags({ ...tags, [type]: tags[type].filter((it) => it !== item) });
+      setTags({ ...tags, [type]: tags[type].filter((it: any) => it !== item) });
       p = findPath(item);
       handleItemCheck(item, p);
     }
@@ -437,7 +437,7 @@ function Filters({ filterOptions, setFilterOptions, isLoading }: any) {
                           }
                     }
                   >
-                    {tags[key].map((item) => (
+                    {tags[key].map((item: any) => (
                       <Chip
                         sx={{
                           margin: '0px 2px',
