@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from 'react';
-import { TextField, Link, Typography, Grid } from '@mui/material';
+import {
+  TextField,
+  Link,
+  Typography,
+  Grid,
+  CircularProgress,
+} from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAppDispatch } from '../util/redux/hooks';
 import { login as loginRedux } from '../util/redux/userSlice';
+import { load as loadRedux } from '../util/redux/filterSlice';
 import FormGrid from '../components/form/FormGrid';
 import FormCol from '../components/form/FormCol';
 import FormRow from '../components/form/FormRow';
@@ -11,6 +18,7 @@ import { emailRegex, InputErrorMessage } from '../util/inputvalidation';
 import { loginUser } from './api';
 import AlertDialog from '../components/AlertDialog';
 import PrimaryButton from '../components/buttons/PrimaryButton';
+import { getData } from '../util/api';
 
 const styles = {
   container: {
@@ -19,6 +27,13 @@ const styles = {
     'margin-top': '10vh',
     justifyContent: 'center',
     margin: 'center',
+  },
+  centered: {
+    height: '90vh',
+    display: 'flex',
+    'flex-direction': 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 };
 
@@ -47,6 +62,8 @@ function LoginPage() {
   type ValueType = keyof typeof values;
 
   // State values and hooks
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFilters, setIsLoadingFilters] = useState(false);
   const [values, setValueState] = useState(defaultValues);
   const [showError, setShowErrorState] = useState(defaultShowErrors);
   const [errorMessage, setErrorMessageState] = useState(defaultErrorMessages);
@@ -86,6 +103,10 @@ function LoginPage() {
     dispatch(loginRedux({ email: userEmail, firstName, lastName, admin }));
   }
 
+  function dispatchFilters(filters: any) {
+    dispatch(loadRedux({ filters }));
+  }
+
   const clearErrorMessages = () => {
     setShowErrorState(defaultShowErrors);
     setErrorMessageState(defaultErrorMessages);
@@ -121,90 +142,115 @@ function LoginPage() {
 
   async function handleSubmit() {
     if (validateInputs()) {
-      loginUser(values.email, values.password)
-        .then((user) => {
-          dispatchUser(
-            user.email!,
-            user.firstName!,
-            user.lastName!,
-            user.admin!,
-          );
-          window.location.reload();
-          navigate('/home');
-        })
-        .catch((e) => {
-          setShowError('alert', true);
-          setErrorMessage('alert', e.message);
-        });
+      setIsLoading(true);
+
+      try {
+        const user = await loginUser(values.email, values.password);
+        dispatchUser(user.email!, user.firstName!, user.lastName!, user.admin!);
+      } catch (e: any) {
+        setShowError('alert', true);
+        setErrorMessage('alert', e.message);
+        setIsLoading(false);
+      }
+
+      setIsLoadingFilters(true);
+
+      try {
+        const res = await getData('exposure/filterOptions');
+        dispatchFilters(res.data);
+        window.location.reload();
+        navigate('/home');
+      } catch (e: any) {
+        setShowError('alert', true);
+        setErrorMessage('alert', e.message);
+        setIsLoading(false);
+        setIsLoadingFilters(false);
+      }
+
+      setIsLoading(false);
+      setIsLoadingFilters(false);
     }
   }
 
   return (
-    <div style={styles.container}>
-      <FormGrid>
-        <FormCol>
-          <Grid item container justifyContent="center">
-            <Typography variant="h2" textAlign="center">
-              Login
-            </Typography>
-          </Grid>
-          <Grid item width="1">
-            <TextField
-              fullWidth
-              error={showError.email}
-              helperText={errorMessage.email}
-              type="email"
-              required
-              label="Email"
-              value={values.email}
-              onChange={(e) => setValue('email', e.target.value)}
+    <div>
+      {isLoading ? (
+        <div style={styles.centered}>
+          <CircularProgress />
+          {isLoadingFilters ? (
+            <p>loading exposurepedia database...</p>
+          ) : (
+            <p>logging in (this may take a few moments)...</p>
+          )}
+        </div>
+      ) : (
+        <div style={styles.container}>
+          <FormGrid>
+            <FormCol>
+              <Grid item container justifyContent="center">
+                <Typography variant="h2" textAlign="center">
+                  Login
+                </Typography>
+              </Grid>
+              <Grid item width="1">
+                <TextField
+                  fullWidth
+                  error={showError.email}
+                  helperText={errorMessage.email}
+                  type="email"
+                  required
+                  label="Email"
+                  value={values.email}
+                  onChange={(e) => setValue('email', e.target.value)}
+                />
+              </Grid>
+              <Grid item width="1">
+                <TextField
+                  fullWidth
+                  error={showError.password}
+                  helperText={errorMessage.password}
+                  type="password"
+                  required
+                  label="Password"
+                  value={values.password}
+                  onChange={(e) => setValue('password', e.target.value)}
+                />
+              </Grid>
+              <Grid item container justifyContent="center">
+                <PrimaryButton
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  onClick={() => handleSubmit()}
+                >
+                  Login
+                </PrimaryButton>
+              </Grid>
+              <FormRow>
+                <Grid item>
+                  <Link component={RouterLink} to="/email-reset">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link component={RouterLink} to="/register">
+                    Sign up
+                  </Link>
+                </Grid>
+              </FormRow>
+            </FormCol>
+          </FormGrid>
+          {/* The alert that pops up */}
+          <Grid item>
+            <AlertDialog
+              showAlert={showError.alert}
+              title={alertTitle}
+              message={errorMessage.alert}
+              onClose={handleAlertClose}
             />
           </Grid>
-          <Grid item width="1">
-            <TextField
-              fullWidth
-              error={showError.password}
-              helperText={errorMessage.password}
-              type="password"
-              required
-              label="Password"
-              value={values.password}
-              onChange={(e) => setValue('password', e.target.value)}
-            />
-          </Grid>
-          <Grid item container justifyContent="center">
-            <PrimaryButton
-              fullWidth
-              type="submit"
-              variant="contained"
-              onClick={() => handleSubmit()}
-            >
-              Login
-            </PrimaryButton>
-          </Grid>
-          <FormRow>
-            <Grid item>
-              <Link component={RouterLink} to="/email-reset">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/register">
-                Sign up
-              </Link>
-            </Grid>
-          </FormRow>
-        </FormCol>
-      </FormGrid>
-      {/* The alert that pops up */}
-      <Grid item>
-        <AlertDialog
-          showAlert={showError.alert}
-          title={alertTitle}
-          message={errorMessage.alert}
-          onClose={handleAlertClose}
-        />
-      </Grid>
+        </div>
+      )}
     </div>
   );
 }

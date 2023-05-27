@@ -53,7 +53,6 @@ const login = async (
     next(ApiError.badRequest('Already logged in'));
     return;
   }
-  // TODO: look more into when each of these errors are thrown
   passport.authenticate(
     ['local'],
     {

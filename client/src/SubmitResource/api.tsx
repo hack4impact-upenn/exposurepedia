@@ -18,7 +18,10 @@ import { postData } from '../util/api';
  */
 async function submit(
   name: string,
-  disorders: string[],
+  disorder1: string[],
+  disorder2: string[],
+  disorder3: string[],
+  disorder4: string[],
   formats: string[],
   interventionTypes: string[],
   isAdultAppropriate: boolean,
@@ -29,7 +32,10 @@ async function submit(
 ) {
   const res = await postData('exposure', {
     name,
-    disorders,
+    disorder1,
+    disorder2,
+    disorder3,
+    disorder4,
     formats,
     interventionTypes,
     isAdultAppropriate,
@@ -39,7 +45,6 @@ async function submit(
     link,
   });
   if (res.error) {
-    console.log(res.error);
     return false;
   }
   return true;

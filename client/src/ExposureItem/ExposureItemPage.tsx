@@ -78,8 +78,6 @@ export default function ExposureItem() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  // console.log('LOCATION');
-  // console.log(location.state);
   let isBroken = location.state ? location.state.isBroken : false;
   let isApprove = location.state ? location.state.isApprove : false;
 
@@ -87,7 +85,6 @@ export default function ExposureItem() {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
       const maturity = [];
-
       const disorders = res?.data[0].disorders.map((it: any) => it.name);
       const formats = res?.data[0].formats.map((it: any) => it.name);
       const interventionTypes = res?.data[0].interventionTypes.map(
@@ -319,6 +316,7 @@ export default function ExposureItem() {
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
           <Box
@@ -331,7 +329,9 @@ export default function ExposureItem() {
             <div style={{ marginRight: '10px' }}>
               <IconButton
                 onClick={() => {
-                  navigate('/exposurepedia');
+                  return isApprove
+                    ? navigate('/approve')
+                    : navigate('/exposurepedia');
                 }}
               >
                 <ArrowBackRoundedIcon
@@ -544,7 +544,7 @@ export default function ExposureItem() {
                 mx: '3.25rem',
               }}
             >
-              <Typography>
+              <Typography noWrap>
                 <strong>Link: </strong>
                 {isEdit ? (
                   <TextField

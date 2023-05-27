@@ -114,7 +114,7 @@ const getFilteredExposureItemsFromDB = async (
   isApproved: boolean,
   query: string,
   sortColumn: string,
-  sortDirection: 'asc' | 'desc'
+  sortDirection: 'asc' | 'desc',
 ) => {
   const match: any = {};
 

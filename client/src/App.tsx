@@ -60,7 +60,6 @@ function App() {
                     {/* <Route path="/home" element={<HomePage />} /> */}
                   </Route>
                   {/* Routes accessed only if user is authenticated */}
-                  {/* TODO: Change back to ProtectedRoutesWrapper */}
                   <Route element={<ProtectedRoutesWrapper />}>
                     {/* <Route path="/home" element={<HomePage />} /> */}
                     <Route
