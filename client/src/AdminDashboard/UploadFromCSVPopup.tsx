@@ -9,7 +9,9 @@ import {
   CircularProgress,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Papa from 'papaparse';
+import { isRouteErrorResponse } from 'react-router-dom';
 import { postData } from '../util/api';
 
 interface PopupProps {
@@ -19,6 +21,9 @@ interface PopupProps {
 function UploadFromCSVPopup({ setPopupState }: PopupProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorCount, setErrorCount] = useState(0);
+  const [failed, setFailed] = useState<any[]>([]);
 
   const parseCSV = async (e: any) => {
     Papa.parse(e.target.files[0], {
@@ -26,12 +31,17 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
       skipEmptyLines: true,
       async complete(results: any) {
         // eslint-disable-next-line no-restricted-syntax, guard-for-in
+        setIsUploading(true);
+        setErrorCount(0);
+        setIsError(false);
+        setFileUploaded(false);
+        console.log(results.data);
         for (let i = 0; i < results.data.length; i += 1) {
           const exposure: any = results.data[i];
           // disorders
           const disorder1 = exposure.disorders_1
             ? exposure.disorders_1.split(',').map((s: string) => s.trim())
-            : [];
+            : null;
           const disorder2 = exposure.disorders_2
             ? exposure.disorders_2.split(',').map((s: string) => s.trim())
             : [];
@@ -43,17 +53,16 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             : [];
           // formats
           const formats = exposure.formats
-            .split(',')
-            .map((s: string) => s.trim());
+            ? exposure.formats.split(',').map((s: string) => s.trim())
+            : [];
           // intervention types
           const interventionTypes = exposure.interventionTypes
-            .split(',')
-            .map((s: string) => s.trim());
+            ? exposure.interventionTypes.split(',').map((s: string) => s.trim())
+            : [];
           // keywords
           const keywords = exposure.keywords
-            .split(';')
-            .map((s: string) => s.trim());
-
+            ? exposure.keywords.split(';').map((s: string) => s.trim())
+            : [];
           const exposureItem = {
             name: exposure.name,
             disorder1,
@@ -70,17 +79,25 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             isAdminUpload: true,
           };
 
+          console.log(exposureItem);
+
           // eslint-disable-next-line no-await-in-loop
-          await postData('exposure', exposureItem);
+          const res = await postData('exposure', exposureItem);
+          console.log(res);
+          if (res.error) {
+            console.log(res.error);
+            setErrorCount((c) => c + 1);
+            setIsError(true);
+            // add exposure name and row number to failed list
+            setFailed((f) => [...f, { name: exposure.name, row: i + 1 }]);
+          }
+        }
+        setIsUploading(false);
+        if (!isError) {
+          setFileUploaded(true);
         }
       },
     });
-    setIsUploading(true);
-    setFileUploaded(false);
-    const sleep = (ms: number) => new Promise((r: any) => setTimeout(r, ms));
-    await sleep(2000);
-    setIsUploading(false);
-    setFileUploaded(true);
   };
 
   return (
@@ -129,7 +146,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
               }}
             >
               {isUploading && <CircularProgress sx={{ marginTop: '20px' }} />}
-              {fileUploaded && (
+              {!isError && fileUploaded && (
                 <div
                   style={{
                     display: 'flex',
@@ -143,6 +160,25 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
                   <CheckCircleOutlineIcon
                     sx={{ color: 'green', fontSize: '36px' }}
                   />
+                </div>
+              )}
+              {isError && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p style={{ fontSize: '24px', marginRight: '5px' }}>
+                    Error uploading {errorCount} items:
+                    {failed.map((f) => (
+                      <p style={{ fontSize: '18px' }}>
+                        {f.name} (row {f.row})
+                      </p>
+                    ))}
+                  </p>
+                  <CancelIcon sx={{ color: 'red', fontSize: '36px' }} />
                 </div>
               )}
             </div>
