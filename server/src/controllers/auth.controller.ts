@@ -70,7 +70,7 @@ const login = async (
         next(ApiError.unauthorized('Incorrect credentials'));
         return;
       }
-      if (user!.status && user!.status !== 'approved') {
+      if (user!.status && user!.status !== 'Approved') {
         next(ApiError.unauthorized('User not approved'));
         return;
       }

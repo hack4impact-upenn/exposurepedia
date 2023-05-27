@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import { createTheme } from '@mui/material/styles';
 import { approveUser } from './api';
 import LoadingButton from '../components/buttons/LoadingButton';
-import ConfirmationModal from '../components/ConfirmationModal';
 
 interface ApproveUserButtonProps {
   status: string;
@@ -39,7 +37,7 @@ function ApproveUserButton({
   if (isLoading) {
     return <LoadingButton />;
   }
-  if (status === 'pending' || !status) {
+  if (status === 'Pending' || !status) {
     return (
       <Button
         style={{ color: 'green', borderColor: 'green' }}

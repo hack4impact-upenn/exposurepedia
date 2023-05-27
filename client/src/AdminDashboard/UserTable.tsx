@@ -61,17 +61,6 @@ function UserTable() {
   const [userList, setUserList] = useState<IUser[]>([]);
   const users = useData('admin/all');
   const self = useAppSelector(selectUser);
-  const [openUser, setOpenUser] = useState(-1);
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = (userId: number) => {
-    setOpenUser(userId);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   // Upon getting the list of users for the database, set the state of the userList to contain all users except for logged in user
   useEffect(() => {
@@ -111,7 +100,7 @@ function UserTable() {
           return entry;
         }
         const newEntry = entry;
-        newEntry.status = 'approved';
+        newEntry.status = 'Approved';
         return newEntry;
       }),
     );
