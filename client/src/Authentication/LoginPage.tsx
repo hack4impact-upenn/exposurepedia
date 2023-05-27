@@ -158,14 +158,11 @@ function LoginPage() {
       try {
         const res = await getData('exposure/filterOptions');
         dispatchFilters(res.data);
-        console.log('data!');
-        console.log(res.data);
         window.location.reload();
         navigate('/home');
       } catch (e: any) {
         setShowError('alert', true);
         setErrorMessage('alert', e.message);
-        console.log('error :(');
         setIsLoading(false);
         setIsLoadingFilters(false);
       }

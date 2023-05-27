@@ -18,7 +18,7 @@ const isAdmin = (
   const user: IUser | null = req.user as IUser;
   // Check is user exists and is valid
   if (!user) {
-    next(ApiError.unauthorized('Not a valid user.')); // TODO: see if this is the correct message
+    next(ApiError.unauthorized('Not a valid user.'));
     return;
   }
   // Check if the user is an admin

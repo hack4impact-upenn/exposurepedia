@@ -51,21 +51,22 @@ function SubmitResourcePage() {
   const [interventionTypes, setInterventionTypes] = useState([]);
   const [formatTypes, setFormatTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const defaultValues = {
-    title: '',
-    disorder: emp,
-    newDisorder: '',
-    keywords: '',
-    modifications: '',
-    link: '',
-    formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
-    interventions: Object.fromEntries(interventionTypes.map((i) => [i, false])),
-    maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
-  };
+  const [defaultValues, setDefaultValues] = useState<any>({});
 
   const filters = useAppSelector(selectFilters);
-  const [values, setValueState] = useState(defaultValues);
+
+  // const empObj = {
+  //   title: '',
+  //   disorder: emp,
+  //   newDisorder: '',
+  //   keywords: '',
+  //   modifications: '',
+  //   link: '',
+  //   formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
+  //   interventions: Object.fromEntries(interventionTypes.map((i) => [i, false])),
+  //   maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
+  // };
+  const [values, setValueState] = useState<any>({});
   const [selectOtherDisorder, setSelectOtherDisorder] = useState(false);
 
   useEffect(() => {
@@ -81,6 +82,34 @@ function SubmitResourcePage() {
       const resFormat = await getData('exposure/formats');
       setFormatTypes(resFormat?.data);
 
+      setDefaultValues({
+        title: '',
+        disorder: [],
+        newDisorder: '',
+        keywords: '',
+        modifications: '',
+        link: '',
+        formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
+        interventions: Object.fromEntries(
+          interventionTypes.map((i) => [i, false]),
+        ),
+        maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
+      });
+
+      setValueState({
+        title: '',
+        disorder: [],
+        newDisorder: '',
+        keywords: '',
+        modifications: '',
+        link: '',
+        formats: Object.fromEntries(formatTypes.map((i) => [i, false])),
+        interventions: Object.fromEntries(
+          interventionTypes.map((i) => [i, false]),
+        ),
+        maturity: Object.fromEntries(maturityTypes.map((i) => [i, false])),
+      });
+
       setIsLoading(false);
     };
     fetchData();
@@ -88,14 +117,14 @@ function SubmitResourcePage() {
   }, []);
 
   const setValue = (field: string, value: any) => {
-    setValueState((prevState) => ({
+    setValueState((prevState: any) => ({
       ...prevState,
       ...{ [field]: value },
     }));
   };
 
   const setFormatCheckboxValues = (option: string) => {
-    setValueState((prevState) => ({
+    setValueState((prevState: any) => ({
       ...prevState,
       formats: {
         ...prevState.formats,
@@ -105,7 +134,7 @@ function SubmitResourcePage() {
   };
 
   const setInterventionCheckboxValues = (option: string, value: string) => {
-    setValueState((prevState) => ({
+    setValueState((prevState: any) => ({
       ...prevState,
       interventions: {
         ...prevState.interventions,
@@ -115,7 +144,7 @@ function SubmitResourcePage() {
   };
 
   const setMaturityCheckboxValues = (option: string, value: string) => {
-    setValueState((prevState) => ({
+    setValueState((prevState: any) => ({
       ...prevState,
       maturity: {
         ...prevState.maturity,
@@ -144,8 +173,8 @@ function SubmitResourcePage() {
       const temp = [...a];
       const t = findListHelper(s, o[item], temp);
       if (t.length > 0) {
-        temp.push(item);
-        l = temp;
+        t.push(item);
+        l = t;
       }
     });
 
@@ -154,8 +183,9 @@ function SubmitResourcePage() {
 
   const findList = (s: string) => {
     const tempPath: string[] = [];
-    findListHelper(s, masterDisorderObject, tempPath);
-    return tempPath;
+    const ret = findListHelper(s, masterDisorderObject, tempPath);
+    const flipped = ret.reverse();
+    return flipped;
   };
 
   const [disordersOpen, setDisordersOpen] = useState(false);
@@ -163,6 +193,7 @@ function SubmitResourcePage() {
   const [inputText, setInputText] = useState('');
   const [searchedDisorders, setSearchedDisorders] = useState<string[]>([]);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
   const disorders = resolveDisorder(currPath);
 
   const submitResourceHelper = async () => {
@@ -174,7 +205,7 @@ function SubmitResourcePage() {
     );
 
     const modifications = selectOtherDisorder
-      ? `${values.modifications}\n ADMIN: created new disorder`
+      ? `${values.modifications}\n NOTE TO ADMIN: New Disorder created. Do NOT approve this resource! Duplicate it and upload the information via a CSV with the disorder hierarchy specified.      `
       : values.modifications;
 
     setSelectOtherDisorder(false);
@@ -183,15 +214,12 @@ function SubmitResourcePage() {
 
     let isSuccess = true;
     const disorder = values.newDisorder
-      ? values.newDisorder.split(',').map((str) => str.trim())
+      ? values.newDisorder.split(',').map((str: any) => str.trim())
       : values.disorder;
 
-    console.log('new disorders');
-    console.log(disorder);
-
     await Promise.all(
-      disorder.map(async (d) => {
-        const path = findList(d);
+      disorder.map(async (d: any) => {
+        const path = values.newDisorder ? [d] : findList(d);
         const len = path.length;
         const d1 = len > 0 ? [path[0]] : [];
         const d2 = len > 1 ? [path[1]] : [];
@@ -223,12 +251,29 @@ function SubmitResourcePage() {
   };
 
   const submitResource = async () => {
+    if (
+      !values.title ||
+      (values.disorder.length === 0 && values.newDisorder === '') ||
+      Object.keys(values.formats).filter((item) => values.formats[item])
+        .length === 0 ||
+      Object.keys(values.interventions).filter(
+        (item) => values.interventions[item],
+      ).length === 0 ||
+      Object.keys(values.maturity).filter((item) => values.maturity[item])
+        .length === 0
+    ) {
+      setIsSuccessful(false);
+      setSuccessOpen(true);
+      return;
+    }
     const res = await submitResourceHelper();
     if (res) {
       setValueState(defaultValues);
+      setIsSuccessful(true);
       setSuccessOpen(true);
     } else {
-      setSuccessOpen(false);
+      setIsSuccessful(false);
+      setSuccessOpen(true);
     }
   };
 
@@ -240,7 +285,6 @@ function SubmitResourcePage() {
       tempOptions = tempOptions[tempPath[0]];
       tempPath = tempPath.slice(1);
     }
-    // TODO: figure out why this doesn't truncate number of keywords displayed
     if (tempOptions.Keyword && forDisplay) {
       tempOptions.Keyword = Object.fromEntries(
         Object.entries(tempOptions.Keyword).slice(0, 5),
@@ -316,13 +360,13 @@ function SubmitResourcePage() {
                     setCurrPath([]);
                   }}
                   renderTags={(_, getTagProps) => {
-                    return values.disorder.map((option, index) => (
+                    return values.disorder.map((option: any, index: any) => (
                       <Chip
                         {...getTagProps({ index })}
                         label={option}
                         onDelete={() => {
                           const temp = values.disorder.filter(
-                            (item) => item !== option,
+                            (item: any) => item !== option,
                           );
                           setValueState({ ...values, disorder: temp });
                         }}
@@ -382,12 +426,14 @@ function SubmitResourcePage() {
                                 let temp = values.disorder;
                                 findList(option);
                                 if (
-                                  temp.filter((item) => item === option)
+                                  temp.filter((item: any) => item === option)
                                     .length === 0
                                 ) {
                                   temp.push(option);
                                 } else {
-                                  temp = temp.filter((item) => item !== option);
+                                  temp = temp.filter(
+                                    (item: any) => item !== option,
+                                  );
                                 }
                                 setValueState({
                                   ...values,
@@ -450,12 +496,14 @@ function SubmitResourcePage() {
                                 let temp = values.disorder;
                                 findList(option);
                                 if (
-                                  temp.filter((item) => item === option)
+                                  temp.filter((item: any) => item === option)
                                     .length === 0
                                 ) {
                                   temp.push(option);
                                 } else {
-                                  temp = temp.filter((item) => item !== option);
+                                  temp = temp.filter(
+                                    (item: any) => item !== option,
+                                  );
                                 }
                                 setValueState({
                                   ...values,
@@ -503,15 +551,15 @@ function SubmitResourcePage() {
                             checked={selected}
                             onChange={(e) => {
                               let temp = values.disorder;
-                              console.log(`temp! ${temp}`);
-                              console.log(`e! ${e.target.value}`);
                               if (
-                                temp.filter((item) => item === option)
+                                temp.filter((item: any) => item === option)
                                   .length === 0
                               ) {
                                 temp.push(option);
                               } else {
-                                temp = temp.filter((item) => item !== option);
+                                temp = temp.filter(
+                                  (item: any) => item !== option,
+                                );
                               }
                               setValueState({
                                 ...values,
@@ -601,7 +649,7 @@ function SubmitResourcePage() {
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={values.formats[option]}
+                            checked={values.formats[option] || false}
                             onChange={() => setFormatCheckboxValues(option)}
                             name={option}
                           />
@@ -620,7 +668,7 @@ function SubmitResourcePage() {
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={values.interventions[option]}
+                            checked={values.interventions[option] || false}
                             onChange={(e) =>
                               setInterventionCheckboxValues(
                                 option,
@@ -705,12 +753,12 @@ function SubmitResourcePage() {
           >
             <Alert
               onClose={() => setSuccessOpen(false)}
-              severity={successOpen ? 'success' : 'error'}
+              severity={isSuccessful ? 'success' : 'error'}
               sx={{ width: '100%' }}
             >
-              {successOpen
+              {isSuccessful
                 ? 'Successfully submitted resource!'
-                : 'Error - please try again'}
+                : "Error - please try again (make sure you've filled out all fields correctly)"}
             </Alert>
           </Snackbar>
           <Button

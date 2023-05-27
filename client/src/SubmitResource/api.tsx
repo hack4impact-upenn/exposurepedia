@@ -45,7 +45,6 @@ async function submit(
     link,
   });
   if (res.error) {
-    console.log(res.error);
     return false;
   }
   return true;

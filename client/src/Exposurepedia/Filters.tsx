@@ -41,7 +41,6 @@ function Filters({ filterOptions, setFilterOptions, isLoading }: any) {
       tempOptions = tempOptions[tempPath[0]];
       tempPath = tempPath.slice(1);
     }
-    // TODO: figure out why this doesn't truncate number of keywords displayed
     if (tempOptions && tempOptions.Keyword && forDisplay) {
       tempOptions.Keyword = Object.fromEntries(
         Object.entries(tempOptions.Keyword).slice(0, 5),

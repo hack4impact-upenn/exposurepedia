@@ -113,12 +113,6 @@ function Row({ row, index, updateItem, updateRowItems }: RowProps) {
                 style: { textAlign: 'center' },
               }}
               onChange={(event) => {
-                console.log(
-                  'event.target.value: ',
-                  event.target.value,
-                  row,
-                  index,
-                );
                 updateItem(
                   {
                     key: `${row.key}`,
@@ -156,10 +150,8 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
   const updateRowItems = (row: TRow) => {
     // deleting row
     const tempRows = rows.filter((it) => {
-      console.log('it.key: ', it.key, 'row.key: ', row.key);
       return it.key !== row.key;
     });
-    console.log('done: ');
     setRows(tempRows);
     const toEdit: [string, string, string][] = tempRows.map((r) => [
       r.itemName,
