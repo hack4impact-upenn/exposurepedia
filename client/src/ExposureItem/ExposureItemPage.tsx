@@ -533,7 +533,7 @@ export default function ExposureItem() {
             )}
           </Typography>
         </Box>
-        {curItem.link !== '' && (
+        {(curItem.link !== '' || isEdit) && (
           <div>
             <Box
               sx={{
@@ -546,7 +546,23 @@ export default function ExposureItem() {
             >
               <Typography noWrap>
                 <strong>Link: </strong>
-                <Link href={curItem.link}>{curItem.link}</Link>
+                {isEdit ? (
+                  <TextField
+                    sx={{ width: '350px' }}
+                    InputProps={{ style: { fontSize: '16px' } }}
+                    id="standard-basic"
+                    variant="standard"
+                    onChange={(e) => {
+                      setCurItem((prevItem) => ({
+                        ...prevItem,
+                        link: e.target.value,
+                      }));
+                    }}
+                    defaultValue={curItem.link}
+                  />
+                ) : (
+                  <Link href={curItem.link}>{curItem.link}</Link>
+                )}
               </Typography>
             </Box>
             {curItem.link && curItem.link.includes('youtube') && (
