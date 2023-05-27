@@ -20,21 +20,28 @@ interface PopupProps {
 function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
   const [value, setValue] = useState('');
   const [valueDescr, setValueDescr] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const email = user?.email?.toLowerCase();
 
   async function createHierarchy() {
     if (value && valueDescr && email) {
-      addToHierarchies({ title: value, updated_at: Date.now() });
       const res = await addHierarchy(email, value, valueDescr);
+      if (res?.error) {
+        setErrorMessage(res.error?.data?.message);
+        return;
+      }
+      addToHierarchies({ title: value, updated_at: Date.now() });
       setPopupState('');
       navigate('/viewhierarchy', {
         state: {
           // eslint-disable-next-line no-underscore-dangle
-          id: res._id,
+          id: res?.data?._id,
         },
       });
+    } else {
+      setErrorMessage('Please fill out all fields.');
     }
   }
 
@@ -82,6 +89,12 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
                 fullWidth
                 onChange={(event) => setValueDescr(event.target.value)}
               />
+              <Typography
+                variant="body1"
+                sx={{ color: 'red', marginTop: '10px' }}
+              >
+                {errorMessage}
+              </Typography>
             </div>
           </DialogContent>
           <PrimaryButton
