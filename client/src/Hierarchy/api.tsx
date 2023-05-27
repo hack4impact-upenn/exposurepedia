@@ -25,7 +25,7 @@ async function addHierarchy(email: string, title: string, description: string) {
     title,
     description,
   });
-  return res?.data;
+  return res;
 }
 
 /**
