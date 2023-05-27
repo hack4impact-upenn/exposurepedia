@@ -2,7 +2,7 @@
  * A file for defining functions used to interact with the backend server
  * for authentication purposes.
  */
-import { postData } from '../util/api';
+import { getData, postData } from '../util/api';
 
 /**
  * Sends a request to the server to log in a user
@@ -16,10 +16,17 @@ async function loginUser(email: string, password: string) {
     email: lowercaseEmail,
     password,
   });
+  const resFilters = await getData('exposure/filterOptions');
+
   if (res.error) {
     throw Error(res.error.message);
   }
-  return res.data;
+  if (resFilters.error) {
+    throw Error(resFilters.error.message);
+  }
+
+  const newRes = { ...res.data, filters: resFilters.data };
+  return newRes;
 }
 
 /**

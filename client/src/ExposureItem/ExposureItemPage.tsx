@@ -87,7 +87,8 @@ export default function ExposureItem() {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
       const maturity = [];
-
+      console.log('info!');
+      console.log(res.data);
       const disorders = res?.data[0].disorders.map((it: any) => it.name);
       const formats = res?.data[0].formats.map((it: any) => it.name);
       const interventionTypes = res?.data[0].interventionTypes.map(

@@ -19,16 +19,16 @@ import SearchComponent from '../Exposurepedia/SearchComponent';
 
 function DisorderDropdown({ filterOptions, setFilterOptions }: any) {
   const emptyArr: string[] = [];
-  const emptyObj: { [key: string]: string[] } = {
-    Disorder: emptyArr,
-    Format: emptyArr,
-    'Intervention Type': emptyArr,
-    Maturity: emptyArr,
-    Keyword: emptyArr,
-  };
+  // const emptyObj: { [key: string]: string[] } = {
+  //   Disorder: emptyArr,
+  //   Format: emptyArr,
+  //   'Intervention Type': emptyArr,
+  //   Maturity: emptyArr,
+  //   Keyword: emptyArr,
+  // };
   const [current, setCurrent] = useState('');
   const [path, setPath] = useState(emptyArr);
-  const [tags, setTags] = useState(emptyObj);
+  const [tags, setTags] = useState<any>({});
   const [change, setChange] = useState(false);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState(emptyArr);
@@ -321,7 +321,7 @@ function DisorderDropdown({ filterOptions, setFilterOptions }: any) {
       setTags({ ...tags, [type]: [] });
       handleItemCheck(type, p);
     } else {
-      setTags({ ...tags, [type]: tags[type].filter((it) => it !== item) });
+      setTags({ ...tags, [type]: tags[type].filter((it: any) => it !== item) });
       p = findPath(item);
       handleItemCheck(item, p);
     }
@@ -397,7 +397,7 @@ function DisorderDropdown({ filterOptions, setFilterOptions }: any) {
                           }
                     }
                   >
-                    {tags[key].map((item) => (
+                    {tags[key].map((item: any) => (
                       <Chip
                         sx={{
                           margin: '0px 2px',
