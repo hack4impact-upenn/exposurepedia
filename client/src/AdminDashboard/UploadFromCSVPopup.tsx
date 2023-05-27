@@ -22,6 +22,7 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
+  const [successCount, setSuccessCount] = useState(0);
   const [failed, setFailed] = useState<any[]>([]);
 
   const parseCSV = async (e: any) => {
@@ -34,7 +35,6 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
         setErrorCount(0);
         setIsError(false);
         setFileUploaded(false);
-        console.log(results.data);
         for (let i = 0; i < results.data.length; i += 1) {
           const exposure: any = results.data[i];
           // disorders
@@ -78,8 +78,6 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             isAdminUpload: true,
           };
 
-          console.log(exposureItem);
-
           // eslint-disable-next-line no-await-in-loop
           const res = await postData('exposure', exposureItem);
           console.log(res);
@@ -89,6 +87,8 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
             setIsError(true);
             // add exposure name and row number to failed list
             setFailed((f) => [...f, { name: exposure.name, row: i + 1 }]);
+          } else {
+            setSuccessCount((c) => c + 1);
           }
         }
         setIsUploading(false);
@@ -170,7 +170,8 @@ function UploadFromCSVPopup({ setPopupState }: PopupProps) {
                   }}
                 >
                   <p style={{ fontSize: '24px', marginRight: '5px' }}>
-                    Error uploading {errorCount} items:
+                    Successfully uploaded {successCount} items, but encountered
+                    errors uploading {errorCount} items:
                     {failed.map((f) => (
                       <p style={{ fontSize: '18px' }}>
                         {f.name} (row {f.row})
