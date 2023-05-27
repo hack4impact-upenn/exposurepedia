@@ -96,6 +96,8 @@ function Exposurepedia() {
       const isChildAppropriate =
         filterOptions['Adult/Child Friendly']['Child Friendly'];
 
+      const filteredQuery = query.replace(/[^a-zA-Z0-9 ]/g, '');
+
       const response = await postData('exposure/filter', {
         disorders,
         formats,
@@ -104,7 +106,7 @@ function Exposurepedia() {
         isChildAppropriate,
         isLinkBroken: false,
         isApproved: true,
-        query,
+        query: filteredQuery,
         sortColumn,
         sortDirection,
       });
