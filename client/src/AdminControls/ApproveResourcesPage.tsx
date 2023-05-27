@@ -26,6 +26,11 @@ function ApproveResourcesPage() {
         isApproved: false,
         query: '',
       });
+      response.data.forEach((row: any) => {
+        const date = new Date(row.createdAt);
+        // eslint-disable-next-line no-param-reassign
+        row.createdAt = date.toLocaleDateString();
+      });
       setRows(response.data);
       setIsLoading(false);
     };
