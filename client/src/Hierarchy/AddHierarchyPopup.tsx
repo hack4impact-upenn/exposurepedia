@@ -90,7 +90,7 @@ function AddHierarchyPopup({ setPopupState, addToHierarchies }: PopupProps) {
                 onChange={(event) => setValueDescr(event.target.value)}
               />
               <Typography
-                variant="body1"
+                variant="subtitle1"
                 sx={{ color: 'red', marginTop: '10px' }}
               >
                 {errorMessage}
