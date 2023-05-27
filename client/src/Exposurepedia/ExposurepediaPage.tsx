@@ -20,6 +20,7 @@ import { selectFilters } from '../util/redux/filterSlice';
  */
 function Exposurepedia() {
   const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+  const [isLoadingTable, setIsLoadingTable] = useState(true);
   const [initFilterOptions, setInitFilterOptions] = useState<any>({});
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
@@ -111,6 +112,7 @@ function Exposurepedia() {
         sortDirection,
       });
       setRows(response.data);
+      setIsLoadingTable(false);
     };
     fetchData();
   }, [filterOptions, query, sortColumn, sortDirection]);
@@ -146,19 +148,23 @@ function Exposurepedia() {
               search={query}
               handleChange={(e: string) => setQuery(e)}
             />
-            <ExposureItemTable
-              rows={rows}
-              columns={columns}
-              isApprove={false}
-              isBroken={false}
-              setCount={setCount}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
-              sortColumn={sortColumn}
-              setSortColumn={setSortColumn}
-              sortDirection={sortDirection}
-              setSortDirection={setSortDirection}
-            />
+            {isLoadingTable ? (
+              <CircularProgress />
+            ) : (
+              <ExposureItemTable
+                rows={rows}
+                columns={columns}
+                isApprove={false}
+                isBroken={false}
+                setCount={setCount}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                sortColumn={sortColumn}
+                setSortColumn={setSortColumn}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+              />
+            )}
           </div>
         </Box>
       </Box>

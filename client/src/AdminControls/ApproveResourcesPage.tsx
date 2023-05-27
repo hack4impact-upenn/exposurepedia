@@ -1,10 +1,11 @@
-import { Toolbar } from '@mui/material';
+import { CircularProgress, Toolbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ExposureItemTable } from '../Exposurepedia/ExposureItemTable';
 import { postData } from '../util/api';
 
 function ApproveResourcesPage() {
   const [rows, setRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const columns = [
     { id: 'name', label: 'Title', minWidth: 170 },
@@ -18,7 +19,7 @@ function ApproveResourcesPage() {
         disorders: [],
         formats: [],
         interventionTypes: [],
-        isAdultAppropriate: true,
+        isAdultAppropriate: false,
         isChildAppropriate: false,
         keywords: [],
         isLinkBroken: false,
@@ -26,6 +27,7 @@ function ApproveResourcesPage() {
         query: '',
       });
       setRows(response.data);
+      setIsLoading(false);
     };
     fetch();
   }, []);
@@ -34,12 +36,25 @@ function ApproveResourcesPage() {
     <div style={{ width: '90%', margin: 'auto' }}>
       <Toolbar />
       <h1> Approve Resources </h1>
-      <ExposureItemTable
-        rows={rows}
-        columns={columns}
-        isApprove
-        isBroken={false}
-      />
+      {isLoading ? (
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+        <ExposureItemTable
+          rows={rows}
+          columns={columns}
+          isApprove
+          isBroken={false}
+        />
+      )}
     </div>
   );
 }
