@@ -15,7 +15,7 @@ import {
   TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
+import { ArrowUpward } from '@material-ui/icons';
 import {
   DragDropContext,
   Droppable,
@@ -254,7 +254,7 @@ function ViewHierarchyTable({ rows, setRows, email, hierarchyId }: TableProps) {
                     <div>
                       <span>SUDS</span>
                       <IconButton onClick={sortBySuds}>
-                        <SwapVertIcon />
+                        <ArrowUpward />
                       </IconButton>
                     </div>
                   </div>

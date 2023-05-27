@@ -102,6 +102,7 @@ export default function NavBar() {
           <NavTab label="Exposurepedia" href="/exposurepedia" />
           <NavTab label="Submit Resources" href="/submitresources" />
           <NavTab label="Hierarchies" href="/hierarchies" />
+          <NavTab label="Modifications" href="/modifications" />
           <NavTab label="Contact" href="/contact" />
         </Tabs>
         <MenuListComposition user={self} />

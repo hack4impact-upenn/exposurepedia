@@ -21,6 +21,7 @@ import LoginPage from './Authentication/LoginPage';
 import EmailResetPasswordPage from './Authentication/EmailResetPasswordPage';
 import ResetPasswordPage from './Authentication/ResetPasswordPage';
 import HierarchiesPage from './Hierarchy/HierarchiesPage';
+import ModificationsPage from './Modifications/ModificationsPage';
 import ViewHierarchyPage from './Hierarchy/ViewHierarchyPage';
 import ApproveResourcesPage from './AdminControls/ApproveResourcesPage';
 import FixLinksPage from './AdminControls/FixLinksPage';
@@ -73,6 +74,10 @@ function App() {
                       key={window.location.pathname}
                     />
                     <Route path="/hierarchies" element={<HierarchiesPage />} />
+                    <Route
+                      path="/modifications"
+                      element={<ModificationsPage />}
+                    />
                     <Route
                       path="/viewhierarchy"
                       element={<ViewHierarchyPage />}
