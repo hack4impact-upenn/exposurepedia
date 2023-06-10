@@ -1,32 +1,27 @@
-# Boilerplate
+# Exposurepedia
 
-This is a simple boilerplate designed to serve as robust template for quickly starting development on a [Typescript](https://www.typescriptlang.org) based [MERN](https://www.mongodb.com/mern-stack) web application.
+![Exposurepedia](https://images2.imgbox.com/58/7b/8XpmH6BT_o.png)
 
-## Features
+Exposurepedia is a project for Rachel Schwartz, Ph.D. with the Center for Treatment and Study of Anxiety at the University of Pennsylvania. It is a powerful resource for clinicians to research exposure therapies, share new treatments, and build hierarchies for their patients.
 
-- Session based authentication with [Passport](https://www.passportjs.org)
-- Emailing for account verification and resetting password with [SendGrid](https://sendgrid.com)
-- Admin functionality for viewing/deleting/promoting other users
-- Clean authentication pages built with [Material UI](https://mui.com)
-- In memory database testing with [Jest](https://jestjs.io) and [Supertest](https://www.npmjs.com/package/supertest)
-- [AirBnb Typescript styling](https://github.com/airbnb/javascript) with [Prettier](https://prettier.io) and [ESLint](https://eslint.org)
-- [Husky](https://typicode.github.io/husky/#/) and [lint-staged](https://github.com/okonet/lint-staged) for checking linting on commits
-- [GitHub Actions](https://docs.github.com/en/actions) for ensuring linting + tests pass on pushes
+If you are a clinician and would like to use Exposurepedia as a resource, visit [https://exposurepedia.herokuapp.com](https://exposurepedia.herokuapp.com) and sign up for an account!
 
-## Required tools
+Typescript-based MERN web application.
+
+## Setup
+
+### Required tools
 
 These are necessary to build and run the project at full functionality
 
 - Install [Yarn Package Manager](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
 - Install [NodeJS](https://nodejs.org/en/download/)
 
-## Recommended tools
+### Recommended tools
 
 To take full advantage of the linting/formatting, recommend adding the [Prettier](https://prettier.io) and [ESLint](https://eslint.org) VSCode extensions and configuring them as shown [here](https://levelup.gitconnected.com/setting-up-eslint-with-prettier-typescript-and-visual-studio-code-d113bbec9857#:~:text=Install%20the%20following%20Visual%20Studio%20Code%20extensions) for code highlighting and formatting on save. Skip to the section labeled "Add the following to your VS Code settings.json". To access your settings.json, follow what is linked [here](https://stackoverflow.com/questions/65908987/how-can-i-open-visual-studio-codes-settings-json-file). See [here](https://blog.logrocket.com/using-prettier-eslint-automate-formatting-fixing-javascript/#differences-between-eslint-prettier) for the differences between the two tools and how they work together.
 
 Finally, we also recommend downloading the [Live Share](https://visualstudio.microsoft.com/services/live-share/) extension by Microsoft for improved Collaboration. This allows for easy peer programming on one shared repository instance.
-
-## Setup
 
 ### MongoDB
 
