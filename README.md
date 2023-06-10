@@ -4,7 +4,7 @@
 
 Exposurepedia is a project for Rachel Schwartz, Ph.D. with the Center for Treatment and Study of Anxiety at the University of Pennsylvania. It is a powerful resource for clinicians to research exposure therapies, share new treatments, and build hierarchies for their patients.
 
-If you are a clinician and would like to use Exposurepedia as a resource, visit [https://exposurepedia.herokuapp.com](https://exposurepedia.herokuapp.com) and sign up for an account!
+If you are a clinician and would like to use Exposurepedia, visit [https://exposurepedia.herokuapp.com](https://exposurepedia.herokuapp.com) and sign up for an account!
 
 Typescript-based MERN web application.
 
