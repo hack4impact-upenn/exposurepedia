@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-nested-ternary */
 import {
   Button,
@@ -26,6 +27,7 @@ interface Item {
   keywords: string[];
   modifications: string;
   link: string;
+  updatedAt: string;
 }
 
 interface PopupProps {
@@ -46,12 +48,28 @@ function Popup({ category, setPopupState, setCurItem }: PopupProps) {
   useEffect(() => {
     const fetch = async () => {
       const disorders = (await getData('exposure/disorders')).data;
+      const emp: Object[] = [];
+      const flattenedObj = Object.assign(
+        {},
+        ...(function flatten(o: any): Object[] {
+          return emp.concat(
+            ...Object.keys(o).map((k) => {
+              if (typeof o[k] === 'boolean') {
+                return { [k]: 'temp' };
+              }
+              return [...flatten(o[k]), { [k]: 'temp' }];
+            }),
+          );
+        })(disorders),
+      );
+      const itemsBelow: any = Object.keys(flattenedObj);
+
       const formats = (await getData('exposure/formats')).data;
       const interventionTypes = (await getData('exposure/interventionTypes'))
         .data;
       const keywords = (await getData('exposure/keywords')).data;
       setValues({
-        disorders,
+        disorders: itemsBelow,
         formats,
         interventionTypes,
         maturity: ['Child', 'Adult'],
@@ -59,7 +77,7 @@ function Popup({ category, setPopupState, setCurItem }: PopupProps) {
       });
     };
     fetch();
-  });
+  }, []);
   return (
     // eslint-disable-next-line @typescript-eslint/no-empty-function, react/jsx-boolean-value
     <Dialog

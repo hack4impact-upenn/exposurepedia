@@ -41,6 +41,7 @@ interface Item {
   modifications: string;
   maturity: string[];
   link: string;
+  updatedAt: string;
 }
 
 export default function ExposureItem() {
@@ -62,6 +63,7 @@ export default function ExposureItem() {
     maturity: emp,
     modifications: '',
     link: '',
+    updatedAt: '',
   });
   const [savedItem, setSavedItem] = useState({
     name: '',
@@ -74,6 +76,7 @@ export default function ExposureItem() {
     maturity: emp,
     modifications: '',
     link: '',
+    updatedAt: '',
   });
   const { id } = useParams();
   const navigate = useNavigate();
@@ -84,7 +87,8 @@ export default function ExposureItem() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getData(`exposure/${id}`);
-      const maturity = [];
+      const maturity: any = [];
+      const updatedAt = new Date(res?.data[0].updatedAt).toLocaleDateString();
       const disorders = res?.data[0].disorders.map((it: any) => it.name);
       const formats = res?.data[0].formats.map((it: any) => it.name);
       const interventionTypes = res?.data[0].interventionTypes.map(
@@ -104,6 +108,7 @@ export default function ExposureItem() {
         interventionTypes,
         keywords,
         maturity,
+        updatedAt,
       });
       setSavedItem({
         ...res?.data[0],
@@ -392,7 +397,7 @@ export default function ExposureItem() {
               alignItems: 'flex-end',
             }}
           >
-            <Typography>Last updated March 22nd, 2023</Typography>
+            <Typography>Last updated {curItem.updatedAt}</Typography>
             {user.admin &&
               (isEdit ? (
                 <>
