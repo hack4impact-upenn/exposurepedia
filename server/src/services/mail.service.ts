@@ -6,7 +6,7 @@ import SGmail, { MailDataRequired } from '@sendgrid/mail';
 
 const appName = 'Exposurepedia';
 const senderName = 'Exposurepedia Admin';
-const baseUrl = 'https://test-exposurepedia.herokuapp.com'; // TODO: change this once deployed
+const baseUrl = 'https://exposurepedia.com';
 
 // eslint-disable-next-line no-useless-concat
 SGmail.setApiKey(`${process.env.SENDGRID_API_KEY}`);

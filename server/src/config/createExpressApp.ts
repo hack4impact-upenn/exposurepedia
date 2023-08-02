@@ -23,13 +23,6 @@ const createExpressApp = (sessionStore: MongoStore): express.Express => {
   // Set up passport and strategies
   initializePassport(passport);
 
-  // Sets up CORS configurations
-  app.all('/', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    next();
-  });
-
   // Sets the port for the app
   app.set('port', process.env.PORT || 4000);
   // Gives express the ability to parse requests with JSON and turn the JSON into objects
@@ -41,8 +34,8 @@ const createExpressApp = (sessionStore: MongoStore): express.Express => {
     }),
   );
   // Gives express the ability accept origins outside its own to accept requests from
-  // app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-  app.use(cors({ credentials: true, origin: true }));
+  app.use(cors({ credentials: true, origin: 'http://exposurepedia.com' }));
+  // app.use(cors({ credentials: true, origin: true }));
   // Gives express the ability to parse client cookies and add them to req.cookies
   app.use(cookieParser(process.env.COOKIE_SECRET));
 
