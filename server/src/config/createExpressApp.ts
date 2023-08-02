@@ -23,6 +23,13 @@ const createExpressApp = (sessionStore: MongoStore): express.Express => {
   // Set up passport and strategies
   initializePassport(passport);
 
+  // Sets up CORS configurations
+  app.all('/', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    next();
+  });
+
   // Sets the port for the app
   app.set('port', process.env.PORT || 4000);
   // Gives express the ability to parse requests with JSON and turn the JSON into objects
