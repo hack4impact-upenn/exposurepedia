@@ -37,7 +37,7 @@ const createExpressApp = (sessionStore: MongoStore): express.Express => {
   app.use(
     cors({
       credentials: true,
-      origin: 'http://exposurepedia.com' || 'http://www.exposurepedia.com',
+      origin: ['http://exposurepedia.com', 'http://www.exposurepedia.com'],
     }),
   );
   // app.use(cors({ credentials: true, origin: true }));
